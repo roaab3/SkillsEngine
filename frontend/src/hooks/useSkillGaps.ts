@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { apiClient } from '@/services/api-client';
+import apiClient from '@/services/api-client';
 
 interface SkillGap {
   competency_id: string;
