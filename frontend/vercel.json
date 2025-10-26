@@ -3,6 +3,5 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
-  "installCommand": "npm ci --prefer-offline --no-audit",
-  "rootDirectory": "frontend"
+  "installCommand": "npm ci --prefer-offline --no-audit"
 }
