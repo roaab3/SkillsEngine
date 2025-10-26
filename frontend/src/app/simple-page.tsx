@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { CompetencyDashboard } from '@/components/CompetencyDashboard';
-import { SkillGapsPanel } from '@/components/SkillGapsPanel';
-import { Header } from '@/components/Header';
+import CompetencyDashboard from '@/components/CompetencyDashboard';
+import SkillGapsPanel from '@/components/SkillGapsPanel';
+import Header from '@/components/Header';
 
 // Mock data for demo
 const mockProfile = {
