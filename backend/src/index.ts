@@ -55,8 +55,18 @@ app.use(morgan('combined', {
   }
 }));
 
-// Health check endpoint
-app.use('/health', healthRoutes);
+// Simple health check endpoint (always responds)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// Detailed health check endpoint
+app.use('/health/detailed', healthRoutes);
 
 // API routes
 app.use('/api/skills', skillRoutes);
