@@ -78,35 +78,48 @@ app.use('/api/assessments', assessmentRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Initialize services
-async function initializeApp() {
+// Start server immediately
+const server = app.listen(PORT, () => {
+  logger.info(`Skills Engine API server running on port ${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV}`);
+  logger.info(`API Base URL: ${process.env.API_BASE_URL}`);
+  logger.info(`Health check available at: http://localhost:${PORT}/health`);
+});
+
+// Initialize services in background (non-blocking)
+async function initializeServices() {
   try {
     // Connect to database
     await connectDatabase();
     logger.info('Database connected successfully');
+  } catch (error) {
+    logger.error('Database connection failed:', error);
+    // Don't exit - continue without database
+  }
 
+  try {
     // Connect to Kafka
     await connectKafka();
     logger.info('Kafka connected successfully');
+  } catch (error) {
+    logger.error('Kafka connection failed:', error);
+    // Don't exit - continue without Kafka
+  }
 
+  try {
     // Connect to Redis (optional)
     if (process.env.REDIS_URL) {
       await connectRedis();
       logger.info('Redis connected successfully');
     }
-
-    // Start server
-    app.listen(PORT, () => {
-      logger.info(`Skills Engine API server running on port ${PORT}`);
-      logger.info(`Environment: ${process.env.NODE_ENV}`);
-      logger.info(`API Base URL: ${process.env.API_BASE_URL}`);
-    });
-
   } catch (error) {
-    logger.error('Failed to initialize application:', error);
-    process.exit(1);
+    logger.error('Redis connection failed:', error);
+    // Don't exit - continue without Redis
   }
 }
+
+// Start services in background
+initializeServices();
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
@@ -130,8 +143,7 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-// Initialize the application
-initializeApp();
+// Application is already initialized above
 
 export default app;
 

@@ -7,6 +7,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:simple": "node src/simple-server.js",
+    "start:fallback": "npm run start:simple",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
