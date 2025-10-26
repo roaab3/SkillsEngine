@@ -78,7 +78,7 @@ const mockGaps = {
           title: 'CSS Grid Fundamentals',
           provider: 'Skills Engine Learning',
           estimated_duration: '4 hours'
-        }
+        },
         {
           type: 'course',
           title: 'TypeScript Basics',
