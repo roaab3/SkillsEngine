@@ -14,8 +14,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:e2e": "playwright test",
-    "postbuild": "next-sitemap"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "next": "^14.0.3",
