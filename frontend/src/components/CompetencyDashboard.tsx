@@ -48,10 +48,6 @@ export default function CompetencyDashboard({ competencies, userId }: Competency
           <h2 className="text-2xl font-bold text-secondary-100">Your Competencies</h2>
           <p className="text-secondary-400">Track your progress across different skill areas</p>
         </div>
-        <button className="btn-primary">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Competency
-        </button>
       </div>
 
       {/* Filters */}
