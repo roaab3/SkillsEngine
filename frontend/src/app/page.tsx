@@ -1,0 +1,133 @@
+'use client';
+
+import { useState } from 'react';
+import CompetencyDashboard from '../components/CompetencyDashboard';
+import SkillGapsPanel from '../components/SkillGapsPanel';
+import Header from '../components/Header';
+
+const mockProfile = {
+  user_id: 'user-123',
+  name: 'John Doe',
+  company_id: 'company-123',
+  competencies: [
+    {
+      id: 'uc-1',
+      competency_id: 'comp-1',
+      name: 'Frontend Development',
+      level: 'Advanced',
+      progress_percentage: 75,
+      verification_source: 'Assessment',
+      last_evaluate: new Date().toISOString()
+    },
+    {
+      id: 'uc-2',
+      competency_id: 'comp-2',
+      name: 'Backend Development',
+      level: 'Beginner',
+      progress_percentage: 25,
+      verification_source: 'User Claims',
+      last_evaluate: new Date().toISOString()
+    }
+  ],
+  skills: [
+    {
+      id: 'us-1',
+      skill_id: 'skill-1',
+      name: 'JavaScript',
+      verified: true,
+      verification_source: 'Assessment',
+      last_evaluate: new Date().toISOString()
+    },
+    {
+      id: 'us-2',
+      skill_id: 'skill-2',
+      name: 'React',
+      verified: true,
+      verification_source: 'Assessment',
+      last_evaluate: new Date().toISOString()
+    }
+  ],
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+};
+
+const mockGaps = {
+  user_id: 'user-123',
+  gaps: [
+    {
+      competency_id: 'comp-1',
+      competency_name: 'Frontend Development',
+      missing_skills: [
+        {
+          skill_id: 'skill-3',
+          name: 'CSS Grid',
+          type: 'L3',
+          priority: 'High'
+        },
+        {
+          skill_id: 'skill-4',
+          name: 'TypeScript',
+          type: 'L3',
+          priority: 'Medium'
+        }
+      ],
+      gap_percentage: 25,
+      recommendations: [
+        {
+          type: 'course',
+          title: 'CSS Grid Fundamentals',
+          provider: 'Skills Engine Learning',
+          estimated_duration: '4 hours'
+        },
+        {
+          type: 'course',
+          title: 'TypeScript Basics',
+          provider: 'Skills Engine Learning',
+          estimated_duration: '6 hours'
+        }
+      ]
+    }
+  ],
+  overall_gap_percentage: 25,
+  generated_at: new Date().toISOString()
+};
+
+export default function HomePage() {
+  const [userId] = useState('user-123');
+
+  return (
+    <div className="min-h-screen bg-secondary-900">
+      <Header user={mockProfile} />
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gradient mb-2">
+            Welcome back, {mockProfile.name}!
+          </h1>
+          <p className="text-secondary-400">
+            Track your skills progress and identify areas for growth
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Competency Dashboard - Takes up 2/3 of the width */}
+          <div className="lg:col-span-2">
+            <CompetencyDashboard 
+              competencies={mockProfile.competencies} 
+              userId={userId}
+            />
+          </div>
+
+          {/* Skill Gaps Panel - Takes up 1/3 of the width */}
+          <div className="lg:col-span-1">
+            <SkillGapsPanel 
+              gaps={mockGaps.gaps}
+              overallGapPercentage={mockGaps.overall_gap_percentage}
+            />
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+

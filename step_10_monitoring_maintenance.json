@@ -1,0 +1,155 @@
+{
+  "observability_stack": {
+    "telemetry_collection": {
+      "instrumentation": "OpenTelemetry for traces, spans, and basic metrics from Node.js services",
+      "metrics": "Prometheus scrape + long-term storage (Thanos or Cortex) for scale",
+      "dashboarding": "Grafana for metrics dashboards and alerts",
+      "tracing_apm": "Jaeger (OpenTelemetry-compatible) or commercial APM (DataDog, New Relic)",
+      "logging": "Structured JSON logs shipped to ELK/EFK (Elasticsearch/Fluentd/Kibana)",
+      "error_tracking": "Sentry for uncaught exceptions, stack traces, and release correlation",
+      "event_bus": "Kafka metrics via Prometheus Kafka Exporter and consumer lag monitoring"
+    },
+    "synthetic_monitoring": {
+      "uptime_checks": "Pingdom, UptimeRobot, or Grafana synthetic monitoring",
+      "key_endpoints": "Health checks, profile page render, critical API endpoints"
+    },
+    "storage_retention": {
+      "metrics": "High resolution (1-2s) short-term (7-14 days), downsampled long-term (90+ days)",
+      "traces": "100% for high-priority endpoints, 1-5% for background jobs; retain 7-30 days",
+      "logs": "Hot (30 days), cold (90-365 days) depending on compliance needs"
+    }
+  },
+  "error_budget_policy": {
+    "slos": {
+      "availability": "99.9% uptime (monthly) for core API endpoints",
+      "latency": "95th percentile API latency < 300ms; 99th percentile < 1s for read endpoints",
+      "gap_analysis": "End-to-end (event to updated competency stored) ≤ 1s for typical loads",
+      "error_rate": "< 0.5% 5xx errors across production traffic"
+    },
+    "error_budget": {
+      "monthly_downtime": "≈ 43.2 minutes for 99.9% availability",
+      "consumption_tracking": "Monthly error budget consumption monitoring",
+      "freeze_threshold": ">50% consumed triggers review and freeze on non-essential releases"
+    },
+    "performance_budget": {
+      "db_query_time": "p95 query time for taxonomy resolution < 100ms",
+      "kafka_consumer_lag": "< 500ms for standard load; alert if > 5s"
+    }
+  },
+  "alerts_dashboards": {
+    "alert_priorities": {
+      "p0_critical": [
+        "Service down or health-check failing (all instances)",
+        "Kafka consumer group lag > 10s / > 1000 messages on assessment topic",
+        "DB connection pool exhausted or > 90% utilization",
+        "Error rate spikes: 5xx rate > 5% sustained for 1 minute"
+      ],
+      "p1_high": [
+        "p95 latency > SLA (> 300ms) for 5+ minutes",
+        "Key business pipeline failures: no ProfileUpdatedEvent published",
+        "Sentry: repeated uncaught exceptions with increasing volume"
+      ],
+      "p2_medium": [
+        "Elevated error rate (1-5%) for non-critical endpoints",
+        "Partial resource saturation (CPU > 80% on many pods)"
+      ],
+      "p3_low": [
+        "Non-blocking log spikes, minor metric deviations, or infra warnings"
+      ]
+    },
+    "dashboards": {
+      "service_overview": "Availability, RPS, latency p50/p95/p99, errors, instance count",
+      "pipeline_health": "Consumer lag, event rates in/out (Assessment → Skills Engine → Learner AI)",
+      "db_cache": "Slow queries, connections, index usage, Redis hit rate",
+      "domain_metrics": "Competencies recalculated, skills verified, number of gaps generated",
+      "slo_error_budget": "Remaining error budget, burn rate",
+      "release_health": "Deploy counts, rollback events, new errors by release tag"
+    }
+  },
+  "feedback_loops": {
+    "incident_lifecycle": "Alert → Triage (on-call) → Mitigate (hotfix/scale/rollback) → Post-incident RCA → Fix in backlog",
+    "postmortems": "Mandatory for P0/P1 incidents with action items and timelines",
+    "user_feedback": {
+      "in_app_reporting": "Report an issue for users on profile page",
+      "contextual_telemetry": "Request id, user id, trace id with user reports",
+      "regular_surveys": "Analytics to capture UX issues (e.g., confusing gap info)"
+    },
+    "runbooks": {
+      "high_latency": "Check traces → isolate slow service → check DB slow queries → check cache",
+      "kafka_lag": "Check consumer group health → confirm consumers running → scale consumers → check broker health",
+      "db_connection_exhaustion": "Check pool settings → increase pool or scale workers → investigate long-running queries",
+      "missing_events": "Confirm producer side published → check broker → check consumer offsets"
+    }
+  },
+  "optimization_backlog": {
+    "database_optimization": [
+      "Index tuning for recursive CTEs during taxonomy traversal",
+      "Optimize pgvector IVFFlat parameters and embedding refresh strategy"
+    ],
+    "caching_strategy": [
+      "Add Redis caching for hot taxonomy lookups",
+      "Plan TTL and invalidation strategy"
+    ],
+    "cost_optimization": [
+      "Reduce trace/metric costs by improving sampling and aggregation",
+      "Move to hosted APM if needed for better root-cause analysis",
+      "Rightsizing instances, storage lifecycle policies for logs and traces"
+    ],
+    "scaling_automation": [
+      "Horizontal scaling automation for Kafka consumers and gRPC services"
+    ]
+  },
+  "ethics_privacy_review": {
+    "gdpr_compliance": {
+      "log_retention": "Limit log retention of PII, store only pseudonymized identifiers",
+      "data_deletion": "Implement data deletion APIs and procedures",
+      "access_control": "Access control for dashboards & logs to satisfy GDPR and security policies"
+    },
+    "audit_trails": {
+      "immutable_logs": "Persist audit_log (immutable) and ensure monitoring/backup policies",
+      "retention_policies": "Define retention windows per data type and automate lifecycle"
+    }
+  },
+  "key_metrics_events": {
+    "service_level_metrics": {
+      "request_rate": "RPS per endpoint",
+      "latency": "p50, p95, p99 for REST/gRPC endpoints (ms)",
+      "error_rate": "4xx / 5xx ratios and business errors",
+      "availability": "Uptime percentage",
+      "consumer_lag": "Kafka topics consumer lag (AssessmentResultAvailableEvent)"
+    },
+    "business_metrics": {
+      "competency_recalculations": "Number per minute/hour",
+      "gap_analyses_completed": "Per minute",
+      "user_profile_renders": "Per minute",
+      "skills_verified": "Per hour (assessment-driven)",
+      "taxonomy_operations": "Import/discovery counts and failures"
+    },
+    "infrastructure_metrics": {
+      "database": "CPU, connections, slow queries, locks, replication lag",
+      "redis": "Memory usage, hit/miss rate",
+      "kafka": "Broker health: ISR, partition under-replicated, throughput",
+      "containers": "CPU, memory, restarts, OOM events"
+    },
+    "tracing": {
+      "profile_initialization": "End-to-end trace (UserCreatedEvent → LLM → DB writes → CreatePrimaryAssignment)",
+      "verification_pipeline": "Trace (Assessment event → skill updates → competency recompute → events)"
+    }
+  },
+  "best_practices": {
+    "correlation_ids": "Propagate request_id/trace_id through async events (Kafka message headers)",
+    "structured_logs": "Include minimal PII, user_id as hashed or pseudonymized for GDPR compliance",
+    "sampling": "Keep 100% errors and traces for failures, sample successful traces at lower rate",
+    "alert_fatigue_reduction": "Use rate-based alerts, require sustained violations (>5 minutes) for non-critical alerts",
+    "access_control": "Access control for dashboards & logs to satisfy GDPR and security policies"
+  },
+  "implementation_checklist": [
+    "Instrument services with OpenTelemetry (metrics + traces) and export to Prometheus + Jaeger",
+    "Centralize logs to ELK/EFK and integrate Sentry for exceptions",
+    "Build Grafana dashboards: Service overview, Pipeline health, DB, SLOs",
+    "Define SLOs & thresholds and configure alerting rules in Grafana/Alertmanager",
+    "Create runbooks for top 5 incidents and onboard on-call rota",
+    "Add synthetic checks for profile render and profile update flows",
+    "Start small, measure, iterate — keep an optimization backlog"
+  ]
+}

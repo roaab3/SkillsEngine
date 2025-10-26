@@ -1,0 +1,233 @@
+{
+  "information_architecture": {
+    "main_dashboard": {
+      "layout": "Two-section layout",
+      "section_1": {
+        "title": "Current Competencies",
+        "description": "Shows competencies the user currently has",
+        "purpose": "Display user's existing skills and proficiency levels"
+      },
+      "section_2": {
+        "title": "Skills Needed for Career Path",
+        "description": "Lists skills they need to achieve the career path that the company has set for them",
+        "purpose": "Show gap analysis and learning requirements"
+      }
+    }
+  },
+  "user_flows": [
+    {
+      "name": "User Login to Dashboard",
+      "description": "When a user logs in, they are redirected to their Competency & Skills Dashboard",
+      "steps": [
+        "User logs into system",
+        "Redirected to Competency & Skills Dashboard",
+        "Dashboard displays current progress, verified skills, and remaining gaps"
+      ]
+    },
+    {
+      "name": "Competency Card Interaction",
+      "description": "User interacts with competency cards to view detailed information",
+      "steps": [
+        "User hovers on competency card",
+        "Card expands to show detailed breakdown (verified vs missing micro/nano skills)",
+        "User clicks on specific skill",
+        "Skill details modal opens showing proficiency history, last verification date, and source"
+      ]
+    },
+    {
+      "name": "Missing Skills Management",
+      "description": "User views and manages missing skills for career development",
+      "steps": [
+        "User views 'Your Skill Gaps' section",
+        "Clicks on missing skill",
+        "Suggestion modal opens with recommended courses and learning paths",
+        "User can mark skill as 'In Progress'"
+      ]
+    },
+    {
+      "name": "Real-Time Updates",
+      "description": "Dashboard updates automatically when assessment results arrive",
+      "steps": [
+        "Assessment result arrives from Assessment Service",
+        "Verification status updates automatically",
+        "Progress bars and skill indicators refresh",
+        "User sees updated competency levels"
+      ]
+    }
+  ],
+  "wireframes": [
+    {
+      "name": "Competency & Skills Dashboard",
+      "layout": "Grid layout of Competency Cards (square tiles)",
+      "components": [
+        {
+          "name": "Competency Card",
+          "type": "Square tile",
+          "sections": [
+            {
+              "name": "Header Section",
+              "elements": [
+                "Competency Name (prominently displayed at top)",
+                "Level Badge (colored badge showing proficiency level)"
+              ]
+            },
+            {
+              "name": "Skills Summary",
+              "elements": [
+                "Concise list of tracked Skills (L1-L4)",
+                "Verified skills marked with ✅",
+                "Unverified/missing skills marked with 🔴 or ⚪"
+              ]
+            },
+            {
+              "name": "Progress Bar",
+              "elements": [
+                "Horizontal progress bar at bottom",
+                "Shows Value Proposition Completion %",
+                "Gradually fills as more skills are verified"
+              ]
+            },
+            {
+              "name": "Goal Indicator",
+              "elements": [
+                "Small tag or icon showing Target Level",
+                "Example: 🎯 Target: Expert"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Missing Skills Section",
+          "location": "Bottom of dashboard or sidebar panel",
+          "elements": [
+            "'Your Skill Gaps' title",
+            "List of missing L3/L4 skills",
+            "Clickable skills that open suggestion modals",
+            "Recommended courses and learning paths",
+            "'Mark as In Progress' button"
+          ]
+        }
+      ]
+    }
+  ],
+  "design_system": {
+    "color_scheme": {
+      "expert_level": "🟢 Green",
+      "advanced_level": "🔵 Blue", 
+      "intermediate_level": "🟠 Orange",
+      "beginner_level": "⚪ White/Gray"
+    },
+    "icons": {
+      "verified_skill": "✅",
+      "unverified_skill": "🔴",
+      "missing_skill": "⚪",
+      "target_goal": "🎯"
+    },
+    "layout": {
+      "card_type": "Square tiles",
+      "grid_system": "Responsive grid layout",
+      "spacing": "Consistent padding and margins"
+    },
+    "typography": {
+      "competency_name": "Prominent display at top of card",
+      "skill_list": "Concise, readable format",
+      "progress_text": "Clear percentage display"
+    }
+  },
+  "responsive_behavior": {
+    "desktop": {
+      "layout": "Grid of cards (3-4 per row)",
+      "card_size": "Square tiles with full content display",
+      "interactions": "Hover effects and detailed tooltips"
+    },
+    "tablet": {
+      "layout": "2 cards per row",
+      "card_size": "Slightly larger tiles for touch interaction",
+      "interactions": "Touch-friendly interactions"
+    },
+    "mobile": {
+      "layout": "Vertical stack view (1 per row)",
+      "card_size": "Full-width cards for easy scrolling",
+      "interactions": "Simplified touch interactions, collapsible sections"
+    },
+    "interactivity": {
+      "hover_effects": "Card expansion on hover (desktop)",
+      "click_actions": "Skill details modal on click",
+      "real_time_updates": "WebSocket or async refresh for live updates"
+    }
+  },
+  "css_styling": {
+    "theme": "Dark Emerald Color Palette - Rich & Elegant",
+    "color_palette": {
+      "primary_colors": {
+        "primary_blue": "#065f46",
+        "primary_purple": "#047857", 
+        "primary_cyan": "#0f766e"
+      },
+      "accent_colors": {
+        "accent_gold": "#d97706",
+        "accent_green": "#047857",
+        "accent_orange": "#f59e0b"
+      },
+      "neutral_colors": {
+        "bg_primary": "#f8fafc",
+        "bg_secondary": "#e2e8f0",
+        "bg_tertiary": "#cbd5e1",
+        "bg_card": "#ffffff",
+        "text_primary": "#1e293b",
+        "text_secondary": "#475569",
+        "text_muted": "#64748b",
+        "text_accent": "#334155"
+      }
+    },
+    "gradients": {
+      "gradient_primary": "linear-gradient(135deg, #065f46, #047857)",
+      "gradient_secondary": "linear-gradient(135deg, #0f766e, #047857)",
+      "gradient_accent": "linear-gradient(135deg, #d97706, #f59e0b)",
+      "gradient_card": "linear-gradient(145deg, #ffffff, #f0fdfa)"
+    },
+    "shadows": {
+      "shadow_glow": "0 0 30px rgba(6, 95, 70, 0.3)",
+      "shadow_card": "0 10px 40px rgba(0, 0, 0, 0.1)",
+      "shadow_hover": "0 20px 60px rgba(6, 95, 70, 0.2)"
+    },
+    "themes": {
+      "day_mode": "Bright & Clean with emerald accents",
+      "night_mode": "Dark & Elegant with enhanced emerald glow",
+      "colorblind_friendly": "High contrast color overrides",
+      "high_contrast": "Maximum contrast for accessibility",
+      "large_font": "Increased spacing and font sizes"
+    },
+    "accessibility_features": [
+      "WCAG compliant color schemes",
+      "Focus indicators with emerald glow",
+      "Skip links for keyboard navigation",
+      "Screen reader support",
+      "Reduced motion preferences",
+      "Touch-friendly targets (44px minimum)",
+      "High contrast mode support"
+    ],
+    "responsive_breakpoints": {
+      "ultra_wide": "1920px+",
+      "large_desktop": "1400px+",
+      "desktop": "1200px-1399px",
+      "tablet_landscape": "992px-1199px",
+      "tablet_portrait": "768px-991px",
+      "mobile_landscape": "576px-767px",
+      "mobile_portrait": "up to 575px"
+    },
+    "animations": {
+      "background_shift": "30s ease-in-out infinite",
+      "floating_particles": "20s infinite linear",
+      "card_hover": "translateY(-8px) scale(1.02)",
+      "progress_glow": "2s ease-in-out infinite",
+      "xp_glow": "2s ease-in-out infinite"
+    },
+    "gamification_elements": {
+      "xp_color": "#f59e0b",
+      "level_color": "#047857", 
+      "badge_color": "#10b981",
+      "streak_color": "#ef4444"
+    }
+  }
+}

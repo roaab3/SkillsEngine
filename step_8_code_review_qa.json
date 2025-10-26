@@ -1,0 +1,197 @@
+{
+  "test_matrix": {
+    "unit_testing": {
+      "scope": "Individual components and business logic functions",
+      "coverage_target": "≥ 85% of lines and functions",
+      "frameworks": "Jest (Node.js), Vitest (Frontend)",
+      "focus_areas": [
+        "Core modules: AI normalization, taxonomy parsing, proficiency calculation",
+        "Data validation for all entities (skills, competencies, user skills)",
+        "Utility and helper functions (recursive hierarchy lookups using CTE)",
+        "Domain services (GapAnalysis, Verification, Taxonomy)"
+      ],
+      "quality_gate": "All unit tests must pass with coverage threshold before PR merge"
+    },
+    "integration_testing": {
+      "scope": "API endpoints, database operations, microservice communication",
+      "frameworks": "Supertest, Postman/Newman",
+      "focus_areas": [
+        "REST APIs between Skills Engine and other services",
+        "Database layer: CRUD operations, joins, transaction integrity",
+        "Kafka event handling and message consumption",
+        "External API integrations (OpenAI, SFIA, ESCO)"
+      ],
+      "quality_gate": "All integration tests must pass before staging deployment"
+    },
+    "end_to_end_testing": {
+      "scope": "Complete user workflows across UI and backend",
+      "frameworks": "Playwright, Cypress, or Selenium",
+      "focus_areas": [
+        "End Learner workflows: login → view profile → see competencies → identify gaps",
+        "Admin workflows: create/update frameworks → assign competencies → verify skills",
+        "System workflows: taxonomy import → assessment results → gap analysis notification"
+      ],
+      "cross_browser": "Chrome, Edge, Firefox",
+      "responsive_testing": "Desktop, tablet, mobile viewports",
+      "quality_gate": "E2E regression suite must pass before production deployment"
+    },
+    "performance_testing": {
+      "scope": "Load, stress, and response time validation",
+      "frameworks": "k6, Locust, or JMeter",
+      "metrics": [
+        "Max response time ≤ 300ms for 95th percentile requests",
+        "Gap analysis completion in <1 second",
+        "API throughput: 200+ RPS minimum",
+        "pgvector query time: 50–80ms",
+        "Database performance during recursive queries"
+      ],
+      "stress_testing": "2–3× expected peak load",
+      "quality_gate": "All endpoints must meet SLA performance benchmarks"
+    },
+    "security_testing": {
+      "scope": "Authentication, authorization, data protection, compliance",
+      "frameworks": "OWASP ZAP, custom security tests",
+      "focus_areas": [
+        "Authentication and authorization for API endpoints",
+        "Data encryption at rest and in transit",
+        "Multi-tenant data isolation and access control",
+        "Audit logging and GDPR compliance verification",
+        "OWASP Top 10 vulnerability testing"
+      ],
+      "quality_gate": "No critical security vulnerabilities before production deployment"
+    }
+  },
+  "ci_jobs": [
+    {
+      "name": "Unit Tests & Coverage",
+      "trigger": "Pull Request",
+      "steps": [
+        "Install dependencies",
+        "Run unit tests with Jest/Vitest",
+        "Generate coverage report",
+        "Check coverage threshold (≥85%)",
+        "Upload coverage to codecov"
+      ],
+      "quality_gate": "All tests pass + coverage threshold met"
+    },
+    {
+      "name": "Integration Tests",
+      "trigger": "Push to develop branch",
+      "steps": [
+        "Setup test database",
+        "Run integration tests",
+        "Test API endpoints",
+        "Validate database operations",
+        "Test Kafka event handling"
+      ],
+      "quality_gate": "All integration tests pass"
+    },
+    {
+      "name": "Security Scan",
+      "trigger": "Pull Request",
+      "steps": [
+        "Dependency vulnerability scan",
+        "OWASP ZAP security scan",
+        "Code security analysis",
+        "Secrets detection"
+      ],
+      "quality_gate": "No critical vulnerabilities found"
+    },
+    {
+      "name": "Performance Tests",
+      "trigger": "Push to main branch",
+      "steps": [
+        "Load testing with k6",
+        "Response time validation",
+        "Database performance testing",
+        "Memory and CPU profiling"
+      ],
+      "quality_gate": "Performance benchmarks met"
+    },
+    {
+      "name": "E2E Tests",
+      "trigger": "Push to main branch",
+      "steps": [
+        "Deploy to staging environment",
+        "Run E2E test suite",
+        "Cross-browser testing",
+        "Responsive design testing"
+      ],
+      "quality_gate": "All E2E tests pass"
+    },
+    {
+      "name": "Deploy to Production",
+      "trigger": "Push to main branch (after all tests pass)",
+      "steps": [
+        "Deploy backend to Railway",
+        "Deploy frontend to Vercel",
+        "Run database migrations",
+        "Health check validation",
+        "Smoke tests in production"
+      ],
+      "quality_gate": "Successful deployment + health checks pass"
+    }
+  ],
+  "quality_thresholds": {
+    "code_coverage": {
+      "unit_tests": "≥ 85% line and function coverage",
+      "integration_tests": "≥ 70% API endpoint coverage",
+      "e2e_tests": "≥ 90% critical user journey coverage"
+    },
+    "performance_benchmarks": {
+      "api_response_time": "≤ 300ms for 95th percentile",
+      "gap_analysis_time": "< 1 second",
+      "database_query_time": "≤ 100ms for complex queries",
+      "throughput": "≥ 200 RPS sustained load"
+    },
+    "security_standards": {
+      "vulnerability_severity": "No critical or high severity vulnerabilities",
+      "dependency_scan": "All dependencies up to date",
+      "secrets_detection": "No secrets in codebase",
+      "encryption": "TLS 1.3 for all communications"
+    },
+    "accessibility_standards": {
+      "wcag_compliance": "WCAG 2.1 AA compliance",
+      "keyboard_navigation": "All functionality accessible via keyboard",
+      "screen_reader": "Compatible with screen readers",
+      "color_contrast": "Minimum 4.5:1 contrast ratio"
+    }
+  },
+  "review_checklist": {
+    "code_review_criteria": [
+      "Code follows established patterns and conventions",
+      "Functions are small, focused, and well-named",
+      "Error handling is comprehensive and appropriate",
+      "Security best practices are followed",
+      "Performance implications are considered",
+      "Database queries are optimized",
+      "API design follows RESTful principles",
+      "Multi-tenant data isolation is maintained"
+    ],
+    "testing_requirements": [
+      "Unit tests cover all new functionality",
+      "Integration tests cover API endpoints",
+      "Edge cases and error scenarios are tested",
+      "Performance tests validate non-functional requirements",
+      "Security tests verify data protection",
+      "Accessibility tests ensure WCAG compliance"
+    ],
+    "documentation_standards": [
+      "API endpoints are documented with OpenAPI/Swagger",
+      "Database schema changes are documented",
+      "Complex business logic has inline comments",
+      "README files are updated for new features",
+      "Deployment procedures are documented",
+      "Troubleshooting guides are maintained"
+    ],
+    "deployment_readiness": [
+      "All tests pass in CI pipeline",
+      "Environment variables are properly configured",
+      "Database migrations are tested",
+      "Health checks are implemented",
+      "Monitoring and logging are in place",
+      "Rollback procedures are tested"
+    ]
+  }
+}
+

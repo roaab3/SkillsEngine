@@ -1,0 +1,61 @@
+{
+  "business_goals": "Create a centralized skills and competency intelligence system that helps organizations and individuals identify skill gaps, map competencies to real-world job roles, and guide personalized upskilling based on data-driven insights",
+  "target_users": {
+    "end_learner": {
+      "description": "Employee / Student",
+      "goal": "Understand their current skills, identify missing competencies, and find learning paths to reach target roles",
+      "uses": [
+        "View personal skill profile and proficiency level",
+        "See required skills for target competencies or roles", 
+        "Track progress and close skill gaps through recommended learning activities"
+      ]
+    },
+    "system_integrations": {
+      "description": "External services (Directory, Assessment, Learning AI, Course Builder)",
+      "goal": "Connect the Skills Engine with other services via APIs",
+      "uses": [
+        "Fetch or update skill data for users and roles",
+        "Sync learning progress and assessment results"
+      ]
+    }
+  },
+  "problem_statement": "Organizations struggle to understand, measure, and develop workforce skills effectively. Traditional learning systems focus on courses and certifications, not on actual skill growth or job readiness",
+  "vision_mission": "Help both companies and learners see what skills they have, what they need, and how to close the gap — improving workforce capability, employability, and business performance",
+  "success_metrics": {
+    "quantitative": [
+      "User Adoption Rate: Number of active users engaging with skill assessments and profiles",
+      "Skill Gap Closure Rate: Percentage of users who improve proficiency or complete missing skills over time",
+      "Profile Completion Rate: Number of users who have a fully built skills and competency profile",
+      "Learning Path Engagement: How many users follow and complete recommended learning paths",
+      "Accuracy Rate: How accurately the system matches skills and competencies (based on feedback or validation tests)"
+    ],
+    "qualitative": [
+      "User Satisfaction: Feedback scores from learners, managers, and admins on clarity and usefulness of insights",
+      "Perceived Value: Percentage of users who report that the engine helped them understand or advance their career goals",
+      "Manager Feedback: How well managers feel the system supports workforce planning and development decisions"
+    ]
+  },
+  "constraints": {
+    "technical": [
+      "The system must integrate smoothly with other microservices such as Directory, Assessment, Learner AI, Course Builder, and Learning Analytics",
+      "Core technologies are limited to Node.js (backend) and PostgreSQL (database)",
+      "Must support scalable API design to handle large data sets of skills and competencies",
+      "Data synchronization and consistency across services must be maintained in real time"
+    ],
+    "business": [
+      "Limited budget and team size, so development should prioritize core functionality first (MVP)",
+      "Target timeline: a functional MVP within 3–4 months, with future expansions planned in later phases",
+      "Requires alignment with broader corporate learning strategy and existing product roadmap"
+    ],
+    "compliance_security": [
+      "Must comply with data privacy standards (e.g., GDPR) for user information and learning data",
+      "All user data should be securely stored and transferred using encryption and access control",
+      "Audit logs should be available for tracking data updates and user activity"
+    ],
+    "user": [
+      "The system should be accessible (WCAG-compliant) to users with disabilities",
+      "Must be compatible with web and mobile devices for both learners and managers",
+      "Should support multiple languages and regional settings for global deployment"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "ai_use_cases": [
+    {
+      "id": "skill_extraction",
+      "name": "Skill Extraction from Resumes and Job Descriptions",
+      "description": "Automatically identify and extract relevant skills and competencies from unstructured sources such as resumes, CVs, LinkedIn profiles, and job postings.",
+      "benefit": "Speeds up profile creation, reduces manual input, and ensures accurate skill tracking.",
+      "implementation_location": "Backend API services",
+      "input_sources": [
+        "Resumes and CVs",
+        "LinkedIn profiles",
+        "Job postings",
+        "Job descriptions",
+        "Professional profiles"
+      ],
+      "output": "Structured skill data with confidence scores",
+      "integration_point": "User profile initialization and updates"
+    },
+    {
+      "id": "competency_mapping",
+      "name": "Competency Mapping and Skill Normalization",
+      "description": "Normalize extracted skills and map them to the internal hierarchical skill taxonomy (L1 → L4) and company-specific competencies.",
+      "benefit": "Ensures consistency across all user profiles and company frameworks, supporting multi-tenant organizations.",
+      "implementation_location": "Backend processing services",
+      "input_sources": [
+        "Raw skill data from extraction",
+        "Company-specific competency frameworks",
+        "Global skill taxonomy"
+      ],
+      "output": "Normalized skills mapped to taxonomy levels and competencies",
+      "integration_point": "Skill data processing and storage"
+    }
+  ],
+  "ai_implementation_status": "Backend integration planned",
+  "implementation_approach": "AI capabilities will be integrated into backend services and APIs",
+  "model_api_plan": {},
+  "training_inference_strategy": {},
+  "integration_points": [],
+  "governance_risk_mitigation": {},
+  "step_status": "Skipped - to be completed later"
+}

@@ -1,0 +1,96 @@
+{
+  "project_name": "Skills Engine",
+  "status": "in_progress",
+  "steps": {
+    "step_1": {
+      "name": "Project Definition",
+      "status": "in_progress",
+      "participants": ["PO", "SA", "UX"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_2": {
+      "name": "Roadmap & Milestones",
+      "status": "pending",
+      "participants": ["PO", "SA", "DO"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_3": {
+      "name": "Functional & Non-Functional Requirements",
+      "status": "pending",
+      "participants": ["PO", "FSD", "AI", "QA"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_4": {
+      "name": "AI Integration Plan",
+      "status": "pending",
+      "participants": ["AI", "SA", "FSD"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_5": {
+      "name": "UX/UI & User Flow Design",
+      "status": "pending",
+      "participants": ["UX", "PO", "FSD"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_6": {
+      "name": "Development Process",
+      "status": "pending",
+      "participants": ["FSD", "DO", "QA"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_7": {
+      "name": "System Architecture",
+      "status": "pending",
+      "participants": ["SA", "FSD", "AI"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_8": {
+      "name": "Code Review & QA",
+      "status": "pending",
+      "participants": ["QA", "FSD"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_9": {
+      "name": "Deployment & CI/CD",
+      "status": "pending",
+      "participants": ["DO", "FSD"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_10": {
+      "name": "Monitoring, Maintenance & Optimization",
+      "status": "pending",
+      "participants": ["DO", "QA", "PO"],
+      "completed": false,
+      "rework_reason": null
+    },
+    "step_11": {
+      "name": "Documentation & Handover",
+      "status": "pending",
+      "participants": ["TW", "PO", "DO"],
+      "completed": false,
+      "rework_reason": null
+    }
+  },
+  "technologies": {
+    "frontend": "React + JavaScript + JSX + Vite",
+    "backend": "Node.js + Express.js",
+    "database": "PostgreSQL",
+    "deployment": {
+      "frontend": "Vercel",
+      "backend": "Railway"
+    },
+    "version_control": "GitHub + GitHub Actions",
+    "api_type": "REST API",
+    "testing": "Jest or Vitest",
+    "ai_logic": "OpenAI API / local AI simulation"
+  }
+}

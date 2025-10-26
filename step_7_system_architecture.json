@@ -1,0 +1,162 @@
+{
+  "architecture_diagram": {
+    "pattern": "Onion Architecture",
+    "layers": [
+      {
+        "layer": "Domain Layer",
+        "components": [
+          "Core entities (Skill, Competency, UserSkill, etc.)",
+          "Domain services (GapAnalysis, Verification, Taxonomy)"
+        ]
+      },
+      {
+        "layer": "Application Layer", 
+        "components": [
+          "Business use cases – Profile Initialization",
+          "Verification Processing",
+          "Gap Analysis"
+        ]
+      },
+      {
+        "layer": "Infrastructure Layer",
+        "components": [
+          "Database access",
+          "Kafka messaging",
+          "OpenAI API integration",
+          "External integrations"
+        ]
+      },
+      {
+        "layer": "Presentation Layer",
+        "components": [
+          "REST Controllers",
+          "API Gateway"
+        ]
+      }
+    ]
+  },
+  "service_decisions": {
+    "tech_stack": [
+      "Node.js / Express / TypeScript",
+      "PostgreSQL (pgvector)",
+      "Kafka",
+      "gRPC",
+      "React + Next.js",
+      "Railway / Vercel"
+    ],
+    "microservice_responsibilities": [
+      "Manage the Skills & Competency Taxonomy (4 levels – L1–L4)",
+      "Build and maintain User Skill Profiles with verification status",
+      "Compute Competency Levels and Gap Analysis dynamically",
+      "Share skill and profile data with other microservices (Analytics, Assessment, Learner AI, etc.)"
+    ]
+  },
+  "api_patterns": {
+    "primary_pattern": "REST API",
+    "internal_communication": "gRPC for high-performance internal calls",
+    "event_driven": "Kafka for asynchronous event processing",
+    "external_integrations": "REST APIs for external service communication"
+  },
+  "storage_caching": {
+    "primary_database": "PostgreSQL with pgvector for semantic search",
+    "caching_strategy": "Optional Redis cache for taxonomy queries",
+    "performance_targets": {
+      "pgvector_query_time": "50–80ms",
+      "gap_analysis_response": "<1s",
+      "throughput": "200 RPS"
+    }
+  },
+  "scalability_fault_tolerance": {
+    "scaling_strategy": "Railway auto-scaling for stateless microservices",
+    "database_scaling": "Database partitioning + read replicas for 100K users / 50K skills",
+    "performance_optimization": "Precomputed competency levels for faster reads",
+    "load_balancing": "Railway built-in load balancing"
+  },
+  "security_layers": {
+    "encryption": "TLS 1.3 + Transparent Data Encryption",
+    "authentication": "OAuth 2.0 / JWT for external APIs",
+    "internal_security": "mTLS for internal services",
+    "data_credibility": "Source hierarchy: Assessment > Certification > AI Extraction",
+    "gdpr_compliance": "Immutable audit logs, Right to Erasure & Data Export support"
+  },
+  "integration_points": {
+    "kafka_events": [
+      "UserCreatedEvent from Directory",
+      "AssessmentResultAvailableEvent",
+      "SkillGapDetectedEvent",
+      "ProfileUpdatedEvent"
+    ],
+    "rest_apis": [
+      "Directory Service integration",
+      "Assessment Service integration", 
+      "Course Builder integration",
+      "Learner AI integration",
+      "Learning Analytics integration"
+    ],
+    "external_apis": [
+      "OpenAI API for skill extraction",
+      "External frameworks (SFIA / ESCO) for skill discovery"
+    ]
+  },
+  "iac_setup": {
+    "backend_deployment": "Railway (Dockerfile + railway.toml)",
+    "frontend_deployment": "Vercel (Next.js + vercel.json)",
+    "cicd_pipeline": "GitHub Actions automates build, test, and deployment",
+    "database_migrations": "TypeORM with automatic run and rollback support"
+  },
+  "core_workflows": {
+    "workflow_1_profile_initialization": {
+      "trigger": "UserCreatedEvent from Directory via Kafka",
+      "steps": [
+        "Use GPT-4 to parse CV/resume and extract skills",
+        "Map extracted skills to internal taxonomy using pgvector",
+        "Trigger assessment generation via Assessment MS"
+      ],
+      "output": "Initial user skill profile with extracted skills"
+    },
+    "workflow_2_verification_recalculation": {
+      "trigger": "AssessmentResultAvailableEvent",
+      "steps": [
+        "Update verification status based on score thresholds",
+        "Compute new competency level (Missing → Expert)",
+        "Generate updated Gap Analysis",
+        "Publish SkillGapDetectedEvent and ProfileUpdatedEvent"
+      ],
+      "output": "Updated user profile with new competency levels"
+    },
+    "workflow_3_skill_discovery": {
+      "trigger": "Request from Course Builder",
+      "steps": [
+        "Perform semantic skill search using pgvector",
+        "If not found → query external frameworks (SFIA / ESCO)",
+        "Normalize results via GPT-4",
+        "Return L3/L4 skill set suggestions"
+      ],
+      "output": "Relevant skill suggestions for learning paths"
+    }
+  },
+  "database_design": {
+    "core_tables": [
+      "skills / competencies – main entities",
+      "skill_hierarchy / competency_hierarchy – self-referencing parent–child trees (Recursive CTEs)",
+      "user_skill / user_competencies – store verification and competency levels per user",
+      "audit_log – immutable audit trail for GDPR compliance"
+    ],
+    "design_principles": [
+      "Recursive structure with hierarchical queries",
+      "Precomputed competency levels for performance"
+    ]
+  },
+  "project_structure": {
+    "backend": "Organized by Onion layers (domain, application, infrastructure, presentation)",
+    "frontend": "Next.js with SSR; displays skill trees, competency cards, and gap reports",
+    "testing": "Unit, integration, and end-to-end (Jest)",
+    "cicd": "GitHub Actions → runs tests → deploys to Railway (backend) and Vercel (frontend)"
+  },
+  "design_assumptions_tradeoffs": {
+    "precomputed_competency_levels": "Faster reads, slower writes",
+    "pgvector_semantic_search": "Better skill matching, additional complexity",
+    "event_driven_architecture": "Better scalability, eventual consistency",
+    "multi_tenant_isolation": "Data security, additional query complexity"
+  }
+}
