@@ -49,15 +49,15 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-secondary-100 mb-2">Skill Gaps</h2>
-        <p className="text-secondary-400">Identify areas for improvement</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary-100 mb-2">Missing Skills</h2>
+        <p className="text-gray-600 dark:text-secondary-400">Skills you need to develop to improve your competencies</p>
       </div>
 
       {/* Overall Gap Summary */}
       <div className="card">
         <div className="card-body">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-secondary-100">Overall Gap Analysis</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-secondary-100">Skills Gap Summary</h3>
             <AlertTriangle className="w-5 h-5 text-warning-500" />
           </div>
           
@@ -65,12 +65,12 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
             <div className={`text-3xl font-bold mb-2 ${getGapStatusColor(overallGapPercentage)}`}>
               {Math.round(overallGapPercentage)}%
             </div>
-            <p className="text-secondary-400 text-sm">
+            <p className="text-gray-600 dark:text-secondary-400 text-sm">
               {overallGapPercentage >= 50 
-                ? 'Significant gaps detected' 
+                ? 'Many skills need development' 
                 : overallGapPercentage >= 25 
-                ? 'Moderate gaps identified'
-                : 'Minimal gaps found'
+                ? 'Some skills need improvement'
+                : 'Few skills missing'
               }
             </p>
           </div>
@@ -87,10 +87,105 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
       </div>
 
       {/* Individual Gaps */}
-     
-    
+      {gaps.length > 0 ? (
+        <div className="space-y-4">
+          {gaps.map((gap) => (
+            <div key={gap.competency_id} className="card">
+              <div className="card-header">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-gray-900 dark:text-secondary-100">
+                    {gap.competency_name}
+                  </h4>
+                  <div className="flex items-center space-x-2">
+                    <span className={`text-sm font-medium ${getGapStatusColor(gap.gap_percentage)}`}>
+                      {Math.round(gap.gap_percentage)}% gap
+                    </span>
+                    <AlertTriangle className="w-4 h-4 text-warning-500" />
+                  </div>
+                </div>
+              </div>
 
-      
+              <div className="card-body">
+                {/* Missing Skills List */}
+                <div className="space-y-3">
+                  <h5 className="text-sm font-medium text-gray-700 dark:text-secondary-300 mb-2">
+                    Missing Skills ({gap.missing_skills.length})
+                  </h5>
+                  
+                  <div className="space-y-2">
+                    {gap.missing_skills.map((skill) => (
+                      <div 
+                        key={skill.skill_id}
+                        className={`flex items-center justify-between p-3 rounded-lg border ${getPriorityColor(skill.priority)}`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-2 h-2 rounded-full bg-current"></div>
+                          <div>
+                            <span className="font-medium text-gray-900 dark:text-secondary-100">
+                              {skill.name}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-secondary-400 ml-2">
+                              ({skill.type})
+                            </span>
+                          </div>
+                        </div>
+                        <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(skill.priority)}`}>
+                          {skill.priority}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Recommendations */}
+                {gap.recommendations && gap.recommendations.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-secondary-700">
+                    <h5 className="text-sm font-medium text-gray-700 dark:text-secondary-300 mb-3">
+                      Recommended Learning
+                    </h5>
+                    <div className="space-y-2">
+                      {gap.recommendations.map((rec, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-secondary-700 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <BookOpen className="w-4 h-4 text-primary-500" />
+                            <div>
+                              <span className="font-medium text-gray-900 dark:text-secondary-100">
+                                {rec.title}
+                              </span>
+                              <p className="text-xs text-gray-500 dark:text-secondary-400">
+                                {rec.provider}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-secondary-400">
+                            <Clock className="w-3 h-3" />
+                            <span>{rec.estimated_duration}</span>
+                            <ExternalLink className="w-3 h-3" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="card">
+          <div className="card-body text-center py-8">
+            <div className="w-12 h-12 bg-success-100 dark:bg-success-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🎉</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-secondary-100 mb-2">
+              No Skill Gaps Found!
+            </h3>
+            <p className="text-gray-500 dark:text-secondary-400">
+              You have all the required skills. Great job!
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
