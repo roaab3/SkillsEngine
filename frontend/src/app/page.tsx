@@ -24,7 +24,7 @@ const mockProfile = {
       competency_id: 'comp-2',
       name: 'Backend Development',
       level: 'Beginner',
-      progress_percentage: 25,
+      progress_percentage: 40,
       verification_source: 'User Claims',
       last_evaluate: new Date().toISOString()
     }
@@ -42,6 +42,22 @@ const mockProfile = {
       id: 'us-2',
       skill_id: 'skill-2',
       name: 'React',
+      verified: true,
+      verification_source: 'Assessment',
+      last_evaluate: new Date().toISOString()
+    },
+    {
+      id: 'us-3',
+      skill_id: 'skill-10',
+      name: 'HTML/CSS',
+      verified: true,
+      verification_source: 'Assessment',
+      last_evaluate: new Date().toISOString()
+    },
+    {
+      id: 'us-4',
+      skill_id: 'skill-11',
+      name: 'Git',
       verified: true,
       verification_source: 'Assessment',
       last_evaluate: new Date().toISOString()
