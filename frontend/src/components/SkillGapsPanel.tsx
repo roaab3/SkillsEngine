@@ -9,7 +9,6 @@ interface SkillGap {
     skill_id: string;
     name: string;
     type: string;
-    priority: string;
   }>;
   gap_percentage: number;
 }
@@ -20,18 +19,6 @@ interface SkillGapsPanelProps {
 }
 
 export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGapsPanelProps) {
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high':
-        return 'text-error-500 bg-error-500/10 border-error-500/20';
-      case 'medium':
-        return 'text-warning-500 bg-warning-500/10 border-warning-500/20';
-      case 'low':
-        return 'text-secondary-400 bg-secondary-700 border-secondary-600';
-      default:
-        return 'text-secondary-400 bg-secondary-700 border-secondary-600';
-    }
-  };
 
   const getGapStatusColor = (percentage: number) => {
     if (percentage >= 50) return 'text-error-500';
@@ -98,10 +85,10 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
                     {gap.missing_skills.map((skill) => (
                       <div 
                         key={skill.skill_id}
-                        className={`flex items-center justify-between p-3 rounded-lg border ${getPriorityColor(skill.priority)}`}
+                        className="flex items-center p-3 rounded-lg border border-gray-200 dark:border-secondary-600 bg-gray-50 dark:bg-secondary-700"
                       >
                         <div className="flex items-center space-x-3">
-                          <div className="w-2 h-2 rounded-full bg-current"></div>
+                          <div className="w-2 h-2 rounded-full bg-primary-500"></div>
                           <div>
                             <span className="font-medium text-gray-900 dark:text-secondary-100">
                               {skill.name}
@@ -111,9 +98,6 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
                             </span>
                           </div>
                         </div>
-                        <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(skill.priority)}`}>
-                          {skill.priority}
-                        </span>
                       </div>
                     ))}
                   </div>
