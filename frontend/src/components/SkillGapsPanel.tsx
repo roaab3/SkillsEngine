@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, BookOpen, Clock, ExternalLink } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 interface SkillGap {
   competency_id: string;
@@ -12,12 +12,6 @@ interface SkillGap {
     priority: string;
   }>;
   gap_percentage: number;
-  recommendations?: Array<{
-    type: string;
-    title: string;
-    provider: string;
-    estimated_duration: string;
-  }>;
 }
 
 interface SkillGapsPanelProps {
@@ -49,31 +43,19 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary-100 mb-2">Missing Skills</h2>
-        <p className="text-gray-600 dark:text-secondary-400">Skills you need to develop to improve your competencies</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary-100 mb-2">Skills Profile</h2>
+        <p className="text-gray-600 dark:text-secondary-400">View your competencies and identify missing skills</p>
       </div>
 
       {/* Overall Gap Summary */}
       <div className="card">
         <div className="card-body">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900 dark:text-secondary-100">Skills Gap Summary</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-secondary-100">Skills Overview</h3>
             <AlertTriangle className="w-5 h-5 text-warning-500" />
           </div>
           
-          <div className="text-center">
-            <div className={`text-3xl font-bold mb-2 ${getGapStatusColor(overallGapPercentage)}`}>
-              {Math.round(overallGapPercentage)}%
-            </div>
-            <p className="text-gray-600 dark:text-secondary-400 text-sm">
-              {overallGapPercentage >= 50 
-                ? 'Many skills need development' 
-                : overallGapPercentage >= 25 
-                ? 'Some skills need improvement'
-                : 'Few skills missing'
-              }
-            </p>
-          </div>
+         
 
           <div className="mt-4">
             <div className="progress-bar">
@@ -137,36 +119,6 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
                   </div>
                 </div>
 
-                {/* Recommendations */}
-                {gap.recommendations && gap.recommendations.length > 0 && (
-                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-secondary-700">
-                    <h5 className="text-sm font-medium text-gray-700 dark:text-secondary-300 mb-3">
-                      Recommended Learning
-                    </h5>
-                    <div className="space-y-2">
-                      {gap.recommendations.map((rec, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-secondary-700 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <BookOpen className="w-4 h-4 text-primary-500" />
-                            <div>
-                              <span className="font-medium text-gray-900 dark:text-secondary-100">
-                                {rec.title}
-                              </span>
-                              <p className="text-xs text-gray-500 dark:text-secondary-400">
-                                {rec.provider}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-secondary-400">
-                            <Clock className="w-3 h-3" />
-                            <span>{rec.estimated_duration}</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           ))}
@@ -175,13 +127,13 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
         <div className="card">
           <div className="card-body text-center py-8">
             <div className="w-12 h-12 bg-success-100 dark:bg-success-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🎉</span>
+              <span className="text-2xl">✅</span>
             </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-secondary-100 mb-2">
-              No Skill Gaps Found!
+              Complete Skills Profile
             </h3>
             <p className="text-gray-500 dark:text-secondary-400">
-              You have all the required skills. Great job!
+              All required skills are present in your profile
             </p>
           </div>
         </div>
