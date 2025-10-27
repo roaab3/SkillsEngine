@@ -61,34 +61,50 @@ const mockGaps = {
         {
           skill_id: 'skill-3',
           name: 'CSS Grid',
-          type: 'L3',
-          priority: 'High'
+          type: 'L3'
         },
         {
           skill_id: 'skill-4',
           name: 'TypeScript',
-          type: 'L3',
-          priority: 'Medium'
+          type: 'L3'
         }
       ],
-      gap_percentage: 25,
-      recommendations: [
+      gap_percentage: 25
+    },
+    {
+      competency_id: 'comp-2',
+      competency_name: 'Backend Development',
+      missing_skills: [
         {
-          type: 'course',
-          title: 'CSS Grid Fundamentals',
-          provider: 'Skills Engine Learning',
-          estimated_duration: '4 hours'
+          skill_id: 'skill-5',
+          name: 'Node.js',
+          type: 'L2'
         },
         {
-          type: 'course',
-          title: 'TypeScript Basics',
-          provider: 'Skills Engine Learning',
-          estimated_duration: '6 hours'
+          skill_id: 'skill-6',
+          name: 'Express.js',
+          type: 'L2'
+        },
+        {
+          skill_id: 'skill-7',
+          name: 'MongoDB',
+          type: 'L3'
+        },
+        {
+          skill_id: 'skill-8',
+          name: 'RESTful API Design',
+          type: 'L3'
+        },
+        {
+          skill_id: 'skill-9',
+          name: 'Authentication & Authorization',
+          type: 'L3'
         }
-      ]
+      ],
+      gap_percentage: 60
     }
   ],
-  overall_gap_percentage: 25,
+  overall_gap_percentage: 42,
   generated_at: new Date().toISOString()
 };
 
