@@ -45,15 +45,15 @@ export default function CompetencyDashboard({ competencies, userId }: Competency
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-secondary-100">Your Competencies</h2>
-          <p className="text-secondary-400">Track your progress across different skill areas</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-secondary-100">Your Competencies</h2>
+          <p className="text-gray-600 dark:text-secondary-400">Track your progress across different skill areas</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-secondary-400 w-4 h-4" />
           <input
             type="text"
             placeholder="Search competencies..."
@@ -63,7 +63,7 @@ export default function CompetencyDashboard({ competencies, userId }: Competency
           />
         </div>
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 w-4 h-4" />
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-secondary-400 w-4 h-4" />
           <select
             value={levelFilter}
             onChange={(e) => setLevelFilter(e.target.value)}
@@ -81,11 +81,11 @@ export default function CompetencyDashboard({ competencies, userId }: Competency
       {/* Competency Grid */}
       {filteredCompetencies.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-secondary-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Plus className="w-8 h-8 text-secondary-400" />
+          <div className="w-16 h-16 bg-gray-100 dark:bg-secondary-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-gray-400 dark:text-secondary-400" />
           </div>
-          <h3 className="text-lg font-medium text-secondary-300 mb-2">No competencies found</h3>
-          <p className="text-secondary-500 mb-4">
+          <h3 className="text-lg font-medium text-gray-700 dark:text-secondary-300 mb-2">No competencies found</h3>
+          <p className="text-gray-500 dark:text-secondary-500 mb-4">
             {searchTerm || levelFilter !== 'all' 
               ? 'Try adjusting your search or filter criteria'
               : 'Get started by adding your first competency'

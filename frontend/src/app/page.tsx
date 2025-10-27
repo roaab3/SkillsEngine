@@ -96,7 +96,7 @@ export default function HomePage() {
   const [userId] = useState('user-123');
 
   return (
-    <div className="min-h-screen bg-secondary-900">
+    <div className="min-h-screen bg-white dark:bg-secondary-900 transition-colors duration-200">
       <Header user={mockProfile} />
       
       <main className="container mx-auto px-4 py-8">
@@ -104,7 +104,7 @@ export default function HomePage() {
           <h1 className="text-3xl font-bold text-gradient mb-2">
             Welcome back, {mockProfile.name}!
           </h1>
-          <p className="text-secondary-400">
+          <p className="text-gray-600 dark:text-secondary-400">
             Track your skills progress and identify areas for growth
           </p>
         </div>

@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Dark Emerald Color Palette
+        // Emerald Color Palette (works for both light and dark)
         primary: {
           50: '#ecfdf5',
           100: '#d1fae5',
@@ -22,6 +22,7 @@ module.exports = {
           900: '#064e3b',
           950: '#022c22',
         },
+        // Adaptive secondary colors for light/dark mode
         secondary: {
           50: '#f8fafc',
           100: '#f1f5f9',
@@ -34,6 +35,26 @@ module.exports = {
           800: '#1e293b',
           900: '#0f172a',
           950: '#020617',
+        },
+        // Light mode specific colors
+        light: {
+          bg: '#ffffff',
+          surface: '#f8fafc',
+          surfaceHover: '#f1f5f9',
+          border: '#e2e8f0',
+          text: '#1e293b',
+          textSecondary: '#64748b',
+          textMuted: '#94a3b8',
+        },
+        // Dark mode specific colors
+        dark: {
+          bg: '#0f172a',
+          surface: '#1e293b',
+          surfaceHover: '#334155',
+          border: '#475569',
+          text: '#f8fafc',
+          textSecondary: '#cbd5e1',
+          textMuted: '#94a3b8',
         },
         success: {
           50: '#f0fdf4',

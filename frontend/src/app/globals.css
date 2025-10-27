@@ -12,14 +12,14 @@
   }
   
   * {
-    @apply border-secondary-700;
+    @apply border-gray-200 dark:border-secondary-700;
   }
 }
 
 @layer components {
   /* Button Components */
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-secondary-900 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-secondary-900 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .btn-primary {
@@ -27,7 +27,7 @@
   }
   
   .btn-secondary {
-    @apply btn bg-secondary-700 text-secondary-100 hover:bg-secondary-600 focus:ring-secondary-500;
+    @apply btn bg-gray-200 dark:bg-secondary-700 text-gray-900 dark:text-secondary-100 hover:bg-gray-300 dark:hover:bg-secondary-600 focus:ring-gray-500 dark:focus:ring-secondary-500;
   }
   
   .btn-success {
@@ -43,16 +43,16 @@
   }
   
   .btn-ghost {
-    @apply btn bg-transparent text-secondary-300 hover:bg-secondary-800 hover:text-secondary-100 focus:ring-secondary-500;
+    @apply btn bg-transparent text-gray-600 dark:text-secondary-300 hover:bg-gray-100 dark:hover:bg-secondary-800 hover:text-gray-900 dark:hover:text-secondary-100 focus:ring-gray-500 dark:focus:ring-secondary-500;
   }
   
   /* Card Components */
   .card {
-    @apply bg-secondary-800 rounded-xl border border-secondary-700 shadow-lg;
+    @apply bg-white dark:bg-secondary-800 rounded-xl border border-gray-200 dark:border-secondary-700 shadow-lg;
   }
   
   .card-header {
-    @apply px-6 py-4 border-b border-secondary-700;
+    @apply px-6 py-4 border-b border-gray-200 dark:border-secondary-700;
   }
   
   .card-body {
@@ -60,7 +60,7 @@
   }
   
   .card-footer {
-    @apply px-6 py-4 border-t border-secondary-700;
+    @apply px-6 py-4 border-t border-gray-200 dark:border-secondary-700;
   }
   
   /* Competency Card */
@@ -82,7 +82,7 @@
   
   /* Progress Bar */
   .progress-bar {
-    @apply w-full bg-secondary-700 rounded-full h-2 overflow-hidden;
+    @apply w-full bg-gray-200 dark:bg-secondary-700 rounded-full h-2 overflow-hidden;
   }
   
   .progress-fill {
@@ -95,7 +95,7 @@
   }
   
   .badge-beginner {
-    @apply badge bg-secondary-600 text-secondary-200;
+    @apply badge bg-gray-200 dark:bg-secondary-600 text-gray-700 dark:text-secondary-200;
   }
   
   .badge-intermediate {
@@ -125,11 +125,11 @@
   
   /* Form Components */
   .form-input {
-    @apply w-full px-3 py-2 bg-secondary-800 border border-secondary-600 rounded-lg text-secondary-100 placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-3 py-2 bg-white dark:bg-secondary-800 border border-gray-300 dark:border-secondary-600 rounded-lg text-gray-900 dark:text-secondary-100 placeholder-gray-400 dark:placeholder-secondary-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
   }
   
   .form-label {
-    @apply block text-sm font-medium text-secondary-200 mb-2;
+    @apply block text-sm font-medium text-gray-700 dark:text-secondary-200 mb-2;
   }
   
   .form-error {
@@ -138,11 +138,11 @@
   
   /* Loading States */
   .loading-spinner {
-    @apply animate-spin rounded-full h-6 w-6 border-2 border-secondary-600 border-t-primary-500;
+    @apply animate-spin rounded-full h-6 w-6 border-2 border-gray-300 dark:border-secondary-600 border-t-primary-500;
   }
   
   .loading-skeleton {
-    @apply bg-secondary-700 animate-pulse rounded;
+    @apply bg-gray-200 dark:bg-secondary-700 animate-pulse rounded;
   }
   
   /* Responsive Grid */
@@ -175,7 +175,7 @@
   
   /* Focus styles for keyboard navigation */
   .focus-visible {
-    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-secondary-900;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-secondary-900;
   }
 }
 
@@ -196,6 +196,10 @@
   /* Scrollbar styling */
   .scrollbar-thin {
     scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.400') theme('colors.gray.100');
+  }
+  
+  .dark .scrollbar-thin {
     scrollbar-color: theme('colors.secondary.600') theme('colors.secondary.800');
   }
   
@@ -204,15 +208,27 @@
   }
   
   .scrollbar-thin::-webkit-scrollbar-track {
+    background: theme('colors.gray.100');
+  }
+  
+  .dark .scrollbar-thin::-webkit-scrollbar-track {
     background: theme('colors.secondary.800');
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: theme('colors.secondary.600');
+    background: theme('colors.gray.400');
     border-radius: 3px;
   }
   
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: theme('colors.secondary.600');
+  }
+  
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.gray.500');
+  }
+  
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: theme('colors.secondary.500');
   }
 }

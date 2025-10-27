@@ -43,7 +43,7 @@ export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
     <div className="competency-card" onClick={onClick}>
       <div className="competency-card-header">
         <div className="flex items-center justify-between w-full">
-          <h3 className="font-semibold text-secondary-100 truncate">{competency.name}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-secondary-100 truncate">{competency.name}</h3>
           {getLevelBadge(competency.level)}
         </div>
       </div>
@@ -53,19 +53,19 @@ export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
         <div className="space-y-2">
           <div className="flex items-center text-sm">
             <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-            <span className="text-secondary-300">Planning & Scheduling</span>
+            <span className="text-gray-600 dark:text-secondary-300">Planning & Scheduling</span>
           </div>
           <div className="flex items-center text-sm">
             <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-            <span className="text-secondary-300">Risk Assessment</span>
+            <span className="text-gray-600 dark:text-secondary-300">Risk Assessment</span>
           </div>
           <div className="flex items-center text-sm">
             <Circle className="w-4 h-4 text-error-500 mr-2" />
-            <span className="text-secondary-300">Stakeholder Communication</span>
+            <span className="text-gray-600 dark:text-secondary-300">Stakeholder Communication</span>
           </div>
           <div className="flex items-center text-sm">
             <Circle className="w-4 h-4 text-warning-500 mr-2" />
-            <span className="text-secondary-300">Agile Reporting</span>
+            <span className="text-gray-600 dark:text-secondary-300">Agile Reporting</span>
           </div>
         </div>
       </div>
@@ -74,8 +74,8 @@ export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
         {/* Progress Bar */}
         <div className="mb-3">
           <div className="flex items-center justify-between text-sm mb-1">
-            <span className="text-secondary-400">Progress</span>
-            <span className="text-secondary-300 font-medium">
+            <span className="text-gray-500 dark:text-secondary-400">Progress</span>
+            <span className="text-gray-700 dark:text-secondary-300 font-medium">
               {Math.round(competency.progress_percentage)}%
             </span>
           </div>
@@ -89,18 +89,18 @@ export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
 
         {/* Goal Indicator */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center text-sm text-secondary-400">
+          <div className="flex items-center text-sm text-gray-500 dark:text-secondary-400">
             <Target className="w-4 h-4 mr-1" />
             <span>Target: Expert</span>
           </div>
-          <div className="flex items-center text-sm text-primary-400">
+          <div className="flex items-center text-sm text-primary-500 dark:text-primary-400">
             <TrendingUp className="w-4 h-4 mr-1" />
             <span>+12% this month</span>
           </div>
         </div>
 
         {/* Last Updated */}
-        <div className="mt-2 text-xs text-secondary-500">
+        <div className="mt-2 text-xs text-gray-400 dark:text-secondary-500">
           Last updated: {new Date(competency.last_evaluate).toLocaleDateString()}
         </div>
       </div>
