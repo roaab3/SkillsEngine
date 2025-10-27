@@ -75,18 +75,10 @@ export function CompetencyDetailModal({ competency, onClose }: CompetencyDetailM
             <div className="card-body">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-secondary-100">Progress Overview</h3>
-                <div className="flex items-center text-sm text-primary-400">
-                  <TrendingUp className="w-4 h-4 mr-1" />
-                  <span>+12% this month</span>
-                </div>
+                
               </div>
               
-              <div className="progress-bar mb-4">
-                <div 
-                  className="progress-fill bg-gradient-to-r from-primary-500 to-primary-600"
-                  style={{ width: `${competency.progress_percentage}%` }}
-                />
-              </div>
+            
 
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
@@ -146,28 +138,7 @@ export function CompetencyDetailModal({ competency, onClose }: CompetencyDetailM
             </div>
           </div>
 
-          {/* Learning Recommendations */}
-          <div className="card">
-            <div className="card-body">
-              <h3 className="font-semibold text-secondary-100 mb-3 flex items-center">
-                <BookOpen className="w-4 h-4 text-primary-500 mr-2" />
-                Learning Recommendations
-              </h3>
-              <div className="space-y-3">
-                {missingSkills.slice(0, 3).map((skill) => (
-                  <div key={skill.id} className="flex items-center justify-between p-3 bg-secondary-700 rounded-lg">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-secondary-100">{skill.name} Fundamentals</p>
-                      <p className="text-xs text-secondary-400">Skills Engine Learning</p>
-                    </div>
-                    <div className="flex items-center text-xs text-secondary-400">
-                      <span>4 hours</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          
 
           {/* Target Level */}
           <div className="card">
@@ -197,10 +168,7 @@ export function CompetencyDetailModal({ competency, onClose }: CompetencyDetailM
           <button onClick={onClose} className="btn-secondary">
             Close
           </button>
-          <button className="btn-primary">
-            <BookOpen className="w-4 h-4 mr-2" />
-            Start Learning
-          </button>
+          
         </div>
       </div>
     </div>

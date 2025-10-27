@@ -30,17 +30,8 @@ export default function Header({ user }: HeaderProps) {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-gray-600 dark:text-secondary-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-              Dashboard
-            </a>
-            <a href="#" className="text-gray-600 dark:text-secondary-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+            <a href="/" className="text-gray-600 dark:text-secondary-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
               Skills
-            </a>
-            <a href="#" className="text-gray-600 dark:text-secondary-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-              Learning Paths
-            </a>
-            <a href="#" className="text-gray-600 dark:text-secondary-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-              Reports
             </a>
           </nav>
 

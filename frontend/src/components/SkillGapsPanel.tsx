@@ -87,101 +87,10 @@ export default function SkillGapsPanel({ gaps, overallGapPercentage }: SkillGaps
       </div>
 
       {/* Individual Gaps */}
-      <div className="space-y-4">
-        <h3 className="font-semibold text-secondary-100">Competency Gaps</h3>
-        
-        {gaps.length === 0 ? (
-          <div className="card">
-            <div className="card-body text-center py-8">
-              <div className="w-12 h-12 bg-success-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-6 h-6 text-success-500" />
-              </div>
-              <h4 className="font-medium text-secondary-100 mb-2">No skill gaps found!</h4>
-              <p className="text-secondary-400 text-sm">
-                You're on track with all your competencies.
-              </p>
-            </div>
-          </div>
-        ) : (
-          gaps.map((gap) => (
-            <div key={gap.competency_id} className="card">
-              <div className="card-body">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-secondary-100 truncate">
-                    {gap.competency_name}
-                  </h4>
-                  <span className={`text-sm font-medium ${getGapStatusColor(gap.gap_percentage)}`}>
-                    {Math.round(gap.gap_percentage)}% gap
-                  </span>
-                </div>
+     
+    
 
-                {/* Missing Skills */}
-                <div className="space-y-2 mb-4">
-                  {gap.missing_skills.slice(0, 3).map((skill) => (
-                    <div 
-                      key={skill.skill_id}
-                      className={`flex items-center justify-between p-2 rounded-lg border ${getPriorityColor(skill.priority)}`}
-                    >
-                      <span className="text-sm font-medium">{skill.name}</span>
-                      <span className="text-xs uppercase tracking-wide">
-                        {skill.priority}
-                      </span>
-                    </div>
-                  ))}
-                  
-                  {gap.missing_skills.length > 3 && (
-                    <p className="text-xs text-secondary-500">
-                      +{gap.missing_skills.length - 3} more skills
-                    </p>
-                  )}
-                </div>
-
-                {/* Recommendations */}
-                {gap.recommendations && gap.recommendations.length > 0 && (
-                  <div className="space-y-2">
-                    <h5 className="text-sm font-medium text-secondary-200">Recommended Learning</h5>
-                    {gap.recommendations.slice(0, 2).map((rec, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-secondary-700 rounded-lg">
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-secondary-100">{rec.title}</p>
-                          <p className="text-xs text-secondary-400">{rec.provider}</p>
-                        </div>
-                        <div className="flex items-center text-xs text-secondary-400">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {rec.estimated_duration}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Action Button */}
-                <button className="w-full mt-3 btn-secondary text-sm">
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  View Learning Path
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="card">
-        <div className="card-body">
-          <h3 className="font-semibold text-secondary-100 mb-3">Quick Actions</h3>
-          <div className="space-y-2">
-            <button className="w-full btn-primary text-sm">
-              <BookOpen className="w-4 h-4 mr-2" />
-              Find Learning Resources
-            </button>
-            <button className="w-full btn-secondary text-sm">
-              <AlertTriangle className="w-4 h-4 mr-2" />
-              Schedule Assessment
-            </button>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 }

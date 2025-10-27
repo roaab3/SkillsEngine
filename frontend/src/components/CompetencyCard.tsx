@@ -87,17 +87,7 @@ export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
           </div>
         </div>
 
-        {/* Goal Indicator */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center text-sm text-gray-500 dark:text-secondary-400">
-            <Target className="w-4 h-4 mr-1" />
-            <span>Target: Expert</span>
-          </div>
-          <div className="flex items-center text-sm text-primary-500 dark:text-primary-400">
-            <TrendingUp className="w-4 h-4 mr-1" />
-            <span>+12% this month</span>
-          </div>
-        </div>
+
 
         {/* Last Updated */}
         <div className="mt-2 text-xs text-gray-400 dark:text-secondary-500">
