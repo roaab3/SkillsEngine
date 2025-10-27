@@ -49,24 +49,66 @@ export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
       </div>
 
       <div className="competency-card-body">
-        {/* Skills Summary - Mock data for now */}
+        {/* Skills Summary - Based on competency type */}
         <div className="space-y-2">
-          <div className="flex items-center text-sm">
-            <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-            <span className="text-gray-600 dark:text-secondary-300">Planning & Scheduling</span>
-          </div>
-          <div className="flex items-center text-sm">
-            <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-            <span className="text-gray-600 dark:text-secondary-300">Risk Assessment</span>
-          </div>
-          <div className="flex items-center text-sm">
-            <Circle className="w-4 h-4 text-error-500 mr-2" />
-            <span className="text-gray-600 dark:text-secondary-300">Stakeholder Communication</span>
-          </div>
-          <div className="flex items-center text-sm">
-            <Circle className="w-4 h-4 text-warning-500 mr-2" />
-            <span className="text-gray-600 dark:text-secondary-300">Agile Reporting</span>
-          </div>
+          {competency.name === 'Frontend Development' ? (
+            <>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">JavaScript</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">React</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">HTML/CSS</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-error-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">CSS Grid</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-error-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">TypeScript</span>
+              </div>
+            </>
+          ) : competency.name === 'Backend Development' ? (
+            <>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">Git</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-error-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">Node.js</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-error-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">Express.js</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-error-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">MongoDB</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-error-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">RESTful API Design</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center text-sm">
+                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">Core Skills</span>
+              </div>
+              <div className="flex items-center text-sm">
+                <Circle className="w-4 h-4 text-warning-500 mr-2" />
+                <span className="text-gray-600 dark:text-secondary-300">Advanced Skills</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
