@@ -4,23 +4,21 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package.json first
-COPY package.json ./
+# Copy package files first for better layer caching
+COPY package.json package-lock.json* ./
 
-# Install dependencies (will generate package-lock.json if missing)
-# Use npm install instead of npm ci to handle lock file sync issues
-RUN npm install --omit=dev
+# Install ALL dependencies (including devDependencies for TypeScript build)
+RUN npm install
 
-# Copy package-lock.json if it exists (optional)
-COPY package-lock.json* ./
-
-# Copy source code (exclude test files and node_modules)
+# Copy source code and config files
 COPY src ./src
 COPY tsconfig.json ./
-COPY package.json ./
 
-# Build the application (excludes __tests__ via tsconfig.json)
+# Build the application (TypeScript -> JavaScript)
 RUN npm run build
+
+# Remove dev dependencies after build to reduce image size
+RUN npm prune --omit=dev
 
 # Expose port
 EXPOSE 8080

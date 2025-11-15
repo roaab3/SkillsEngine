@@ -4,7 +4,7 @@ import logger from '../utils/logger';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/health', async (req, res) => {
   const healthCheck = {
     status: 'ok',
     timestamp: new Date().toISOString(),
