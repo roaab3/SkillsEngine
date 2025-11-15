@@ -30,10 +30,18 @@ const allowedOrigins = process.env.FRONTEND_URL
       'https://*.vercel.app',
     ];
 
+// Log CORS configuration on startup
+logger.info('CORS Configuration:', {
+  allowedOrigins,
+  nodeEnv: process.env.NODE_ENV,
+  frontendUrl: process.env.FRONTEND_URL || 'not set (using defaults)',
+});
+
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     // Allow requests with no origin (like mobile apps, Postman, or curl)
     if (!origin) {
+      logger.debug('CORS: Allowing request with no origin');
       return callback(null, true);
     }
 
@@ -46,9 +54,17 @@ const corsOptions = {
           .replace(/\./g, '\\.')
           .replace(/\*/g, '.*');
         const regex = new RegExp(`^${pattern}$`);
-        return regex.test(origin);
+        const matches = regex.test(origin);
+        if (matches) {
+          logger.debug(`CORS: Origin ${origin} matched pattern ${allowedOrigin}`);
+        }
+        return matches;
       }
-      return origin === allowedOrigin;
+      const exactMatch = origin === allowedOrigin;
+      if (exactMatch) {
+        logger.debug(`CORS: Origin ${origin} matched exactly`);
+      }
+      return exactMatch;
     });
 
     if (isAllowed) {
@@ -56,9 +72,11 @@ const corsOptions = {
     } else {
       // In development, allow all origins
       if (process.env.NODE_ENV === 'development') {
+        logger.debug(`CORS: Allowing ${origin} in development mode`);
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        logger.warn(`CORS: Blocked origin ${origin}. Allowed origins: ${allowedOrigins.join(', ')}`);
+        callback(new Error(`Not allowed by CORS: ${origin}`));
       }
     }
   },
