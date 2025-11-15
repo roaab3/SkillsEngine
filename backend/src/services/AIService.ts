@@ -188,7 +188,6 @@ export class AIService {
         topics_covered: 'General',
         skill_focus: 'General',
         notes: 'Mock data fallback',
-        hierarchy_support: true,
       },
     ];
   }
