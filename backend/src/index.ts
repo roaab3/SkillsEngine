@@ -20,67 +20,14 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS configuration - support multiple origins for Vercel deployments
+// CORS configuration - Allow all origins (for development/testing)
+// WARNING: This allows requests from any origin. For production, restrict to specific origins.
 // Must be configured BEFORE other middleware to handle preflight requests
-const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : [
-      'http://localhost:3001',
-      'http://localhost:5173',
-      'https://skills-engine-psjm-7ii6dw848-roaas-projects-70865844.vercel.app',
-      'https://*.vercel.app',
-    ];
 
-// Log CORS configuration on startup
-logger.info('CORS Configuration:', {
-  allowedOrigins,
-  nodeEnv: process.env.NODE_ENV,
-  frontendUrl: process.env.FRONTEND_URL || 'not set (using defaults)',
-});
+logger.info('CORS Configuration: Allowing all origins');
 
 const corsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Allow requests with no origin (like mobile apps, Postman, or curl)
-    if (!origin) {
-      logger.debug('CORS: Allowing request with no origin');
-      return callback(null, true);
-    }
-
-    // Check if origin matches any allowed origin
-    const isAllowed = allowedOrigins.some(allowedOrigin => {
-      // Support wildcard patterns (e.g., *.vercel.app)
-      if (allowedOrigin.includes('*')) {
-        // Escape dots and convert * to .*
-        const pattern = allowedOrigin
-          .replace(/\./g, '\\.')
-          .replace(/\*/g, '.*');
-        const regex = new RegExp(`^${pattern}$`);
-        const matches = regex.test(origin);
-        if (matches) {
-          logger.debug(`CORS: Origin ${origin} matched pattern ${allowedOrigin}`);
-        }
-        return matches;
-      }
-      const exactMatch = origin === allowedOrigin;
-      if (exactMatch) {
-        logger.debug(`CORS: Origin ${origin} matched exactly`);
-      }
-      return exactMatch;
-    });
-
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      // In development, allow all origins
-      if (process.env.NODE_ENV === 'development') {
-        logger.debug(`CORS: Allowing ${origin} in development mode`);
-        callback(null, true);
-      } else {
-        logger.warn(`CORS: Blocked origin ${origin}. Allowed origins: ${allowedOrigins.join(', ')}`);
-        callback(new Error(`Not allowed by CORS: ${origin}`));
-      }
-    }
-  },
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
