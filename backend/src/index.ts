@@ -27,6 +27,7 @@ const allowedOrigins = process.env.FRONTEND_URL
   : [
       'http://localhost:3001',
       'http://localhost:5173',
+      'https://skills-engine-psjm-7ii6dw848-roaas-projects-70865844.vercel.app',
       'https://*.vercel.app',
     ];
 
