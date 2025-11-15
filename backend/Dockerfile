@@ -14,10 +14,12 @@ RUN npm install --omit=dev
 # Copy package-lock.json if it exists (optional)
 COPY package-lock.json* ./
 
-# Copy source code
-COPY . .
+# Copy source code (exclude test files and node_modules)
+COPY src ./src
+COPY tsconfig.json ./
+COPY package.json ./
 
-# Build the application
+# Build the application (excludes __tests__ via tsconfig.json)
 RUN npm run build
 
 # Expose port
