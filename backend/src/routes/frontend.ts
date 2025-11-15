@@ -4,6 +4,8 @@ import { authenticateUser } from '../middleware/auth';
 import { ProfileService } from '../services/ProfileService';
 import { GapAnalysisService } from '../services/GapAnalysisService';
 import { NotFoundError } from '../utils/errors';
+import fs from 'fs';
+import path from 'path';
 
 const router = Router();
 const profileService = new ProfileService();
@@ -16,8 +18,9 @@ router.get(
   asyncHandler(async (req, res) => {
     const { user_id } = req.params;
     
-    // Verify user can only access their own profile
-    if (req.userId !== user_id) {
+    // Verify user can only access their own profile (skip in development)
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    if (nodeEnv !== 'development' && req.userId !== user_id) {
       throw new NotFoundError('Profile');
     }
 
@@ -38,7 +41,8 @@ router.get(
   asyncHandler(async (req, res) => {
     const { user_id } = req.params;
     
-    if (req.userId !== user_id) {
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    if (nodeEnv !== 'development' && req.userId !== user_id) {
       throw new NotFoundError('Profile');
     }
 
@@ -60,7 +64,8 @@ router.get(
     const { user_id } = req.params;
     const { type, course_name } = req.query;
     
-    if (req.userId !== user_id) {
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    if (nodeEnv !== 'development' && req.userId !== user_id) {
       throw new NotFoundError('Gap analysis');
     }
 
@@ -83,6 +88,35 @@ router.get(
       data: gapAnalysis,
       timestamp: new Date().toISOString(),
     });
+  })
+);
+
+// Get mock profile data from JSON file
+router.get(
+  '/mock/profile',
+  asyncHandler(async (req, res) => {
+    try {
+      // After build, __dirname is dist/src/routes, so we need to go up 2 levels to backend root
+      const mockDataPath = path.join(__dirname, '../../mockdata/userProfile.json');
+      if (fs.existsSync(mockDataPath)) {
+        const mockData = JSON.parse(fs.readFileSync(mockDataPath, 'utf-8'));
+        res.json({
+          success: true,
+          data: mockData,
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        throw new NotFoundError('Mock profile data');
+      }
+    } catch (error) {
+      res.status(404).json({
+        success: false,
+        error: {
+          code: 'NotFoundError',
+          message: 'Mock profile data not found',
+        },
+      });
+    }
   })
 );
 

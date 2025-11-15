@@ -18,9 +18,16 @@ export class AIService {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    this.flashModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    this.deepSearchModel = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    
+    // Use environment variables for model names, with defaults
+    const flashModelName = process.env.GEMINI_FLASH_MODEL || 'gemini-1.5-flash';
+    const deepSearchModelName = process.env.GEMINI_DEEP_SEARCH_MODEL || 'gemini-1.5-pro';
+    
+    this.flashModel = genAI.getGenerativeModel({ model: flashModelName });
+    this.deepSearchModel = genAI.getGenerativeModel({ model: deepSearchModelName });
     this.sourceRepository = new SourceRepository();
+    
+    logger.info(`Gemini AI initialized - Flash: ${flashModelName}, Deep Search: ${deepSearchModelName}`);
   }
 
   async discoverSources(domain: string): Promise<OfficialSource[]> {

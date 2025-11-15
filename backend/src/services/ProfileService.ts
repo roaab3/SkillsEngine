@@ -12,6 +12,8 @@ import {
 } from '../types';
 import { NotFoundError } from '../utils/errors';
 import logger from '../utils/logger';
+import fs from 'fs';
+import path from 'path';
 
 export class ProfileService {
   private profileRepository: ProfileRepository;
@@ -170,40 +172,111 @@ export class ProfileService {
   }
 
   async getUserProfile(userId: string): Promise<UserProfile> {
-    const user = await this.profileRepository.getUserById(userId);
-    if (!user) {
-      throw new NotFoundError('User');
+    const nodeEnv = process.env.NODE_ENV || 'development';
+    
+    try {
+      const user = await this.profileRepository.getUserById(userId);
+      if (!user) {
+        // In development, return mock data if user doesn't exist
+        if (nodeEnv === 'development') {
+          logger.warn(`User ${userId} not found, returning mock data for development`);
+          return this.getMockUserProfile(userId);
+        }
+        throw new NotFoundError('User');
+      }
+
+      const userCompetencies = await this.profileRepository.getUserCompetencies(userId);
+      const competencies: CompetencyProfile[] = [];
+
+      for (const userComp of userCompetencies) {
+        const competency = await this.taxonomyRepository.getCompetencyById(userComp.competency_id);
+        if (!competency) continue;
+
+        const l1Skills = await this.taxonomyRepository.getL1SkillsForCompetency(competency.competency_id);
+        const requiredMGS = await this.taxonomyRepository.getAllMGSForCompetency(competency.competency_id);
+        const verifiedSkills = userComp.verifiedSkills || [];
+
+        competencies.push({
+          competency_id: competency.competency_id,
+          competency_name: competency.competency_name,
+          coverage_percentage: userComp.coverage_percentage,
+          proficiency_level: userComp.proficiency_level || 'BEGINNER',
+          l1_skills: l1Skills,
+          verified_skills_count: verifiedSkills.filter((vs) => vs.verified).length,
+          total_required_mgs: requiredMGS.length,
+        });
+      }
+
+      return {
+        user_id: user.user_id,
+        user_name: user.user_name,
+        company_id: user.company_id,
+        relevance_score: user.relevance_score,
+        competencies,
+        last_updated: user.updated_at,
+      };
+    } catch (error: any) {
+      // In development, if database error, return mock data
+      if (nodeEnv === 'development' && (error.code === 'ECONNREFUSED' || error.message?.includes('database'))) {
+        logger.warn(`Database error, returning mock data for development:`, error.message);
+        return this.getMockUserProfile(userId);
+      }
+      throw error;
+    }
+  }
+
+  private getMockUserProfile(userId: string): UserProfile {
+    try {
+      // Try to load from JSON file
+      // After build, __dirname is dist/src/services, so we need to go up 3 levels to backend root
+      const mockDataPath = path.join(__dirname, '../../../mockdata/userProfile.json');
+      if (fs.existsSync(mockDataPath)) {
+        const mockData = JSON.parse(fs.readFileSync(mockDataPath, 'utf-8'));
+        // Override user_id with the requested userId
+        return {
+          ...mockData,
+          user_id: userId,
+          last_updated: new Date(),
+        };
+      }
+    } catch (error) {
+      logger.warn('Failed to load mock data from JSON file, using fallback:', error);
     }
 
-    const userCompetencies = await this.profileRepository.getUserCompetencies(userId);
-    const competencies: CompetencyProfile[] = [];
-
-    for (const userComp of userCompetencies) {
-      const competency = await this.taxonomyRepository.getCompetencyById(userComp.competency_id);
-      if (!competency) continue;
-
-      const l1Skills = await this.taxonomyRepository.getL1SkillsForCompetency(competency.competency_id);
-      const requiredMGS = await this.taxonomyRepository.getAllMGSForCompetency(competency.competency_id);
-      const verifiedSkills = userComp.verifiedSkills || [];
-
-      competencies.push({
-        competency_id: competency.competency_id,
-        competency_name: competency.competency_name,
-        coverage_percentage: userComp.coverage_percentage,
-        proficiency_level: userComp.proficiency_level || 'BEGINNER',
-        l1_skills: l1Skills,
-        verified_skills_count: verifiedSkills.filter((vs) => vs.verified).length,
-        total_required_mgs: requiredMGS.length,
-      });
-    }
-
+    // Fallback mock data if file doesn't exist
     return {
-      user_id: user.user_id,
-      user_name: user.user_name,
-      company_id: user.company_id,
-      relevance_score: user.relevance_score,
-      competencies,
-      last_updated: user.updated_at,
+      user_id: userId,
+      user_name: 'John Doe',
+      company_id: 'company_456',
+      relevance_score: 75.5,
+      competencies: [
+        {
+          competency_id: 'comp_1',
+          competency_name: 'Full Stack Development',
+          coverage_percentage: 65.0,
+          proficiency_level: 'INTERMEDIATE',
+          l1_skills: [
+            { skill_id: 'skill_1', skill_name: 'JavaScript' },
+            { skill_id: 'skill_2', skill_name: 'React' },
+            { skill_id: 'skill_3', skill_name: 'Node.js' },
+          ],
+          verified_skills_count: 5,
+          total_required_mgs: 10,
+        },
+        {
+          competency_id: 'comp_2',
+          competency_name: 'Database Management',
+          coverage_percentage: 45.0,
+          proficiency_level: 'BEGINNER',
+          l1_skills: [
+            { skill_id: 'skill_4', skill_name: 'SQL' },
+            { skill_id: 'skill_5', skill_name: 'PostgreSQL' },
+          ],
+          verified_skills_count: 2,
+          total_required_mgs: 8,
+        },
+      ],
+      last_updated: new Date(),
     };
   }
 

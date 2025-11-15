@@ -28,14 +28,22 @@ export const authenticateUser = (
   next: NextFunction
 ) => {
   const authToken = req.headers['authorization'] as string;
+  const userId = req.headers['x-user-id'] as string;
+  const nodeEnv = process.env.NODE_ENV || 'development';
 
+  // In development, allow requests without auth for easier testing
+  if (nodeEnv === 'development') {
+    // Extract userId from URL params if not in header
+    const urlUserId = (req.params as any).user_id;
+    req.userId = userId || urlUserId || 'user_123'; // Default for dev
+    return next();
+  }
+
+  // Production: require authentication
   if (!authToken) {
     throw new UnauthorizedError('Authentication required');
   }
 
-  // In production, validate JWT token
-  // For now, extract user_id from token or header
-  const userId = req.headers['x-user-id'] as string;
   if (!userId) {
     throw new UnauthorizedError('User identification required');
   }
