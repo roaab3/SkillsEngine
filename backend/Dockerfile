@@ -4,12 +4,15 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json first
+COPY package.json ./
 
-# Install dependencies
+# Install dependencies (will generate package-lock.json if missing)
 # Use npm install instead of npm ci to handle lock file sync issues
 RUN npm install --omit=dev
+
+# Copy package-lock.json if it exists (optional)
+COPY package-lock.json* ./
 
 # Copy source code
 COPY . .
