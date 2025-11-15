@@ -1,142 +1,80 @@
-'use client';
-
-import { CheckCircle, Circle, Target, TrendingUp } from 'lucide-react';
-
-interface Competency {
-  id: string;
-  competency_id: string;
-  name: string;
-  level: string;
-  progress_percentage: number;
-  verification_source: string;
-  last_evaluate: string;
-}
+import React from 'react';
+import { ChevronRight } from 'lucide-react';
+import type { Competency } from '../types';
+import { getProficiencyBadgeColor, getProficiencyColor } from '../utils/proficiencyColors';
+import { cn } from '../utils/cn';
 
 interface CompetencyCardProps {
   competency: Competency;
   onClick: () => void;
 }
 
-export function CompetencyCard({ competency, onClick }: CompetencyCardProps) {
-  const getLevelBadge = (level: string) => {
-    switch (level.toLowerCase()) {
-      case 'expert':
-        return <span className="badge-expert">Expert</span>;
-      case 'advanced':
-        return <span className="badge-advanced">Advanced</span>;
-      case 'intermediate':
-        return <span className="badge-intermediate">Intermediate</span>;
-      case 'beginner':
-      default:
-        return <span className="badge-beginner">Beginner</span>;
-    }
-  };
-
-  const getProgressColor = (percentage: number) => {
-    if (percentage >= 90) return 'from-success-500 to-success-600';
-    if (percentage >= 70) return 'from-primary-500 to-primary-600';
-    if (percentage >= 40) return 'from-warning-500 to-warning-600';
-    return 'from-secondary-500 to-secondary-600';
-  };
+const CompetencyCard: React.FC<CompetencyCardProps> = ({ competency, onClick }) => {
+  const proficiencyColor = getProficiencyColor(competency.proficiency_level);
+  const badgeColor = getProficiencyBadgeColor(competency.proficiency_level);
 
   return (
-    <div className="competency-card" onClick={onClick}>
-      <div className="competency-card-header">
-        <div className="flex items-center justify-between w-full">
-          <h3 className="font-semibold text-gray-900 dark:text-secondary-100 truncate">{competency.name}</h3>
-          {getLevelBadge(competency.level)}
-        </div>
-      </div>
+    <div
+      onClick={onClick}
+      className="group relative bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer card-hover overflow-hidden"
+    >
+      {/* Accent strip */}
+      <div className={cn('h-1 w-full', proficiencyColor)} />
 
-      <div className="competency-card-body">
-        {/* Skills Summary - Based on competency type */}
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1">
+              {competency.competency_name}
+            </h3>
+            {competency.description && (
+              <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                {competency.description}
+              </p>
+            )}
+          </div>
+          <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+        </div>
+
+        {/* Badge */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className={cn('px-3 py-1 rounded-full text-xs font-medium', badgeColor)}>
+            {competency.proficiency_level}
+          </span>
+        </div>
+
+        {/* Progress */}
         <div className="space-y-2">
-          {competency.name === 'Frontend Development' ? (
-            <>
-              <div className="flex items-center text-sm">
-                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">JavaScript</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">React</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">HTML/CSS</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">CSS Grid</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">TypeScript</span>
-              </div>
-            </>
-          ) : competency.name === 'Backend Development' ? (
-            <>
-              <div className="flex items-center text-sm">
-                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">Git</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">Node.js</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">Express.js</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">MongoDB</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">RESTful API Design</span>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center text-sm">
-                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">Core Skills</span>
-              </div>
-              <div className="flex items-center text-sm">
-                <Circle className="w-4 h-4 text-warning-500 mr-2" />
-                <span className="text-gray-600 dark:text-secondary-300">Advanced Skills</span>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="competency-card-footer">
-        {/* Progress Bar */}
-        <div className="mb-3">
-          <div className="flex items-center justify-between text-sm mb-1">
-            <span className="text-gray-500 dark:text-secondary-400">Progress</span>
-            <span className="text-gray-700 dark:text-secondary-300 font-medium">
-              {Math.round(competency.progress_percentage)}%
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-slate-600 dark:text-slate-400">Coverage</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {competency.coverage_percentage.toFixed(1)}%
             </span>
           </div>
-          <div className="progress-bar">
-            <div 
-              className={`progress-fill bg-gradient-to-r ${getProgressColor(competency.progress_percentage)}`}
-              style={{ width: `${competency.progress_percentage}%` }}
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+            <div
+              className={cn('h-full transition-all duration-500', proficiencyColor)}
+              style={{ width: `${competency.coverage_percentage}%` }}
             />
           </div>
         </div>
 
-
-
-        {/* Last Updated */}
-        <div className="mt-2 text-xs text-gray-400 dark:text-secondary-500">
-          Last updated: {new Date(competency.last_evaluate).toLocaleDateString()}
-        </div>
+        {/* Stats */}
+        {competency.verified_skills_count !== undefined && (
+          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-sm">
+            <span className="text-slate-600 dark:text-slate-400">
+              Verified Skills
+            </span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">
+              {competency.verified_skills_count} / {competency.total_required_mgs || 0}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default CompetencyCard;
 

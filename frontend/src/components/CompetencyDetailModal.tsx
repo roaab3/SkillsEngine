@@ -1,197 +1,136 @@
-'use client';
-
-import { X, CheckCircle, Circle, Target, TrendingUp, BookOpen } from 'lucide-react';
-
-interface Competency {
-  id: string;
-  competency_id: string;
-  name: string;
-  level: string;
-  progress_percentage: number;
-  verification_source: string;
-  last_evaluate: string;
-}
+import React, { useState } from 'react';
+import { X, ChevronDown, ChevronRight } from 'lucide-react';
+import type { CompetencyDetail, SkillHierarchy } from '../types';
+import { cn } from '../utils/cn';
 
 interface CompetencyDetailModalProps {
-  competency: Competency;
-  userId: string;
+  competency: CompetencyDetail;
   onClose: () => void;
 }
 
-export function CompetencyDetailModal({ competency, onClose }: CompetencyDetailModalProps) {
-  // Real skills data based on competency type
-  const getSkillsForCompetency = (competencyName: string) => {
-    if (competencyName === 'Frontend Development') {
-      return [
-        { id: '1', name: 'JavaScript', verified: true, type: 'L2' },
-        { id: '2', name: 'React', verified: true, type: 'L3' },
-        { id: '3', name: 'HTML/CSS', verified: true, type: 'L1' },
-        { id: '4', name: 'CSS Grid', verified: false, type: 'L3' },
-        { id: '5', name: 'TypeScript', verified: false, type: 'L3' },
-        { id: '6', name: 'Git', verified: true, type: 'L2' },
-      ];
-    } else if (competencyName === 'Backend Development') {
-      return [
-        { id: '1', name: 'Git', verified: true, type: 'L2' },
-        { id: '2', name: 'Node.js', verified: false, type: 'L2' },
-        { id: '3', name: 'Express.js', verified: false, type: 'L2' },
-        { id: '4', name: 'MongoDB', verified: false, type: 'L3' },
-        { id: '5', name: 'RESTful API Design', verified: false, type: 'L3' },
-        { id: '6', name: 'Authentication & Authorization', verified: false, type: 'L3' },
-      ];
-    } else {
-      return [
-        { id: '1', name: 'Core Skills', verified: true, type: 'L2' },
-        { id: '2', name: 'Advanced Skills', verified: false, type: 'L3' },
-      ];
-    }
-  };
+const SkillNode: React.FC<{
+  skill: SkillHierarchy;
+  level: number;
+}> = ({ skill, level }) => {
+  const [isExpanded, setIsExpanded] = useState(level < 2);
 
-  const skills = getSkillsForCompetency(competency.name);
-
-  const getLevelBadge = (level: string) => {
-    switch (level.toLowerCase()) {
-      case 'expert':
-        return <span className="badge-expert">Expert</span>;
-      case 'advanced':
-        return <span className="badge-advanced">Advanced</span>;
-      case 'intermediate':
-        return <span className="badge-intermediate">Intermediate</span>;
-      case 'beginner':
-      default:
-        return <span className="badge-beginner">Beginner</span>;
-    }
-  };
-
-  const verifiedSkills = skills.filter(skill => skill.verified);
-  const missingSkills = skills.filter(skill => !skill.verified);
+  const hasChildren = skill.children && skill.children.length > 0;
+  const levelColors = [
+    'text-amber-600 dark:text-amber-400',
+    'text-green-600 dark:text-green-400',
+    'text-blue-600 dark:text-blue-400',
+    'text-emerald-600 dark:text-emerald-400',
+  ];
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-secondary-800 rounded-xl border border-gray-200 dark:border-secondary-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="ml-4">
+      <div
+        className={cn(
+          'flex items-center gap-2 py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors',
+          skill.verified && 'bg-emerald-50 dark:bg-emerald-900/20'
+        )}
+      >
+        {hasChildren ? (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="p-0.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
+          >
+            {isExpanded ? (
+              <ChevronDown className="w-4 h-4 text-slate-500" />
+            ) : (
+              <ChevronRight className="w-4 h-4 text-slate-500" />
+            )}
+          </button>
+        ) : (
+          <div className="w-5" />
+        )}
+        <span className={cn('font-medium', levelColors[level] || levelColors[0])}>
+          {skill.skill_name}
+        </span>
+        {skill.verified && (
+          <span className="ml-auto text-xs px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 rounded">
+            Verified
+          </span>
+        )}
+      </div>
+      {hasChildren && isExpanded && (
+        <div className="ml-4 border-l-2 border-slate-200 dark:border-slate-700">
+          {skill.children!.map((child) => (
+            <SkillNode key={child.skill_id} skill={child} level={level + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const CompetencyDetailModal: React.FC<CompetencyDetailModalProps> = ({
+  competency,
+  onClose,
+}) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-secondary-700">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-secondary-100">{competency.name}</h2>
-            <div className="flex items-center space-x-3 mt-2">
-              {getLevelBadge(competency.level)}
-              <span className="text-sm text-gray-600 dark:text-secondary-400">
-                {Math.round(competency.progress_percentage)}% Complete
-              </span>
-            </div>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              {competency.competency_name}
+            </h2>
+            {competency.description && (
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                {competency.description}
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-500 dark:text-secondary-400 hover:text-gray-700 dark:hover:text-secondary-200 transition-colors"
+            className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
-          {/* Progress Overview */}
-          <div className="card">
-            <div className="card-body">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900 dark:text-secondary-100">Progress Overview</h3>
-                
-              </div>
-              
-            
-
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-success-500">{verifiedSkills.length}</div>
-                  <div className="text-sm text-gray-600 dark:text-secondary-400">Verified Skills</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-error-500">{missingSkills.length}</div>
-                  <div className="text-sm text-gray-600 dark:text-secondary-400">Missing Skills</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-primary-500">{skills.length}</div>
-                  <div className="text-sm text-gray-600 dark:text-secondary-400">Total Skills</div>
-                </div>
-              </div>
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              Skills Hierarchy
+            </h3>
+            <div className="space-y-1">
+              <SkillNode skill={competency.skills} level={0} />
             </div>
           </div>
 
-          {/* Skills Breakdown */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Verified Skills */}
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-secondary-100 mb-3 flex items-center">
-                <CheckCircle className="w-4 h-4 text-success-500 mr-2" />
-                Verified Skills ({verifiedSkills.length})
-              </h3>
-              <div className="space-y-2">
-                {verifiedSkills.map((skill) => (
-                  <div key={skill.id} className="flex items-center justify-between p-3 bg-success-500/10 border border-success-500/20 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-secondary-100">{skill.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-secondary-400">{skill.type}</p>
-                    </div>
-                    <CheckCircle className="w-4 h-4 text-success-500" />
-                  </div>
-                ))}
+          {/* Legend */}
+          <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+            <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-3">
+              Legend
+            </h4>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-amber-600 dark:text-amber-400">●</span>
+                <span className="text-slate-600 dark:text-slate-400">Level 1</span>
               </div>
-            </div>
-
-            {/* Missing Skills */}
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-secondary-100 mb-3 flex items-center">
-                <Circle className="w-4 h-4 text-error-500 mr-2" />
-                Missing Skills ({missingSkills.length})
-              </h3>
-              <div className="space-y-2">
-                {missingSkills.map((skill) => (
-                  <div key={skill.id} className="flex items-center justify-between p-3 bg-error-500/10 border border-error-500/20 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-secondary-100">{skill.name}</p>
-                      <p className="text-xs text-gray-600 dark:text-secondary-400">{skill.type}</p>
-                    </div>
-                    <Circle className="w-4 h-4 text-error-500" />
-                  </div>
-                ))}
+              <div className="flex items-center gap-2">
+                <span className="text-green-600 dark:text-green-400">●</span>
+                <span className="text-slate-600 dark:text-slate-400">Level 2</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-blue-600 dark:text-blue-400">●</span>
+                <span className="text-slate-600 dark:text-slate-400">Level 3</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-600 dark:text-emerald-400">●</span>
+                <span className="text-slate-600 dark:text-slate-400">MGS</span>
               </div>
             </div>
           </div>
-
-          
-
-          {/* Target Level */}
-          <div className="card">
-            <div className="card-body">
-              <h3 className="font-semibold text-secondary-100 mb-3 flex items-center">
-                <Target className="w-4 h-4 text-warning-500 mr-2" />
-                Target Level
-              </h3>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-secondary-300">Current: {competency.level}</p>
-                  <p className="text-sm text-secondary-300">Target: Expert</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-secondary-400">Progress to Expert</p>
-                  <p className="text-lg font-bold text-warning-500">
-                    {Math.round((competency.progress_percentage / 90) * 100)}%
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 p-6 border-t border-secondary-700">
-          <button onClick={onClose} className="btn-secondary">
-            Close
-          </button>
-          
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default CompetencyDetailModal;
 
