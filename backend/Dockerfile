@@ -8,8 +8,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-# Use --omit=dev instead of --only=production (deprecated)
-RUN npm ci --omit=dev
+# Use npm install instead of npm ci to handle lock file sync issues
+RUN npm install --omit=dev
 
 # Copy source code
 COPY . .
