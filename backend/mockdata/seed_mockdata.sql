@@ -1,0 +1,212 @@
+-- ============================================
+-- Skills Engine Mock Data Seed Script
+-- ============================================
+-- Description: Inserts mock data from JSON files into Supabase tables
+-- Usage: Run this script in Supabase SQL Editor or via psql
+-- ============================================
+
+-- Clear existing mock data (optional - comment out if you want to keep existing data)
+-- DELETE FROM userCompetency WHERE user_id IN ('user_123', 'user_456');
+-- DELETE FROM userSkill WHERE user_id IN ('user_123', 'user_456');
+-- DELETE FROM users WHERE user_id IN ('user_123', 'user_456');
+-- DELETE FROM competency_skill;
+-- DELETE FROM skill_subSkill;
+-- DELETE FROM competency_subCompetency;
+-- DELETE FROM skills WHERE skill_id LIKE 'skill_%';
+-- DELETE FROM competencies WHERE competency_id LIKE 'comp_%';
+
+-- ============================================
+-- 1. INSERT USERS
+-- ============================================
+-- Source: backend/mockdata/users.json
+
+INSERT INTO users (user_id, user_name, company_id, employee_type, path_career, relevance_score, created_at, updated_at)
+VALUES 
+    ('user_123', 'John Doe', 'company_456', 'employee', 'Full Stack Developer', 75.50, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('user_456', 'Jane Smith', 'company_456', 'trainer', 'Software Architect', 88.25, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+ON CONFLICT (user_id) DO UPDATE SET
+    user_name = EXCLUDED.user_name,
+    company_id = EXCLUDED.company_id,
+    employee_type = EXCLUDED.employee_type,
+    path_career = EXCLUDED.path_career,
+    relevance_score = EXCLUDED.relevance_score,
+    updated_at = CURRENT_TIMESTAMP;
+
+-- ============================================
+-- 2. INSERT COMPETENCIES
+-- ============================================
+-- Source: backend/mockdata/competencies.json
+
+INSERT INTO competencies (competency_id, competency_name, description, parent_competency_id, created_at, updated_at)
+VALUES 
+    ('comp_123', 'Full Stack Development', 'Complete full-stack development skills', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('comp_456', 'Frontend Development', 'Frontend development skills', 'comp_123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('comp_789', 'Backend Development', 'Backend development skills', 'comp_123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    -- Additional competencies from userProfile.json
+    ('comp_1', 'Full Stack Development', 'Complete full-stack development skills', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('comp_2', 'Database Management', 'Database management and administration skills', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+ON CONFLICT (competency_id) DO UPDATE SET
+    competency_name = EXCLUDED.competency_name,
+    description = EXCLUDED.description,
+    parent_competency_id = EXCLUDED.parent_competency_id,
+    updated_at = CURRENT_TIMESTAMP;
+
+-- ============================================
+-- 3. INSERT SKILLS
+-- ============================================
+-- Source: backend/mockdata/skills.json + userProfile.json
+
+INSERT INTO skills (skill_id, skill_name, parent_skill_id, description, created_at, updated_at)
+VALUES 
+    -- From skills.json
+    ('skill_123', 'React Hooks', NULL, 'React Hooks for state management', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_456', 'useState Hook', 'skill_123', 'React useState hook', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_789', 'useEffect Hook', 'skill_123', 'React useEffect hook', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_101', 'Node.js', NULL, 'Node.js runtime', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_102', 'Express.js', 'skill_101', 'Express.js framework', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    -- From userProfile.json
+    ('skill_1', 'JavaScript', NULL, 'JavaScript programming language', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_2', 'React', NULL, 'React library for building user interfaces', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_3', 'Node.js', NULL, 'Node.js runtime environment', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_4', 'SQL', NULL, 'Structured Query Language', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('skill_5', 'PostgreSQL', NULL, 'PostgreSQL database management system', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+ON CONFLICT (skill_id) DO UPDATE SET
+    skill_name = EXCLUDED.skill_name,
+    parent_skill_id = EXCLUDED.parent_skill_id,
+    description = EXCLUDED.description,
+    updated_at = CURRENT_TIMESTAMP;
+
+-- ============================================
+-- 4. INSERT COMPETENCY HIERARCHY
+-- ============================================
+-- Source: backend/mockdata/competencies.json (parent_competency_id relationships)
+
+INSERT INTO competency_subCompetency (parent_competency_id, child_competency_id, created_at)
+VALUES 
+    ('comp_123', 'comp_456', CURRENT_TIMESTAMP),
+    ('comp_123', 'comp_789', CURRENT_TIMESTAMP)
+ON CONFLICT (parent_competency_id, child_competency_id) DO NOTHING;
+
+-- ============================================
+-- 5. INSERT SKILL HIERARCHY
+-- ============================================
+-- Source: backend/mockdata/skills.json (parent_skill_id relationships)
+
+INSERT INTO skill_subSkill (parent_skill_id, child_skill_id, created_at)
+VALUES 
+    ('skill_123', 'skill_456', CURRENT_TIMESTAMP),
+    ('skill_123', 'skill_789', CURRENT_TIMESTAMP),
+    ('skill_101', 'skill_102', CURRENT_TIMESTAMP)
+ON CONFLICT (parent_skill_id, child_skill_id) DO NOTHING;
+
+-- ============================================
+-- 6. INSERT COMPETENCY-SKILL RELATIONSHIPS
+-- ============================================
+-- Source: backend/mockdata/userProfile.json (l1_skills within competencies)
+
+INSERT INTO competency_skill (competency_id, skill_id, created_at)
+VALUES 
+    -- Full Stack Development (comp_1) skills
+    ('comp_1', 'skill_1', CURRENT_TIMESTAMP),  -- JavaScript
+    ('comp_1', 'skill_2', CURRENT_TIMESTAMP),  -- React
+    ('comp_1', 'skill_3', CURRENT_TIMESTAMP),  -- Node.js
+    -- Database Management (comp_2) skills
+    ('comp_2', 'skill_4', CURRENT_TIMESTAMP),  -- SQL
+    ('comp_2', 'skill_5', CURRENT_TIMESTAMP),  -- PostgreSQL
+    -- Full Stack Development (comp_123) skills
+    ('comp_123', 'skill_1', CURRENT_TIMESTAMP),  -- JavaScript
+    ('comp_123', 'skill_2', CURRENT_TIMESTAMP),  -- React
+    ('comp_123', 'skill_3', CURRENT_TIMESTAMP),  -- Node.js
+    -- Frontend Development (comp_456) skills
+    ('comp_456', 'skill_2', CURRENT_TIMESTAMP),  -- React
+    ('comp_456', 'skill_123', CURRENT_TIMESTAMP),  -- React Hooks
+    -- Backend Development (comp_789) skills
+    ('comp_789', 'skill_3', CURRENT_TIMESTAMP),  -- Node.js
+    ('comp_789', 'skill_101', CURRENT_TIMESTAMP),  -- Node.js
+    ('comp_789', 'skill_102', CURRENT_TIMESTAMP)  -- Express.js
+ON CONFLICT (competency_id, skill_id) DO NOTHING;
+
+-- ============================================
+-- 7. INSERT USER COMPETENCIES
+-- ============================================
+-- Source: backend/mockdata/userProfile.json
+
+INSERT INTO userCompetency (
+    user_id, 
+    competency_id, 
+    coverage_percentage, 
+    proficiency_level, 
+    verifiedSkills, 
+    created_at, 
+    updated_at
+)
+VALUES 
+    -- User 123: Full Stack Development
+    (
+        'user_123',
+        'comp_1',
+        65.0,
+        'INTERMEDIATE',
+        '[
+            {"skill_id": "skill_1", "skill_name": "JavaScript", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"},
+            {"skill_id": "skill_2", "skill_name": "React", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"},
+            {"skill_id": "skill_3", "skill_name": "Node.js", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"},
+            {"skill_id": "skill_4", "skill_name": "SQL", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"},
+            {"skill_id": "skill_5", "skill_name": "PostgreSQL", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"}
+        ]'::jsonb,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    -- User 123: Database Management
+    (
+        'user_123',
+        'comp_2',
+        45.0,
+        'BEGINNER',
+        '[
+            {"skill_id": "skill_4", "skill_name": "SQL", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"},
+            {"skill_id": "skill_5", "skill_name": "PostgreSQL", "verified": true, "lastUpdate": "2025-01-15T10:00:00Z"}
+        ]'::jsonb,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    )
+ON CONFLICT (user_id, competency_id) DO UPDATE SET
+    coverage_percentage = EXCLUDED.coverage_percentage,
+    proficiency_level = EXCLUDED.proficiency_level,
+    verifiedSkills = EXCLUDED.verifiedSkills,
+    updated_at = CURRENT_TIMESTAMP;
+
+-- ============================================
+-- 8. INSERT USER SKILLS (Optional - for detailed tracking)
+-- ============================================
+-- Source: Derived from userProfile.json verifiedSkills
+
+INSERT INTO userSkill (user_id, skill_id, skill_name, verified, source, last_update, created_at)
+VALUES 
+    -- User 123 verified skills
+    ('user_123', 'skill_1', 'JavaScript', TRUE, 'assessment', '2025-01-15 10:00:00', CURRENT_TIMESTAMP),
+    ('user_123', 'skill_2', 'React', TRUE, 'assessment', '2025-01-15 10:00:00', CURRENT_TIMESTAMP),
+    ('user_123', 'skill_3', 'Node.js', TRUE, 'assessment', '2025-01-15 10:00:00', CURRENT_TIMESTAMP),
+    ('user_123', 'skill_4', 'SQL', TRUE, 'certification', '2025-01-15 10:00:00', CURRENT_TIMESTAMP),
+    ('user_123', 'skill_5', 'PostgreSQL', TRUE, 'certification', '2025-01-15 10:00:00', CURRENT_TIMESTAMP)
+ON CONFLICT (user_id, skill_id) DO UPDATE SET
+    skill_name = EXCLUDED.skill_name,
+    verified = EXCLUDED.verified,
+    source = EXCLUDED.source,
+    last_update = EXCLUDED.last_update;
+
+-- ============================================
+-- VERIFICATION QUERIES
+-- ============================================
+-- Run these queries to verify the data was inserted correctly
+
+-- SELECT COUNT(*) as user_count FROM users WHERE user_id IN ('user_123', 'user_456');
+-- SELECT COUNT(*) as competency_count FROM competencies WHERE competency_id LIKE 'comp_%';
+-- SELECT COUNT(*) as skill_count FROM skills WHERE skill_id LIKE 'skill_%';
+-- SELECT * FROM userCompetency WHERE user_id = 'user_123';
+-- SELECT * FROM userSkill WHERE user_id = 'user_123';
+
+-- ============================================
+-- END OF SEED SCRIPT
+-- ============================================
+
