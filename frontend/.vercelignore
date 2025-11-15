@@ -8,10 +8,6 @@ yarn-error.log*
 coverage
 .nyc_output
 
-# Next.js
-.next/
-out/
-
 # Production
 build
 dist
@@ -33,4 +29,6 @@ yarn-error.log*
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
+
+# Vite
+.vite
