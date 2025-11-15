@@ -3,7 +3,6 @@ import axios from 'axios';
 import { api } from '../../services/api';
 
 vi.mock('axios');
-const mockedAxios = vi.mocked(axios);
 
 describe('API Client', () => {
   beforeEach(() => {

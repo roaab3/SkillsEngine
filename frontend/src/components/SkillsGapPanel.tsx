@@ -1,7 +1,6 @@
 import React from 'react';
 import { Target, CheckCircle2 } from 'lucide-react';
 import type { GapAnalysis, MissingSkillGroup } from '../types';
-import { cn } from '../utils/cn';
 
 interface SkillsGapPanelProps {
   gapAnalysis?: GapAnalysis;

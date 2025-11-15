@@ -1,9 +1,8 @@
 import React from 'react';
-import { Upload, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useUserProfile } from '../hooks/useUserProfile';
 import CSVUpload from './CSVUpload';
-import { cn } from '../utils/cn';
 
 interface HeaderProps {
   userId: string;
