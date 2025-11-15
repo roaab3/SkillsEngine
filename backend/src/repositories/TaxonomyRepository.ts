@@ -141,6 +141,7 @@ export class TaxonomyRepository {
 
   async addCompetency(competency: Competency): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO competencies (competency_id, competency_name, description, parent_competency_id)
          VALUES ($1, $2, $3, $4)
@@ -160,6 +161,7 @@ export class TaxonomyRepository {
 
   async addSkill(skill: Skill): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO skills (skill_id, skill_name, parent_skill_id, description)
          VALUES ($1, $2, $3, $4)
@@ -179,6 +181,7 @@ export class TaxonomyRepository {
 
   async linkSkillToCompetency(competencyId: string, skillId: string): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO competency_skill (competency_id, skill_id)
          VALUES ($1, $2)
@@ -193,6 +196,7 @@ export class TaxonomyRepository {
 
   async linkParentChildSkill(parentSkillId: string, childSkillId: string): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO skill_subSkill (parent_skill_id, child_skill_id)
          VALUES ($1, $2)
