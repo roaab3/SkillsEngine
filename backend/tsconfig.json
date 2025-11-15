@@ -40,6 +40,9 @@
     "node_modules",
     "dist",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "**/__mocks__/**"
   ]
 }
