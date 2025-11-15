@@ -14,6 +14,14 @@ import webhookRoutes from './routes/webhooks';
 import frontendRoutes from './routes/frontend';
 import competencyRoutes from './routes/competency';
 import trainerRoutes from './routes/trainer';
+import userRoutes from './routes/users';
+import assessmentRoutes from './routes/assessment';
+import skillRoutes from './routes/skill';
+import gapAnalysisRoutes from './routes/gap-analysis';
+import directoryRoutes from './routes/directory';
+import learnerAiRoutes from './routes/learner-ai';
+import learningAnalyticsRoutes from './routes/learning-analytics';
+import ragRoutes from './routes/rag';
 
 dotenv.config();
 
@@ -57,6 +65,14 @@ app.use('/api/webhooks', webhookRoutes);
 app.use('/api/frontend', frontendRoutes);
 app.use('/api/competency', competencyRoutes);
 app.use('/api/trainer', trainerRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/assessment', assessmentRoutes);
+app.use('/api/skill', skillRoutes);
+app.use('/api/gap-analysis', gapAnalysisRoutes);
+app.use('/api/directory', directoryRoutes);
+app.use('/api/learner-ai', learnerAiRoutes);
+app.use('/api/learning-analytics', learningAnalyticsRoutes);
+app.use('/api/rag', ragRoutes);
 
 // Error handling (must be last)
 app.use(errorHandler);

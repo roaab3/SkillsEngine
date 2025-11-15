@@ -1,13 +1,45 @@
 import { Router } from 'express';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { authenticateService } from '../middleware/auth';
+import { validateRequest } from '../middleware/validateRequest';
+import Joi from 'joi';
 import { TaxonomyService } from '../services/TaxonomyService';
+import { TaxonomyRepository } from '../repositories/TaxonomyRepository';
 import { NotFoundError } from '../utils/errors';
 
 const router = Router();
 const taxonomyService = new TaxonomyService();
+const taxonomyRepository = new TaxonomyRepository();
+
+// Create competency schema
+const createCompetencySchema = Joi.object({
+  competency_id: Joi.string().required(),
+  competency_name: Joi.string().required(),
+  description: Joi.string().optional(),
+  parent_competency_id: Joi.string().optional(),
+});
+
+// POST /api/competency - Add new competency (must come before parameterized routes)
+router.post(
+  '/',
+  authenticateService,
+  validateRequest(createCompetencySchema),
+  asyncHandler(async (req, res) => {
+    const competencyData = req.body;
+    await taxonomyRepository.addCompetency(competencyData);
+
+    const competency = await taxonomyService.getCompetencyById(competencyData.competency_id);
+
+    res.status(201).json({
+      success: true,
+      data: competency,
+      timestamp: new Date().toISOString(),
+    });
+  })
+);
 
 // Get MGS for competency (conditional logic based on service)
+// This must come before /:competency_id to avoid route conflicts
 router.get(
   '/:competencyName/skills',
   authenticateService,
@@ -39,6 +71,23 @@ router.get(
         competency_name: competencyName,
         mgs: mgs,
       },
+      timestamp: new Date().toISOString(),
+    });
+  })
+);
+
+// GET /api/competency/:competency_id - Get specific competency
+// This must come after /:competencyName/skills to avoid route conflicts
+router.get(
+  '/:competency_id',
+  authenticateService,
+  asyncHandler(async (req, res) => {
+    const { competency_id } = req.params;
+    const competency = await taxonomyService.getCompetencyById(competency_id);
+
+    res.json({
+      success: true,
+      data: competency,
       timestamp: new Date().toISOString(),
     });
   })
