@@ -18,7 +18,6 @@ import trainerRoutes from './routes/trainer';
 dotenv.config();
 
 const app: Application = express();
-const PORT = process.env.PORT || 3000;
 
 // CORS configuration - Allow all origins (for development/testing)
 // WARNING: This allows requests from any origin. For production, restrict to specific origins.
@@ -78,8 +77,8 @@ const startServer = async () => {
     await pool.query('SELECT NOW()');
     logger.info('Database connection successful');
 
-    app.listen(PORT, () => {
-      logger.info(`Skills Engine server running on port ${PORT}`);
+    app.listen(process.env.PORT || 8080, () => {
+      logger.info(`Skills Engine server running on port ${process.env.PORT || 8080}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {
