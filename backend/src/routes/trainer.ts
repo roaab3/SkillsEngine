@@ -28,7 +28,7 @@ router.post(
   '/csv/upload',
   authenticateUser,
   requireTrainer,
-  upload.single('file'),
+  upload.single('file') as any,
   asyncHandler(async (req, res) => {
     if (!req.file) {
       throw new ValidationError('CSV file is required');

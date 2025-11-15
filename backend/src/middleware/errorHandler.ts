@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppError } from '../utils/errors';
+import { AppError, ValidationError } from '../utils/errors';
 import logger from '../utils/logger';
 
 export const errorHandler = (
@@ -15,13 +15,18 @@ export const errorHandler = (
       method: req.method,
     });
 
+    const errorResponse: any = {
+      code: err.constructor.name,
+      message: err.message,
+    };
+
+    if (err instanceof ValidationError && err.details) {
+      errorResponse.details = err.details;
+    }
+
     return res.status(err.statusCode).json({
       success: false,
-      error: {
-        code: err.constructor.name,
-        message: err.message,
-        ...(err instanceof ValidationError && err.details ? { details: err.details } : {}),
-      },
+      error: errorResponse,
       timestamp: new Date().toISOString(),
     });
   }
