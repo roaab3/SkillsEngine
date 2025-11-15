@@ -20,10 +20,8 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(helmet());
-
 // CORS configuration - support multiple origins for Vercel deployments
+// Must be configured BEFORE other middleware to handle preflight requests
 const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
   : [
@@ -68,9 +66,19 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
+// Apply CORS BEFORE helmet to ensure headers are set correctly
 app.use(cors(corsOptions));
+
+// Middleware
+// Configure Helmet to not interfere with CORS
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  crossOriginEmbedderPolicy: false,
+}));
 app.use(compression());
 app.use(morgan('combined', {
   stream: { write: (message: string) => logger.info(message.trim()) },
