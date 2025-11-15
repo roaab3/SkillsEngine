@@ -1,0 +1,161 @@
+name: Deploy Skills Engine
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Backend Deployment Job
+  deploy-backend:
+    name: Deploy Backend to Railway
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+        
+    - name: Navigate to backend directory
+      run: cd backend
+      
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+        
+    - name: Run backend tests
+      run: |
+        cd backend
+        npm test
+        
+    - name: Build backend (if needed)
+      run: |
+        cd backend
+        npm run build
+        
+    - name: Deploy to Railway
+      run: |
+        cd backend
+        npx @railway/cli@latest deploy --token ${{ secrets.RAILWAY_TOKEN }} --service backend
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  # Frontend Deployment Job
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Navigate to frontend directory
+      run: cd frontend
+      
+    - name: Install frontend dependencies
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: Build frontend project
+      run: |
+        cd frontend
+        npm run build
+        
+    - name: Deploy to Vercel
+      run: |
+        cd frontend
+        npx vercel --token ${{ secrets.VERCEL_TOKEN }} --prod
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+  # Database Migration Job (if needed)
+  migrate-database:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [deploy-backend]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+        
+    - name: Install backend dependencies
+      run: |
+        cd backend
+        npm ci
+        
+    - name: Run database migrations
+      run: |
+        cd backend
+        npm run migrate:prod
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # Health Check Job
+  health-check:
+    name: Health Check Deployment
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [deploy-backend, deploy-frontend, migrate-database]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Wait for deployment
+      run: sleep 30
+      
+    - name: Health check backend
+      run: |
+        curl -f ${{ secrets.BACKEND_URL }}/health || exit 1
+        
+    - name: Health check frontend
+      run: |
+        curl -f ${{ secrets.FRONTEND_URL }} || exit 1
+
+  # Notification Job
+  notify-deployment:
+    name: Notify Deployment Status
+    runs-on: ubuntu-latest
+    if: always() && github.ref == 'refs/heads/main'
+    needs: [deploy-backend, deploy-frontend, migrate-database, health-check]
+    
+    steps:
+    - name: Notify success
+      if: needs.deploy-backend.result == 'success' && needs.deploy-frontend.result == 'success'
+      run: |
+        echo "✅ Skills Engine deployed successfully!"
+        echo "Backend: ${{ secrets.BACKEND_URL }}"
+        echo "Frontend: ${{ secrets.FRONTEND_URL }}"
+        
+    - name: Notify failure
+      if: needs.deploy-backend.result == 'failure' || needs.deploy-frontend.result == 'failure'
+      run: |
+        echo "❌ Skills Engine deployment failed!"
+        echo "Please check the logs and retry deployment."
+

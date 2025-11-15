@@ -1,0 +1,197 @@
+{
+  "project_name": "Skills Engine Microservice",
+  "status": "planning_complete",
+  "phase": "step_5_complete",
+  "step_0": {
+    "use_default": true,
+    "core_folders": ["/frontend", "/backend", "/database"],
+    "supporting_folders": ["/docs", "/tests", "/.github", "/scripts"],
+    "custom_folders": [],
+    "customization_folder": "/customize",
+    "status": "complete",
+    "timestamp": "2025-01-27T00:00:00Z"
+  },
+  "step_1": {
+    "project_idea": "EduCora AI is a learning and development platform with 11 microservices. Skills Engine is the microservice that acts as the central authority for managing all skill and competency data within the platform. It maintains a hierarchical skill taxonomy, tracks user skill profiles, verifies skills, and enables precise gap analysis. Its core purpose is to provide accurate, structured skill data to other services, supporting personalized learning, career development, and talent management.",
+    "business_goals": "The Skills Engine microservice establishes a single source of truth for skills and competencies across the EduCora AI platform, ensuring consistent, verified data for all training, assessments, and reporting. It enables accurate tracking of individual and team skill levels, allowing employees and trainers to identify gaps and take targeted development actions. By providing structured skill data to other services like Learner AI, Content Studio, and Course Builder, it supports competency-aligned content, courses, and learning paths, enhancing personalized learning experiences. For organizations, it delivers insights into workforce competencies, improves talent management, and ensures scalable, efficient, and data-driven decision-making for employee growth and upskilling initiatives.",
+    "target_users": {
+      "direct_users": {
+        "employees": {
+          "description": "View their own skill profiles, track verified competencies, and identify skill gaps",
+          "capabilities": ["view profiles", "track skills", "identify gaps"]
+        },
+        "trainers": {
+          "description": "Same as employees, plus can upload custom skills/competencies via CSV. Cannot manage the skill taxonomy (that's an admin function)",
+          "capabilities": ["view profiles", "track skills", "identify gaps", "upload custom skills/competencies via CSV"]
+        }
+      },
+      "indirect_users": {
+        "description": "Users accessing Skills Engine data through other services (Directory, EduCore)",
+        "example": "Employee viewing skills summary via Directory - data provided by Skills Engine but interface is through another service"
+      },
+      "system_integrations": {
+        "count": 7,
+        "microservices": [
+          {
+            "name": "Assessment",
+            "role": "Sends exam results to update verified skills"
+          },
+          {
+            "name": "Course Builder",
+            "role": "Requests skills to map courses or training paths"
+          },
+          {
+            "name": "Content Studio",
+            "role": "Sends competency to Skills Engine and receives all related skills to generate/organize lesson content"
+          },
+          {
+            "name": "Learner AI",
+            "role": "Receives missing skills per user, queries Skills Engine for skills related to competency to build learning plans and recommend courses"
+          },
+          {
+            "name": "RAG/Chatbot",
+            "role": "Extracts skill and competency data for analytics or user queries"
+          },
+          {
+            "name": "Directory",
+            "role": "Retrieves skill and competency summaries for display in user dashboards"
+          },
+          {
+            "name": "Learning Analytics",
+            "role": "Retrieves stored, pre-calculated individual profiles and aggregate team competency status for reporting and insights"
+          }
+        ]
+      }
+    },
+    "problem_statement": "Before Skills Engine, skill and competency data across the platform was fragmented, unstructured, and often unreliable. There was no single source of truth for skills, making it difficult to track user proficiency, identify skill gaps, and provide personalized learning paths. Skills Engine solves this by centralizing all skill data, verifying user skills, maintaining a flexible hierarchical taxonomy, and enabling precise gap analysis for career development.",
+    "vision_mission": {
+      "vision": "To be the central, authoritative source of skills and competencies within the EduCora AI platform, enabling transparent, data-driven skill development for every employee and supporting organizations in achieving a highly skilled, future-ready workforce.",
+      "mission": "The Skills Engine microservice organizes, verifies, and delivers structured skill and competency data, powering accurate skill tracking, gap analysis, and competency-aligned learning experiences. It ensures that all services within EduCora AI can rely on a consistent, authoritative source of skill information, enabling personalized growth, informed talent management, and measurable learning outcomes."
+    },
+    "success_metrics": {
+      "performance": {
+        "api_response_times": "Flexible - API response times appropriate for operation complexity (e.g., simple reads faster, complex gap analysis may take longer)",
+        "system_uptime": "≥99.9%"
+      },
+      "business": [
+        "Number of verified skills",
+        "Skill verifications count",
+        "Mapped competencies count"
+      ],
+      "quality": [
+        "Data accuracy",
+        "Gap analysis precision",
+        "Consistency across microservices"
+      ],
+      "adoption": [
+        "API usage frequency",
+        "Number of integrated microservices",
+        "Employee access to skill profiles"
+      ]
+    },
+    "constraints": {
+      "technical": [
+        "Must integrate seamlessly with existing EduCora AI services",
+        "Support scalable, N-level skill hierarchies"
+      ],
+      "business": [
+        "Project timelines",
+        "Budget limitations",
+        "Resource availability"
+      ],
+      "regulatory": [
+        "Secure handling of employee data",
+        "Compliance with privacy regulations"
+      ],
+      "platform": [
+        "Reliable operation within EduCora AI ecosystem",
+        "Backward compatibility requirements",
+        "Support for asynchronous events"
+      ],
+      "authentication": [
+        "Each microservice integration requires its own authentication token",
+        "Microservices with tokens: Directory, Assessment, Content Studio, Course Builder, Learner AI, Learning Analytics, RAG/Chatbot",
+        "Skills Engine must manage and validate tokens for each microservice connection"
+      ]
+    }
+  },
+  "step_2": {
+    "functional_requirements": "Documented in docs/FUNCTIONAL_REQUIREMENTS.md - 10 main requirements covering system initialization, user onboarding, profile updates, gap analysis, API endpoints, CSV upload, frontend display, and integrations",
+    "user_stories": "Documented in docs/USER_STORIES_AND_BUSINESS_LOGIC.md - 13 user stories covering Employees (viewing, tracking, gap identification), Trainers (upload, viewing), and System Integrations (7 microservices)",
+    "business_logic": "Documented in docs/USER_STORIES_AND_BUSINESS_LOGIC.md - 6 main flows: Taxonomy Initialization, User Profile Creation, Baseline Exam Processing, Post-Course Exam Processing, On-Demand Skill Discovery, External Data Integration",
+    "non_functional_requirements": "Documented in docs/NON_FUNCTIONAL_REQUIREMENTS.md - 4 main NFRs: Performance (Gap Analysis <1s), Scalability (100,000+ users), Security & Audit (audit trail), Data Trust Priority (Assessment > Certification > Claims/AI)",
+    "ai_capabilities": "Documented in docs/AI_CAPABILITIES.md - 3 main AI capabilities: Knowledge Building & Taxonomy Construction (discovery, extraction, validation, normalization), Data Extraction & Initial Profile Mapping (from unstructured data), External Knowledge Discovery (dynamic enrichment)",
+    "ai_technology": "Google Gemini API",
+    "ai_models": ["Gemini Flash", "Gemini Deep-Search"]
+  },
+  "step_3": {
+    "feature_architecture": "Documented in docs/FEATURE_ARCHITECTURE.md - 7 system-level features mapped to frontend, backend, and database components. Includes AI integration points (3 capabilities), external API integrations (7 microservices), UI/UX design requirements, dependencies, and 5-phase rollout strategy",
+    "system_features": [
+      "Taxonomy Management",
+      "User Profile Management",
+      "Gap Analysis",
+      "API Gateway",
+      "CSV Upload",
+      "Frontend Display",
+      "Audit & Security"
+    ],
+    "component_mapping": {
+      "frontend": ["ProfileDashboard", "CompetencyCard", "GapAnalysis", "CSVUpload", "SkillsProfileDetail"],
+      "backend": ["taxonomyService", "profileService", "gapAnalysisService", "apiGatewayService", "aiService", "csvProcessingService", "auditService", "authService"],
+      "database": ["skills", "competencies", "userCompetency", "userSkill", "audit_log", "official_sources", "microservice_tokens", "junction_tables"]
+    },
+    "ai_integration_points": [
+      "Knowledge Building & Taxonomy Construction (Flash/Deep-Search)",
+      "Data Extraction & Initial Profile Mapping (Deep-Search/Flash)",
+      "External Knowledge Discovery (Deep-Search)"
+    ],
+    "external_api_integrations": [
+      "Assessment Microservice",
+      "Course Builder Microservice",
+      "Content Studio Microservice",
+      "Learner AI Microservice",
+      "Directory Microservice",
+      "Learning Analytics Microservice",
+      "RAG/Chatbot Microservice"
+    ],
+    "rollout_strategy": "5 phases over 20 weeks: Foundation (Weeks 1-4), Core Features (Weeks 5-8), Integrations (Weeks 9-12), Advanced Features (Weeks 13-16), Production Readiness (Weeks 17-20)"
+  },
+  "step_4": {
+    "technical_design": "Documented in docs/STEP4_TECHNICAL_DESIGN.md - Database schema, API endpoints, component architecture, data access layer, algorithms, security, integration patterns, performance optimization, error handling",
+    "status": "complete",
+    "sections": [
+      "Database Schema (11 tables)",
+      "API Endpoints Design",
+      "Component Architecture",
+      "Data Access Layer",
+      "Algorithms & Queries",
+      "Security Implementation",
+      "Integration Patterns",
+      "Performance Optimization",
+      "Error Handling & Logging"
+    ]
+  },
+  "step_5": {
+    "system_architecture": "Documented in docs/STEP5_ARCHITECTURE_DESIGN.md - Complete system architecture including architecture diagrams, service decisions, API patterns, storage & caching, scalability & fault tolerance, security layers, integration points, and IaC setup",
+    "status": "complete",
+    "sections": [
+      "Architecture Diagram (High-level, Component, Data Flow)",
+      "Service Decisions (Microservice boundaries, responsibilities, technology stack)",
+      "API Patterns (REST, Unified Data Exchange, Synchronous/Asynchronous)",
+      "Storage & Caching (PostgreSQL, in-memory cache, connection pooling)",
+      "Scalability & Fault Tolerance (Horizontal/Vertical scaling, circuit breakers, health checks)",
+      "Security Layers (Authentication, data security, API security, infrastructure security)",
+      "Integration Points (Incoming/outgoing webhooks, synchronous endpoints)",
+      "IaC Setup (Railway backend, Vercel frontend, Supabase database, GitHub Actions CI/CD)"
+    ],
+    "deployment_platform": {
+      "backend": "Railway (Managed Container Platform)",
+      "frontend": "Vercel (Managed Frontend Platform)",
+      "database": "Supabase (Managed PostgreSQL)",
+      "ci_cd": "GitHub Actions"
+    }
+  },
+  "step_6": null,
+  "created_at": "2025-01-27T00:00:00Z",
+  "updated_at": "2025-01-27T10:00:00Z"
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "user_id": "user_123",
+    "user_name": "John Doe",
+    "company_id": "company_456",
+    "employee_type": "employee",
+    "path_career": "Full Stack Developer",
+    "relevance_score": 75.50
+  },
+  {
+    "user_id": "user_456",
+    "user_name": "Jane Smith",
+    "company_id": "company_456",
+    "employee_type": "trainer",
+    "path_career": "Software Architect",
+    "relevance_score": 88.25
+  }
+]
+

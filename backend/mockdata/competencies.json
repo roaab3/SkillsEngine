@@ -1,0 +1,21 @@
+[
+  {
+    "competency_id": "comp_123",
+    "competency_name": "Full Stack Development",
+    "description": "Complete full-stack development skills",
+    "parent_competency_id": null
+  },
+  {
+    "competency_id": "comp_456",
+    "competency_name": "Frontend Development",
+    "description": "Frontend development skills",
+    "parent_competency_id": "comp_123"
+  },
+  {
+    "competency_id": "comp_789",
+    "competency_name": "Backend Development",
+    "description": "Backend development skills",
+    "parent_competency_id": "comp_123"
+  }
+]
+

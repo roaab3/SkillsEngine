@@ -1,0 +1,33 @@
+[
+  {
+    "skill_id": "skill_123",
+    "skill_name": "React Hooks",
+    "parent_skill_id": null,
+    "description": "React Hooks for state management"
+  },
+  {
+    "skill_id": "skill_456",
+    "skill_name": "useState Hook",
+    "parent_skill_id": "skill_123",
+    "description": "React useState hook"
+  },
+  {
+    "skill_id": "skill_789",
+    "skill_name": "useEffect Hook",
+    "parent_skill_id": "skill_123",
+    "description": "React useEffect hook"
+  },
+  {
+    "skill_id": "skill_101",
+    "skill_name": "Node.js",
+    "parent_skill_id": null,
+    "description": "Node.js runtime"
+  },
+  {
+    "skill_id": "skill_102",
+    "skill_name": "Express.js",
+    "parent_skill_id": "skill_101",
+    "description": "Express.js framework"
+  }
+]
+
