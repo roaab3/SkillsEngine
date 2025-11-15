@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { getPool } from '../config/database';
 import { OfficialSource } from '../types';
 import { DatabaseError } from '../utils/errors';
 import logger from '../utils/logger';
@@ -6,6 +6,7 @@ import logger from '../utils/logger';
 export class SourceRepository {
   async getOfficialSources(): Promise<OfficialSource[]> {
     try {
+      const pool = getPool();
       const result = await pool.query('SELECT * FROM official_sources ORDER BY created_at DESC');
       return result.rows;
     } catch (error) {
@@ -16,6 +17,7 @@ export class SourceRepository {
 
   async getOfficialSourceById(sourceId: string): Promise<OfficialSource | null> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM official_sources WHERE source_id = $1',
         [sourceId]
@@ -29,6 +31,7 @@ export class SourceRepository {
 
   async addOfficialSource(source: OfficialSource): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO official_sources (
           source_id, source_name, reference_index_url, reference_type,
@@ -68,6 +71,7 @@ export class SourceRepository {
 
   async updateSourceLastChecked(sourceId: string): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         'UPDATE official_sources SET last_checked = CURRENT_TIMESTAMP WHERE source_id = $1',
         [sourceId]
@@ -80,6 +84,7 @@ export class SourceRepository {
 
   async getSourcesByType(referenceType: string): Promise<OfficialSource[]> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM official_sources WHERE reference_type = $1',
         [referenceType]

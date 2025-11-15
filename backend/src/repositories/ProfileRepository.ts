@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { getPool } from '../config/database';
 import { User, UserCompetency, UserSkill, VerifiedSkill } from '../types';
 import { DatabaseError, NotFoundError } from '../utils/errors';
 import logger from '../utils/logger';
@@ -6,6 +6,7 @@ import logger from '../utils/logger';
 export class ProfileRepository {
   async getUserById(userId: string): Promise<User | null> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM users WHERE user_id = $1',
         [userId]
@@ -19,6 +20,7 @@ export class ProfileRepository {
 
   async createUser(user: User): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO users (user_id, user_name, company_id, employee_type, path_career, raw_data, relevance_score)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -61,6 +63,7 @@ export class ProfileRepository {
       if (fields.length === 0) return;
 
       values.push(userId);
+      const pool = getPool();
       await pool.query(
         `UPDATE users SET ${fields.join(', ')} WHERE user_id = $${paramIndex}`,
         values
@@ -73,6 +76,7 @@ export class ProfileRepository {
 
   async updateRelevanceScore(userId: string, score: number): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         'UPDATE users SET relevance_score = $1 WHERE user_id = $2',
         [score, userId]
@@ -85,6 +89,7 @@ export class ProfileRepository {
 
   async getUserCompetencies(userId: string): Promise<UserCompetency[]> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM userCompetency WHERE user_id = $1',
         [userId]
@@ -98,6 +103,7 @@ export class ProfileRepository {
 
   async getUserCompetency(userId: string, competencyId: string): Promise<UserCompetency | null> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM userCompetency WHERE user_id = $1 AND competency_id = $2',
         [userId, competencyId]
@@ -111,6 +117,7 @@ export class ProfileRepository {
 
   async createUserCompetency(userCompetency: UserCompetency): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO userCompetency (user_id, competency_id, coverage_percentage, proficiency_level, verifiedSkills)
          VALUES ($1, $2, $3, $4, $5::jsonb)
@@ -158,6 +165,7 @@ export class ProfileRepository {
       if (fields.length === 0) return;
 
       values.push(userId, competencyId);
+      const pool = getPool();
       await pool.query(
         `UPDATE userCompetency SET ${fields.join(', ')} 
          WHERE user_id = $${paramIndex} AND competency_id = $${paramIndex + 1}`,
@@ -175,6 +183,7 @@ export class ProfileRepository {
     verifiedSkills: VerifiedSkill[]
   ): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         'UPDATE userCompetency SET verifiedSkills = $1::jsonb WHERE user_id = $2 AND competency_id = $3',
         [JSON.stringify(verifiedSkills), userId, competencyId]
@@ -187,6 +196,7 @@ export class ProfileRepository {
 
   async getUserSkills(userId: string): Promise<UserSkill[]> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM userSkill WHERE user_id = $1',
         [userId]
@@ -200,6 +210,7 @@ export class ProfileRepository {
 
   async createUserSkill(userSkill: UserSkill): Promise<void> {
     try {
+      const pool = getPool();
       await pool.query(
         `INSERT INTO userSkill (user_id, skill_id, skill_name, verified, source, last_update)
          VALUES ($1, $2, $3, $4, $5, $6)

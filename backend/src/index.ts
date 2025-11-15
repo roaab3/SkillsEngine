@@ -5,7 +5,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/errorHandler';
-import { pool } from './config/database';
+import { pool, getPool } from './config/database';
 import logger from './utils/logger';
 
 // Import routes
@@ -72,18 +72,27 @@ app.get('/', (req, res) => {
 
 // Start server
 const startServer = async () => {
-  try {
-    // Test database connection
-    await pool.query('SELECT NOW()');
-    logger.info('Database connection successful');
+  const port = parseInt(process.env.PORT || '8080', 10);
+  
+  // Start server immediately - don't block on database connection
+  // This ensures health endpoint is available for Railway healthchecks
+  app.listen(port, '0.0.0.0', () => {
+    logger.info(`Skills Engine server running on port ${port}`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.info(`Health check available at http://0.0.0.0:${port}/health`);
+  });
 
-    app.listen(process.env.PORT || 8080, () => {
-      logger.info(`Skills Engine server running on port ${process.env.PORT || 8080}`);
-      logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    });
-  } catch (error) {
-    logger.error('Failed to start server:', error);
-    process.exit(1);
+  // Test database connection asynchronously (non-blocking)
+  if (pool) {
+    try {
+      await pool.query('SELECT NOW()');
+      logger.info('Database connection successful');
+    } catch (error) {
+      logger.warn('Database connection failed on startup, but server is running:', error);
+      logger.warn('Server will continue running - database may connect later');
+    }
+  } else {
+    logger.info('Server running without database connection');
   }
 };
 
@@ -92,13 +101,25 @@ startServer();
 // Graceful shutdown
 process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down gracefully');
-  await pool.end();
+  if (pool) {
+    try {
+      await pool.end();
+    } catch (error) {
+      logger.error('Error closing database pool:', error);
+    }
+  }
   process.exit(0);
 });
 
 process.on('SIGINT', async () => {
   logger.info('SIGINT received, shutting down gracefully');
-  await pool.end();
+  if (pool) {
+    try {
+      await pool.end();
+    } catch (error) {
+      logger.error('Error closing database pool:', error);
+    }
+  }
   process.exit(0);
 });
 

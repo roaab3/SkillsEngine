@@ -1,4 +1,4 @@
-import { pool } from '../config/database';
+import { getPool } from '../config/database';
 import { Skill, Competency } from '../types';
 import { DatabaseError, NotFoundError } from '../utils/errors';
 import logger from '../utils/logger';
@@ -6,6 +6,7 @@ import logger from '../utils/logger';
 export class TaxonomyRepository {
   async getCompetencyById(competencyId: string): Promise<Competency | null> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM competencies WHERE competency_id = $1',
         [competencyId]
@@ -19,6 +20,7 @@ export class TaxonomyRepository {
 
   async getCompetencyByName(competencyName: string): Promise<Competency | null> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM competencies WHERE LOWER(TRIM(competency_name)) = LOWER(TRIM($1))',
         [competencyName]
@@ -32,6 +34,7 @@ export class TaxonomyRepository {
 
   async getSkillById(skillId: string): Promise<Skill | null> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         'SELECT * FROM skills WHERE skill_id = $1',
         [skillId]
@@ -46,6 +49,7 @@ export class TaxonomyRepository {
   async getL1SkillsForCompetency(competencyId: string): Promise<Skill[]> {
     try {
       // Get skills that are linked to competency and have no parent in skill_subSkill
+      const pool = getPool();
       const result = await pool.query(
         `SELECT s.* FROM skills s
          INNER JOIN competency_skill cs ON s.skill_id = cs.skill_id
@@ -64,6 +68,7 @@ export class TaxonomyRepository {
 
   async getChildSkills(parentSkillId: string): Promise<Skill[]> {
     try {
+      const pool = getPool();
       const result = await pool.query(
         `SELECT s.* FROM skills s
          INNER JOIN skill_subSkill ss ON s.skill_id = ss.child_skill_id
@@ -80,6 +85,7 @@ export class TaxonomyRepository {
   async getMGSForCompetency(competencyId: string): Promise<Skill[]> {
     try {
       // Use the view for efficient MGS retrieval
+      const pool = getPool();
       const result = await pool.query(
         'SELECT skill_id, skill_name FROM competency_leaf_skills WHERE competency_id = $1',
         [competencyId]
