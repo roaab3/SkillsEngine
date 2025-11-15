@@ -14,13 +14,13 @@
     "production": {
       "variables": {
         "NODE_ENV": "production",
-        "PORT": "3000"
+        "PORT": "8080"
       }
     },
     "staging": {
       "variables": {
         "NODE_ENV": "staging",
-        "PORT": "3000"
+        "PORT": "8080"
       }
     }
   }
