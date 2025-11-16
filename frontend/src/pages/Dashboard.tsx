@@ -77,7 +77,11 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-emerald-100 text-sm mb-1">Career Path Relevance</p>
-              <p className="text-3xl font-bold">{profile.relevance_score.toFixed(1)}%</p>
+              <p className="text-3xl font-bold">
+                {typeof profile.relevance_score === 'number' 
+                  ? profile.relevance_score.toFixed(1) 
+                  : 'N/A'}%
+              </p>
             </div>
             <div className="text-right">
               <p className="text-emerald-100 text-sm mb-1">Career Goal</p>

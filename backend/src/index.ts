@@ -88,7 +88,7 @@ app.get('/', (req, res) => {
 
 // Start server
 const startServer = async () => {
-  const port = parseInt(process.env.PORT || '8080', 10);
+  const port = parseInt(process.env.PORT || '3001', 10);
   
   // Start server immediately - don't block on database connection
   // This ensures health endpoint is available for Railway healthchecks

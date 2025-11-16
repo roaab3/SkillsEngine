@@ -51,7 +51,9 @@ const ProfileDetail: React.FC = () => {
             {profile.user_name}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mb-8">
-            Relevance Score: {profile.relevance_score.toFixed(1)}%
+            Relevance Score: {typeof profile.relevance_score === 'number' 
+              ? profile.relevance_score.toFixed(1) 
+              : 'N/A'}%
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

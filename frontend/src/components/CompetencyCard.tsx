@@ -49,13 +49,17 @@ const CompetencyCard: React.FC<CompetencyCardProps> = ({ competency, onClick }) 
           <div className="flex items-center justify-between text-sm">
             <span className="text-slate-600 dark:text-slate-400">Coverage</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100">
-              {competency.coverage_percentage.toFixed(1)}%
+              {typeof competency.coverage_percentage === 'number' 
+                ? competency.coverage_percentage.toFixed(1) 
+                : '0.0'}%
             </span>
           </div>
           <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
             <div
               className={cn('h-full transition-all duration-500', proficiencyColor)}
-              style={{ width: `${competency.coverage_percentage}%` }}
+              style={{ width: `${typeof competency.coverage_percentage === 'number' 
+                ? competency.coverage_percentage 
+                : 0}%` }}
             />
           </div>
         </div>

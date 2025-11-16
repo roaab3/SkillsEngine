@@ -100,9 +100,22 @@ router.get(
       const mockDataPath = path.join(__dirname, '../../mockdata/userProfile.json');
       if (fs.existsSync(mockDataPath)) {
         const mockData = JSON.parse(fs.readFileSync(mockDataPath, 'utf-8'));
+        // Ensure numeric fields are numbers, not strings
+        const normalizedData = {
+          ...mockData,
+          relevance_score: typeof mockData.relevance_score === 'string' 
+            ? parseFloat(mockData.relevance_score) 
+            : mockData.relevance_score,
+          competencies: mockData.competencies?.map((comp: any) => ({
+            ...comp,
+            coverage_percentage: typeof comp.coverage_percentage === 'string' 
+              ? parseFloat(comp.coverage_percentage) 
+              : comp.coverage_percentage,
+          })) || [],
+        };
         res.json({
           success: true,
-          data: mockData,
+          data: normalizedData,
           timestamp: new Date().toISOString(),
         });
       } else {

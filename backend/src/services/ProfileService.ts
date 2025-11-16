@@ -199,7 +199,9 @@ export class ProfileService {
         competencies.push({
           competency_id: competency.competency_id,
           competency_name: competency.competency_name,
-          coverage_percentage: userComp.coverage_percentage,
+          coverage_percentage: typeof userComp.coverage_percentage === 'string' 
+            ? parseFloat(userComp.coverage_percentage) 
+            : (userComp.coverage_percentage ?? 0),
           proficiency_level: userComp.proficiency_level || 'BEGINNER',
           l1_skills: l1Skills,
           verified_skills_count: verifiedSkills.filter((vs) => vs.verified).length,
@@ -211,7 +213,9 @@ export class ProfileService {
         user_id: user.user_id,
         user_name: user.user_name,
         company_id: user.company_id,
-        relevance_score: user.relevance_score,
+        relevance_score: typeof user.relevance_score === 'string' 
+          ? parseFloat(user.relevance_score) 
+          : (user.relevance_score ?? 0),
         competencies,
         last_updated: user.updated_at,
       };
