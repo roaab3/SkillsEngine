@@ -25,10 +25,11 @@ Set the following environment variables in your Railway project:
 
 ### Optional Variables
 
-- `PORT` - Server port (default: 3000)
+- `PORT` - Server port (default: 8080, Railway may override)
 - `LOG_LEVEL` - Logging level (default: info)
 - `JWT_SECRET` - Secret for JWT tokens
 - `RATE_LIMIT_MAX_REQUESTS` - Max requests per window (default: 1000)
+- `GEMINI_API_KEY` - Google Gemini API key for AI features
 
 ## CORS Configuration
 
@@ -54,11 +55,27 @@ This allows:
 
 The backend exposes a health check endpoint at `/health` which Railway uses for monitoring.
 
-## Database Migrations
+## Database Configuration
+
+### SSL Configuration
+
+The backend automatically enables SSL for PostgreSQL connections in production:
+- SSL is enabled when `NODE_ENV=production`
+- Uses `ssl: { rejectUnauthorized: false }` for Railway PostgreSQL connections
+- This is required by Railway for secure database connections
+
+The SSL configuration is handled automatically in `src/config/database.ts`:
+```typescript
+ssl: process.env.NODE_ENV === 'production' 
+  ? { rejectUnauthorized: false } 
+  : false
+```
+
+### Database Migrations
 
 Run migrations manually after deployment:
 ```bash
-npm run migrate:prod
+npm run migrate:dev
 ```
 
 Or set up a migration script in Railway's deployment configuration.

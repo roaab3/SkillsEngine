@@ -10,9 +10,8 @@
 
 Skills Engine is deployed using:
 - **Backend:** Railway (Node.js + Express)
-- **Frontend:** Vercel (React)
-- **Database:** Supabase (PostgreSQL)
-- **CI/CD:** GitHub Actions
+- **Frontend:** Vercel (React + Vite)
+- **Database:** PostgreSQL (Railway)
 
 ---
 
@@ -22,53 +21,6 @@ Skills Engine is deployed using:
 - [ ] GitHub account with repository access
 - [ ] Railway account for backend hosting
 - [ ] Vercel account for frontend hosting
-- [ ] Supabase account for database hosting
-
-### Required Secrets
-
-Configure the following secrets in your GitHub repository:
-
-#### Railway Secrets
-- `RAILWAY_TOKEN` - Railway deployment token
-- `RAILWAY_BACKEND_SERVICE_ID` - Railway backend service ID
-- `RAILWAY_BACKEND_URL` - Railway backend URL (for health checks)
-
-#### Vercel Secrets
-- `VERCEL_TOKEN` - Vercel deployment token
-- `VERCEL_ORG_ID` - Vercel organization ID (optional)
-- `VERCEL_PROJECT_ID` - Vercel project ID (optional)
-
----
-
-## 🔧 GitHub Actions Setup
-
-### Workflows
-
-The project includes three GitHub Actions workflows:
-
-1. **CI Workflow** (`.github/workflows/ci.yml`)
-   - Runs on push to `main` or `develop` branches
-   - Runs on pull requests
-   - Tests backend and frontend
-   - Runs linters and type checks
-   - Security scans
-
-2. **Backend Deployment** (`.github/workflows/deploy-backend.yml`)
-   - Deploys backend to Railway
-   - Runs on push to `main` branch (backend changes only)
-   - Runs database migrations
-   - Performs health checks
-
-3. **Frontend Deployment** (`.github/workflows/deploy-frontend.yml`)
-   - Deploys frontend to Vercel
-   - Runs on push to `main` branch (frontend changes only)
-
-### Setting Up GitHub Secrets
-
-1. Go to your GitHub repository
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret**
-4. Add each secret listed above
 
 ---
 
@@ -95,47 +47,28 @@ The project includes three GitHub Actions workflows:
    ```env
    # Server
    NODE_ENV=production
-   PORT=3000
+   PORT=8080
    
-   # Database
-   DATABASE_URL=your_supabase_connection_string
+   # Database (PostgreSQL from Railway)
+   DATABASE_URL=postgresql://user:password@host:port/database
    
-   # Authentication
-   JWT_SECRET=your_jwt_secret
-   JWT_EXPIRES_IN=24h
+   # Frontend URL (for CORS)
+   FRONTEND_URL=https://your-frontend.vercel.app
    
-   # Microservice Tokens
-   DIRECTORY_SERVICE_TOKEN=your_token
-   ASSESSMENT_SERVICE_TOKEN=your_token
-   CONTENT_STUDIO_TOKEN=your_token
-   COURSE_BUILDER_TOKEN=your_token
-   LEARNER_AI_TOKEN=your_token
-   LEARNING_ANALYTICS_TOKEN=your_token
-   RAG_CHATBOT_TOKEN=your_token
-   
-   # Microservice URLs
-   DIRECTORY_SERVICE_URL=https://directory.educora.ai
-   ASSESSMENT_SERVICE_URL=https://assessment.educora.ai
-   CONTENT_STUDIO_URL=https://content-studio.educora.ai
-   COURSE_BUILDER_URL=https://course-builder.educora.ai
-   LEARNER_AI_URL=https://learner-ai.educora.ai
-   LEARNING_ANALYTICS_URL=https://learning-analytics.educora.ai
-   RAG_CHATBOT_URL=https://rag.educora.ai
-   
-   # Gemini API
+   # Gemini API (optional)
    GEMINI_API_KEY=your_gemini_api_key
-   
-   # Redis (if using)
-   REDIS_URL=your_redis_url
    ```
 
 3. **Configure Railway Service**
 
    The `railway.json` file in the backend directory configures:
-   - Build command: `npm ci && npm run build`
+   - Build command: `npm install && npm run build`
    - Start command: `npm start`
    - Health check path: `/health`
    - Restart policy: On failure
+
+   **Note:** Railway uses Docker (if `Dockerfile` exists) or NIXPACKS (if `railway.json` exists).
+   Currently, the project uses Docker for deployment.
 
 ### Manual Deployment
 
@@ -146,9 +79,9 @@ railway up
 
 ### Automated Deployment
 
-Deployment happens automatically via GitHub Actions when:
-- Code is pushed to `main` branch
-- Changes are made to `backend/` directory
+Deployment happens automatically when:
+- Code is pushed to `main` branch (if Railway is connected to GitHub)
+- Manual deployment via Railway CLI or dashboard
 
 ---
 
@@ -161,10 +94,11 @@ Deployment happens automatically via GitHub Actions when:
    - Click **Add New Project**
    - Import your GitHub repository
    - Configure project settings:
-     - **Framework Preset:** Next.js (or React)
+     - **Framework Preset:** Vite
      - **Root Directory:** `frontend`
      - **Build Command:** `npm run build`
-     - **Output Directory:** `.next` (for Next.js) or `dist` (for Vite)
+     - **Output Directory:** `dist`
+     - **Node.js Version:** 22.x (matches `package.json` engines)
 
 2. **Configure Environment Variables**
 
@@ -172,8 +106,8 @@ Deployment happens automatically via GitHub Actions when:
 
    ```env
    # API Configuration
-   NEXT_PUBLIC_API_URL=https://your-railway-backend.railway.app
-   NEXT_PUBLIC_API_VERSION=v1
+   VITE_API_URL=https://your-railway-backend.railway.app
+   VITE_APP_NAME=Skills Engine
    
    # Environment
    NODE_ENV=production
@@ -182,10 +116,11 @@ Deployment happens automatically via GitHub Actions when:
 3. **Configure Vercel Project**
 
    The `vercel.json` file in the frontend directory configures:
-   - Framework: Next.js
+   - Framework: Vite
    - Build command: `npm run build`
-   - Output directory: `.next`
+   - Output directory: `dist`
    - Install command: `npm ci --prefer-offline --no-audit`
+   - SPA rewrites for client-side routing
 
 ### Manual Deployment
 
@@ -196,36 +131,43 @@ vercel --prod
 
 ### Automated Deployment
 
-Deployment happens automatically via GitHub Actions when:
-- Code is pushed to `main` branch
-- Changes are made to `frontend/` directory
+Deployment happens automatically when:
+- Code is pushed to `main` branch (if Vercel is connected to GitHub)
+- Manual deployment via Vercel CLI or dashboard
 
 ---
 
-## 🗄️ Database Setup (Supabase)
+## 🗄️ Database Setup (PostgreSQL on Railway)
 
 ### Initial Setup
 
-1. **Create Supabase Project**
-   - Go to [Supabase Dashboard](https://supabase.com)
-   - Create new project
-   - Note the connection string
+1. **Create PostgreSQL Service in Railway**
+   - Go to Railway Dashboard
+   - Add a new PostgreSQL service
+   - Railway will automatically provide the `DATABASE_URL` connection string
 
-2. **Run Migrations**
+2. **Configure Database Connection**
+
+   The backend automatically:
+   - Connects to PostgreSQL using `DATABASE_URL` environment variable
+   - Enables SSL for production connections (required by Railway)
+   - Uses connection pooling for better performance
+
+3. **Run Migrations (if needed)**
 
    ```bash
    # Set database URL
-   export DATABASE_URL=your_supabase_connection_string
+   export DATABASE_URL=postgresql://user:password@host:port/database
    
-   # Run migrations
+   # Run migrations (if migration scripts exist)
    cd backend
-   npm run migrate
+   npm run migrate:dev
    ```
 
-3. **Seed Database (Optional)**
+4. **Seed Database (Optional)**
 
    ```bash
-   npm run seed
+   npm run seed:dev
    ```
 
 ---
@@ -345,13 +287,14 @@ railway rollback
 
 **Database Connection Issues:**
 - Verify `DATABASE_URL` is correct
-- Check Supabase connection settings
+- Check Railway PostgreSQL connection settings
 - Ensure database is accessible
+- Verify SSL is enabled for production (automatic in code)
 
-**Token Authentication Failures:**
-- Verify all microservice tokens are set
-- Check token format and validity
-- Ensure microservice URLs are correct
+**CORS Issues:**
+- Verify `FRONTEND_URL` is set correctly
+- Check that Vercel URL matches the allowed origin
+- Ensure CORS middleware is configured before other middleware
 
 ### Frontend Deployment Issues
 
@@ -361,9 +304,16 @@ railway rollback
 - Ensure all dependencies are installed
 
 **API Connection Issues:**
-- Verify `NEXT_PUBLIC_API_URL` is correct
-- Check CORS settings
+- Verify `VITE_API_URL` is correct
+- Check CORS settings on backend
 - Ensure backend is accessible
+- Check browser console for CORS errors
+
+**TypeScript Build Errors:**
+- Verify `tsconfig.json` has `jsx: "react-jsx"`
+- Ensure `@types/react` and `@types/react-dom` are installed
+- Check that `vite-env.d.ts` includes React type references
+- Verify Node.js version matches `engines.node` in `package.json` (22.x)
 
 ---
 
@@ -387,7 +337,7 @@ railway rollback
 - [ ] Verify backend is accessible
 - [ ] Verify frontend is accessible
 - [ ] Test API endpoints
-- [ ] Test microservice integrations
+- [ ] Test CORS configuration
 - [ ] Monitor logs for errors
 
 ---
@@ -396,11 +346,13 @@ railway rollback
 
 - [Railway Documentation](https://docs.railway.app)
 - [Vercel Documentation](https://vercel.com/docs)
-- [Supabase Documentation](https://supabase.com/docs)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Vite Documentation](https://vite.dev)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs)
 
 ---
 
-**Last Updated:** 2025-01-27
+**Last Updated:** 2025-01-27  
+**Framework:** Vite + React (Frontend), Express + TypeScript (Backend)  
+**Database:** PostgreSQL (Railway)
 
 

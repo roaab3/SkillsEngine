@@ -26,14 +26,13 @@ docker build -t skills-engine-backend ./backend
 # Which executes the Dockerfile steps:
 FROM node:18-alpine
 WORKDIR /app
-COPY package.json ./
-RUN npm install --omit=dev
-COPY package-lock.json* ./
+COPY package.json package-lock.json* ./
+RUN npm install
 COPY src ./src
 COPY tsconfig.json ./
-COPY package.json ./
 RUN npm run build
-EXPOSE 3000
+RUN npm prune --omit=dev
+EXPOSE 8080
 ```
 
 ### 3. **Deploy Phase**
@@ -41,7 +40,7 @@ Railway starts the container with:
 
 ```bash
 # Railway runs:
-docker run -p $PORT:3000 skills-engine-backend
+docker run -p $PORT:8080 skills-engine-backend
 
 # Which executes:
 CMD ["npm", "start"]
@@ -65,11 +64,12 @@ docker build -t skills-engine-backend .
 
 ```bash
 # Run with environment variables
-docker run -p 3000:3000 \
+docker run -p 8080:8080 \
   -e DATABASE_URL="your-database-url" \
   -e GEMINI_API_KEY="your-api-key" \
   -e NODE_ENV="production" \
-  -e PORT=3000 \
+  -e PORT=8080 \
+  -e FRONTEND_URL="https://your-frontend.vercel.app" \
   skills-engine-backend
 ```
 
@@ -77,13 +77,13 @@ docker run -p 3000:3000 \
 
 ```bash
 # Create a .env file with your variables
-docker run -p 3000:3000 --env-file .env skills-engine-backend
+docker run -p 8080:8080 --env-file .env skills-engine-backend
 ```
 
 ### Run in detached mode (background)
 
 ```bash
-docker run -d -p 3000:3000 --env-file .env --name skills-engine skills-engine-backend
+docker run -d -p 8080:8080 --env-file .env --name skills-engine skills-engine-backend
 ```
 
 ### View logs
@@ -138,16 +138,20 @@ docker rm skills-engine
 ### In Dockerfile:
 
 ```dockerfile
-# Step 1: Install dependencies (production only)
-RUN npm install --omit=dev
-# This installs only production dependencies (no devDependencies)
+# Step 1: Install ALL dependencies (including devDependencies for TypeScript build)
+RUN npm install
+# This installs both production and dev dependencies needed for building
 
 # Step 2: Build TypeScript to JavaScript
 RUN npm run build
 # This runs: tsc (TypeScript compiler)
 # Output: dist/index.js and other compiled files
 
-# Step 3: Start the server
+# Step 3: Remove dev dependencies to reduce image size
+RUN npm prune --omit=dev
+# This removes devDependencies after build is complete
+
+# Step 4: Start the server
 CMD ["npm", "start"]
 # This runs: node dist/index.js
 ```
@@ -179,9 +183,14 @@ Railway automatically injects environment variables into the Docker container:
 - [ ] `Dockerfile` exists in `backend/` directory
 - [ ] `package.json` has `build` and `start` scripts
 - [ ] `tsconfig.json` excludes test files
-- [ ] Environment variables set in Railway
+- [ ] Environment variables set in Railway:
+  - [ ] `NODE_ENV=production`
+  - [ ] `DATABASE_URL` (PostgreSQL connection string)
+  - [ ] `FRONTEND_URL` (for CORS configuration)
+  - [ ] `PORT` (optional, Railway may override)
 - [ ] Database URL configured
-- [ ] CORS configured (currently allows all origins)
+- [ ] CORS configured (allows specific Vercel URLs and `*.vercel.app` wildcard)
+- [ ] SSL enabled for database (automatic in production)
 
 ---
 
@@ -197,15 +206,21 @@ Railway automatically injects environment variables into the Docker container:
 ```bash
 cd backend
 docker build -t test-build .
-docker run -p 3000:3000 test-build
+docker run -p 8080:8080 test-build
 ```
 
 ### Common Issues:
 
 1. **Build fails** → Check TypeScript errors, missing dependencies
 2. **Container won't start** → Check `npm start` command, port configuration
-3. **Database connection fails** → Check `DATABASE_URL` environment variable
-4. **CORS errors** → Check CORS configuration in `src/index.ts`
+3. **Database connection fails** → 
+   - Check `DATABASE_URL` environment variable
+   - Verify SSL is enabled (automatic in production)
+   - Check Railway PostgreSQL service is running
+4. **CORS errors** → 
+   - Check CORS configuration in `src/index.ts`
+   - Verify `FRONTEND_URL` matches your Vercel deployment URL
+   - Ensure CORS middleware is configured before other middleware
 
 ---
 
@@ -224,6 +239,6 @@ docker run -p 3000:3000 test-build
 docker build -t skills-engine-backend ./backend
 
 # Run
-docker run -p 3000:3000 --env-file .env skills-engine-backend
+docker run -p 8080:8080 --env-file .env skills-engine-backend
 ```
 
