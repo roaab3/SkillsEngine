@@ -41,7 +41,7 @@ logger.info(`DATABASE_URL exists: ${!!process.env.DATABASE_URL}`);
 
 if (nodeEnv === 'production') {
   logger.info('CORS Configuration: PRODUCTION mode');
-  logger.info(`Allowed origin: ${frontendUrl}`);
+  logger.info(`Allowed origins: ${frontendUrl} or any *.vercel.app domain`);
 } else {
   logger.info('CORS Configuration: DEVELOPMENT mode - allowing all origins');
 }
@@ -54,11 +54,15 @@ const corsOptions = {
     }
 
     if (nodeEnv === 'production') {
-      // Production: Check if origin matches allowed frontend URL
-      if (origin === frontendUrl) {
+      // Production: Allow specific frontend URL and all Vercel preview deployments
+      const isAllowedFrontend = origin === frontendUrl;
+      const isVercelPreview = /^https:\/\/.*\.vercel\.app$/.test(origin);
+      
+      if (isAllowedFrontend || isVercelPreview) {
+        logger.info(`CORS: Allowing origin ${origin}`);
         return callback(null, true);
       } else {
-        logger.warn(`CORS: Blocked origin ${origin}. Allowed: ${frontendUrl}`);
+        logger.warn(`CORS: Blocked origin ${origin}. Allowed: ${frontendUrl} or *.vercel.app`);
         return callback(new Error('Not allowed by CORS'));
       }
     } else {
