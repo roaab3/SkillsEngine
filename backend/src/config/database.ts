@@ -13,7 +13,17 @@ if (process.env.DATABASE_URL) {
     max: parseInt(process.env.DB_POOL_MAX || '20', 10),
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
+    // Railway requires SSL for PostgreSQL connections
+    ssl: process.env.NODE_ENV === 'production' 
+      ? { rejectUnauthorized: false } 
+      : false,
   };
+
+  logger.info('Database configuration:', {
+    hasConnectionString: !!process.env.DATABASE_URL,
+    nodeEnv: process.env.NODE_ENV || 'development',
+    sslEnabled: process.env.NODE_ENV === 'production',
+  });
 
   pool = new Pool(poolConfig);
 

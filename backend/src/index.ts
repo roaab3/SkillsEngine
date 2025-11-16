@@ -30,60 +30,43 @@ const app: Application = express();
 // CORS configuration
 // Must be configured BEFORE other middleware to handle preflight requests
 
-// Parse allowed origins from environment variable
-const getCorsOrigins = (): (string | boolean | RegExp)[] => {
-  const nodeEnv = process.env.NODE_ENV || 'development';
-  const frontendUrl = process.env.FRONTEND_URL;
-  
-  // Default origins for development
-  const defaultOrigins = [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:5173',
-  ];
-  
-  // In production, use FRONTEND_URL or allow all Vercel domains
-  if (nodeEnv === 'production') {
-    if (frontendUrl) {
-      // Split comma-separated URLs and support wildcards
-      const origins = frontendUrl.split(',').map(url => url.trim());
-      const processedOrigins: (string | RegExp)[] = [];
-      
-      origins.forEach(origin => {
-        if (origin.includes('*')) {
-          // Convert wildcard pattern to regex
-          const pattern = origin.replace(/\*/g, '[^/]*').replace(/\./g, '\\.');
-          processedOrigins.push(new RegExp(`^https://${pattern}$`));
-        } else {
-          processedOrigins.push(origin);
-        }
-      });
-      
-      // Always allow all Vercel preview deployments
-      processedOrigins.push(/^https:\/\/.*\.vercel\.app$/);
-      
-      logger.info('CORS Configuration:', { 
-        allowedOrigins: processedOrigins,
-        nodeEnv,
-        frontendUrl 
-      });
-      
-      return processedOrigins;
-    } else {
-      // If no FRONTEND_URL set, allow all Vercel domains
-      logger.warn('FRONTEND_URL not set in production, allowing all Vercel domains');
-      return [/^https:\/\/.*\.vercel\.app$/];
-    }
-  }
-  
-  // Development: allow localhost and all origins
-  logger.info('CORS Configuration: Development mode - allowing all origins');
-  return [true, ...defaultOrigins];
-};
+const nodeEnv = process.env.NODE_ENV || 'development';
+const frontendUrl = process.env.FRONTEND_URL || 'https://skills-engine-psjm-fwddomzeu-roaas-projects-70865844.vercel.app';
+const corsMode = nodeEnv === 'production' ? 'production' : 'development';
+
+// Log environment detection and configuration
+logger.info(`NODE_ENV detected: ${nodeEnv}`);
+logger.info(`CORS mode: ${corsMode}`);
+logger.info(`DATABASE_URL exists: ${!!process.env.DATABASE_URL}`);
+
+if (nodeEnv === 'production') {
+  logger.info('CORS Configuration: PRODUCTION mode');
+  logger.info(`Allowed origin: ${frontendUrl}`);
+} else {
+  logger.info('CORS Configuration: DEVELOPMENT mode - allowing all origins');
+}
 
 const corsOptions = {
-  origin: getCorsOrigins(),
-  credentials: true,
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (nodeEnv === 'production') {
+      // Production: Check if origin matches allowed frontend URL
+      if (origin === frontendUrl) {
+        return callback(null, true);
+      } else {
+        logger.warn(`CORS: Blocked origin ${origin}. Allowed: ${frontendUrl}`);
+        return callback(new Error('Not allowed by CORS'));
+      }
+    } else {
+      // Development: Allow all origins
+      return callback(null, true);
+    }
+  },
+  credentials: nodeEnv === 'production', // Only allow credentials in production
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
