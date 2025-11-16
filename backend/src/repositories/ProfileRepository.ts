@@ -11,7 +11,16 @@ export class ProfileRepository {
         'SELECT * FROM users WHERE user_id = $1',
         [userId]
       );
-      return result.rows[0] || null;
+      if (!result.rows[0]) return null;
+      
+      const user = result.rows[0];
+      // Convert numeric strings to numbers (PostgreSQL returns numeric as strings)
+      return {
+        ...user,
+        relevance_score: typeof user.relevance_score === 'string' 
+          ? parseFloat(user.relevance_score) 
+          : (user.relevance_score ?? 0),
+      };
     } catch (error) {
       logger.error('Error getting user by ID:', error);
       throw new DatabaseError('Failed to get user', error as Error);
@@ -94,7 +103,13 @@ export class ProfileRepository {
         'SELECT * FROM userCompetency WHERE user_id = $1',
         [userId]
       );
-      return result.rows;
+      // Convert numeric strings to numbers (PostgreSQL returns numeric as strings)
+      return result.rows.map(row => ({
+        ...row,
+        coverage_percentage: typeof row.coverage_percentage === 'string' 
+          ? parseFloat(row.coverage_percentage) 
+          : (row.coverage_percentage ?? 0),
+      }));
     } catch (error) {
       logger.error('Error getting user competencies:', error);
       throw new DatabaseError('Failed to get user competencies', error as Error);

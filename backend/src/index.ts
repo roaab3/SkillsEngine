@@ -27,14 +27,62 @@ dotenv.config();
 
 const app: Application = express();
 
-// CORS configuration - Allow all origins (for development/testing)
-// WARNING: This allows requests from any origin. For production, restrict to specific origins.
+// CORS configuration
 // Must be configured BEFORE other middleware to handle preflight requests
 
-logger.info('CORS Configuration: Allowing all origins');
+// Parse allowed origins from environment variable
+const getCorsOrigins = (): (string | boolean | RegExp)[] => {
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  const frontendUrl = process.env.FRONTEND_URL;
+  
+  // Default origins for development
+  const defaultOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:5173',
+  ];
+  
+  // In production, use FRONTEND_URL or allow all Vercel domains
+  if (nodeEnv === 'production') {
+    if (frontendUrl) {
+      // Split comma-separated URLs and support wildcards
+      const origins = frontendUrl.split(',').map(url => url.trim());
+      const processedOrigins: (string | RegExp)[] = [];
+      
+      origins.forEach(origin => {
+        if (origin.includes('*')) {
+          // Convert wildcard pattern to regex
+          const pattern = origin.replace(/\*/g, '[^/]*').replace(/\./g, '\\.');
+          processedOrigins.push(new RegExp(`^https://${pattern}$`));
+        } else {
+          processedOrigins.push(origin);
+        }
+      });
+      
+      // Always allow all Vercel preview deployments
+      processedOrigins.push(/^https:\/\/.*\.vercel\.app$/);
+      
+      logger.info('CORS Configuration:', { 
+        allowedOrigins: processedOrigins,
+        nodeEnv,
+        frontendUrl 
+      });
+      
+      return processedOrigins;
+    } else {
+      // If no FRONTEND_URL set, allow all Vercel domains
+      logger.warn('FRONTEND_URL not set in production, allowing all Vercel domains');
+      return [/^https:\/\/.*\.vercel\.app$/];
+    }
+  }
+  
+  // Development: allow localhost and all origins
+  logger.info('CORS Configuration: Development mode - allowing all origins');
+  return [true, ...defaultOrigins];
+};
 
 const corsOptions = {
-  origin: true, // Allow all origins
+  origin: getCorsOrigins(),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-User-Id'],
