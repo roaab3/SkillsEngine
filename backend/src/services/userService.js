@@ -195,20 +195,9 @@ class UserService {
    * @returns {Promise<Object>}
    */
   async getUserProfile(userId) {
-    const user = await userRepository.findById(userId);
-   /*  if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
-    }
-    
-  console.log('[UserService.getUserProfile] Loaded user:', {
-    userId,
-    raw: user,
-    json: user.toJSON(),
-  });
-    return {
-      user: user.toJSON()
-    }; */
-    console.log('[UserService.getUserProfile] TEMP stub for userId:', userId);
+    // TEMP: Completely stubbed response that does NOT touch the database,
+    // so we can verify frontend-backend connectivity independently of DB config.
+    console.log('[UserService.getUserProfile] TEMP stub for userId (no DB):', userId);
 
     return {
       user: {
