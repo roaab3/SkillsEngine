@@ -8,13 +8,17 @@ const competencyService = require('../services/competencyService');
 
 class CompetencyController {
   /**
-   * Get all parent competencies
-   * GET /api/competencies/parents
+   * Get all competencies
+   * GET /api/competencies
    */
-  async getParentCompetencies(req, res) {
+  async getAllCompetencies(req, res) {
     try {
-      const competencies = await competencyService.getParentCompetencies();
-      res.json({ success: true, data: competencies });
+      const options = {
+        limit: parseInt(req.query.limit) || 100,
+        offset: parseInt(req.query.offset) || 0
+      };
+      const competencies = await competencyService.getAllCompetencies(options);
+      res.json({ success: true, data: competencies, count: competencies.length });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
     }
@@ -126,6 +130,23 @@ class CompetencyController {
       res.json({ success: true, message: 'Skills linked successfully' });
     } catch (error) {
       res.status(400).json({ success: false, error: error.message });
+    }
+  }
+
+  /**
+   * Get skills linked to competency
+    * GET /api/competencies/:competencyId/skills
+   */
+  async getLinkedSkills(req, res) {
+    try {
+      const { competencyId } = req.params;
+      const skills = await competencyService.getLinkedSkills(competencyId);
+      res.json({ success: true, data: skills });
+    } catch (error) {
+      if (error.message.includes('not found')) {
+        return res.status(404).json({ success: false, error: error.message });
+      }
+      res.status(500).json({ success: false, error: error.message });
     }
   }
 

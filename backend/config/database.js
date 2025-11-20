@@ -24,7 +24,8 @@ pool.on('connect', () => {
 
 pool.on('error', (err) => {
   console.error('❌ Unexpected error on idle client', err);
-  process.exit(-1);
+  // Don't exit process - let the application handle it gracefully
+  // process.exit(-1);
 });
 
 /**
@@ -42,6 +43,13 @@ const query = async (text, params) => {
     return res;
   } catch (error) {
     console.error('Database query error', { text, error: error.message });
+    // If it's a connection error, provide helpful message
+    if (error.code === 'ECONNREFUSED' || error.message.includes('timeout')) {
+      console.error('💡 Database connection issue. Check:');
+      console.error('   1. DATABASE_URL in .env is correct');
+      console.error('   2. Supabase project is active');
+      console.error('   3. Network connectivity');
+    }
     throw error;
   }
 };

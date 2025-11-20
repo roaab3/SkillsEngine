@@ -9,6 +9,10 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
+// Rate limiting
+const { apiLimiter } = require('./middleware/rateLimiter');
+app.use('/api', apiLimiter);
+
 // Health check endpoint (required by Railway)
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -66,6 +70,11 @@ app.listen(PORT, () => {
   console.log(`📚 API endpoints:`);
   console.log(`   - Skills: http://localhost:${PORT}/api/skills`);
   console.log(`   - Competencies: http://localhost:${PORT}/api/competencies`);
+  console.log(`   - User: http://localhost:${PORT}/api/user`);
+  console.log(`\n💡 If you see database connection errors, check:`);
+  console.log(`   1. DATABASE_URL in backend/.env`);
+  console.log(`   2. Supabase project is active`);
+  console.log(`   3. Run: node check-connection.js`);
 });
 
 module.exports = app;

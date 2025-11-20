@@ -8,6 +8,20 @@ const competencyRepository = require('../repositories/competencyRepository');
 
 class CompetencySubCompetencyController {
   /**
+   * Get all parent competencies
+   * GET /api/competency-subcompetency/parents
+   */
+  async getAllParents(req, res) {
+    try {
+      const parents = await competencyRepository.findParentCompetencies();
+      const data = parents.map(parent => (parent.toJSON ? parent.toJSON() : parent));
+      res.json({ success: true, data });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  /**
    * Get direct sub-competencies of a parent
    * GET /api/competency-subcompetency/:parentCompetencyId
    */
@@ -72,11 +86,17 @@ class CompetencySubCompetencyController {
 
   /**
    * Remove child competency link
-   * DELETE /api/competency-subcompetency/:parentCompetencyId/:childCompetencyId
+   * DELETE /api/competency-subcompetency/:parentCompetencyId
+   * Body: { child_competency_id: "string" }
    */
   async removeSubCompetency(req, res) {
     try {
-      const { parentCompetencyId, childCompetencyId } = req.params;
+      const { parentCompetencyId } = req.params;
+      const { child_competency_id: childCompetencyId } = req.body;
+
+      if (!childCompetencyId) {
+        return res.status(400).json({ success: false, error: 'child_competency_id is required in body' });
+      }
 
       const parent = await competencyRepository.findById(parentCompetencyId);
       if (!parent) {

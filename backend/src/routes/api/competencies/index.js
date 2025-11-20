@@ -11,20 +11,13 @@ const { controller: importController, upload } = require('../../../controllers/i
 router.post('/import', upload, importController.importCSV.bind(importController));
 router.post('/import/validate', upload, importController.validateCSV.bind(importController));
 
-// Get all parent competencies
-router.get('/parents', competencyController.getParentCompetencies.bind(competencyController));
+// Get all competencies (must be before /:competencyId route)
+router.get('/', competencyController.getAllCompetencies.bind(competencyController));
 
-// Search competencies
+// Search competencies by name (case-insensitive, ?q=pattern)
 router.get('/search', competencyController.searchCompetencies.bind(competencyController));
 
-// Get competency hierarchy
-router.get('/:competencyId/hierarchy', competencyController.getCompetencyHierarchy.bind(competencyController));
 
-// Get required MGS
-router.get('/:competencyId/mgs', competencyController.getRequiredMGS.bind(competencyController));
-
-// Link skills to competency
-router.post('/:competencyId/skills', competencyController.linkSkills.bind(competencyController));
 
 // Get competency by ID
 router.get('/:competencyId', competencyController.getCompetencyById.bind(competencyController));

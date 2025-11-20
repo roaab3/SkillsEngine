@@ -65,7 +65,7 @@ export const api = {
 
   // Competencies
   getCompetencies: async () => {
-    const response = await apiClient.get('/api/competencies/parents');
+    const response = await apiClient.get('/api/competency-subcompetency/parents');
     return response.data;
   },
 

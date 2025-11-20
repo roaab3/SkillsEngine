@@ -93,6 +93,21 @@ class CompetencyService {
   }
 
   /**
+   * Get all skills directly linked to a competency
+   * @param {string} competencyId - Competency ID
+   * @returns {Promise<Array>}
+   */
+  async getLinkedSkills(competencyId) {
+    const competency = await competencyRepository.findById(competencyId);
+    if (!competency) {
+      throw new Error(`Competency with ID ${competencyId} not found`);
+    }
+
+    const linked = await competencyRepository.getLinkedSkills(competencyId);
+    return linked.map(skill => (skill.toJSON ? skill.toJSON() : skill));
+  }
+
+  /**
    * Unlink a skill from a competency
    * @param {string} competencyId - Competency ID
    * @param {string} skillId - Skill ID
@@ -258,6 +273,15 @@ class CompetencyService {
    */
   async getCompetencyById(competencyId) {
     return await competencyRepository.findById(competencyId);
+  }
+
+  /**
+   * Get all competencies
+   * @param {Object} options - Query options (limit, offset)
+   * @returns {Promise<Competency[]>}
+   */
+  async getAllCompetencies(options = {}) {
+    return await competencyRepository.findAll(options);
   }
 }
 
