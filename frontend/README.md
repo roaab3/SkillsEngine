@@ -35,7 +35,7 @@ npm start
 Create `.env.local` file:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ```
 
 ## Features

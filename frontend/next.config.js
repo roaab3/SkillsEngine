@@ -7,6 +7,10 @@ const nextConfig = {
   images: {
     domains: [],
   },
+  // Expose API base URL to the browser
+  env: {
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  },
   // Enable ES modules
   experimental: {
     appDir: false, // Use pages directory

@@ -7,7 +7,8 @@
 
 const http = require('http');
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+// Use the same API base URL as the frontend app
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const colors = {
   reset: '\x1b[0m',
@@ -135,7 +136,7 @@ async function checkBackendConnection() {
         log(`     💡 Backend is not running on ${API_BASE_URL}`, 'yellow');
         log(`     💡 Start backend with: cd backend && npm run dev`, 'yellow');
       } else if (error.code === 'ENOTFOUND') {
-        log(`     💡 Cannot resolve hostname. Check NEXT_PUBLIC_API_URL`, 'yellow');
+        log(`     💡 Cannot resolve hostname. Check NEXT_PUBLIC_API_BASE_URL`, 'yellow');
       }
       
       failed++;

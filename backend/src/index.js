@@ -5,8 +5,53 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+// CORS Configuration
+const FRONTEND_URL = process.env.FRONTEND_URL;
+let corsOptions = {
+  origin: true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Configure CORS for production with specific frontend URLs
+if (FRONTEND_URL && process.env.NODE_ENV === 'production') {
+  const allowedOrigins = FRONTEND_URL.split(',').map(url => url.trim());
+  
+  corsOptions = {
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin matches any allowed origin
+      const isAllowed = allowedOrigins.some(allowedOrigin => {
+        // Support wildcard patterns like https://*.vercel.app
+        if (allowedOrigin.includes('*')) {
+          const pattern = allowedOrigin.replace('*', '.*');
+          const regex = new RegExp(`^${pattern}$`);
+          return regex.test(origin);
+        }
+        return origin === allowedOrigin;
+      });
+      
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  };
+  
+  console.log(`🔒 CORS configured for: ${allowedOrigins.join(', ')}`);
+} else {
+  console.log(`⚠️  CORS: Allowing all origins (development mode or FRONTEND_URL not set)`);
+}
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Rate limiting
