@@ -9,10 +9,6 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
-// Rate limiting
-const { apiLimiter } = require('./middleware/rateLimiter');
-app.use('/api', apiLimiter);
-
 // Health check endpoint (required by Railway)
 app.get('/health', (req, res) => {
   res.status(200).json({
