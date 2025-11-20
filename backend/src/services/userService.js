@@ -199,7 +199,12 @@ class UserService {
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
-
+    
+  console.log('[UserService.getUserProfile] Loaded user:', {
+    userId,
+    raw: user,
+    json: user.toJSON(),
+  });
     return {
       user: user.toJSON()
     };
