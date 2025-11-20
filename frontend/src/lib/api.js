@@ -3,8 +3,15 @@
  */
 
 import axios from 'axios';
+import mockUserProfile from '../../public/mockdata/userProfile.json';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
+
+const buildMockUserProfile = (userId) => ({
+  ...mockUserProfile,
+  user_id: userId || mockUserProfile.user_id,
+});
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -40,8 +47,20 @@ apiClient.interceptors.response.use(
 export const api = {
   // User Profile
   getUserProfile: async (userId) => {
-    const response = await apiClient.get(`/api/user/${userId}/profile`);
-    return response.data;
+    if (USE_MOCK_DATA) {
+      return buildMockUserProfile(userId);
+    }
+
+    try {
+      const response = await apiClient.get(`/api/user/${userId}/profile`);
+      return response.data;
+    } catch (error) {
+      console.warn(
+        '[API:getUserProfile] Failed to fetch from backend, falling back to mock data:',
+        error?.message || error
+      );
+      return buildMockUserProfile(userId);
+    }
   },
 
   // Competencies

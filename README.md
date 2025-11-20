@@ -236,6 +236,8 @@ GEMINI_DEEP_SEARCH_MODEL=gemini-1.5-pro
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8080
+# Optional: Set to true to force the frontend to use mock data from public/mockdata
+NEXT_PUBLIC_USE_MOCK_DATA=false
 ```
 
 ## 📖 Documentation
