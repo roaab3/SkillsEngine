@@ -1,0 +1,59 @@
+/**
+ * Assessment MS API Client
+ * 
+ * Handles communication with Assessment MS with fallback to mock data.
+ */
+
+const { createAPIClient } = require('../utils/apiClient');
+
+const assessmentClient = createAPIClient({
+  baseURL: process.env.ASSESSMENT_SERVICE_URL || 'http://localhost:3002',
+  mockFile: 'assessment_ms_exam_results.json',
+  apiName: 'Assessment MS'
+});
+
+/**
+ * Request baseline exam for user
+ * @param {string} userId - User ID
+ * @param {Array} mgsList - List of MGS to test
+ * @returns {Promise<Object>} Exam request response
+ */
+async function requestBaselineExam(userId, mgsList) {
+  try {
+    const response = await assessmentClient.post('/api/exams/baseline', {
+      user_id: userId,
+      skills: mgsList
+    }, {
+      Authorization: `Bearer ${process.env.ASSESSMENT_SERVICE_TOKEN || ''}`
+    });
+
+    return response;
+  } catch (error) {
+    // Fallback is handled by apiClient
+    throw error;
+  }
+}
+
+/**
+ * Get exam results from Assessment MS
+ * @param {string} examId - Exam ID
+ * @returns {Promise<Object>} Exam results
+ */
+async function getExamResults(examId) {
+  try {
+    const response = await assessmentClient.get(`/api/exams/${examId}/results`, {
+      Authorization: `Bearer ${process.env.ASSESSMENT_SERVICE_TOKEN || ''}`
+    });
+
+    return response;
+  } catch (error) {
+    // Fallback is handled by apiClient
+    throw error;
+  }
+}
+
+module.exports = {
+  requestBaselineExam,
+  getExamResults
+};
+

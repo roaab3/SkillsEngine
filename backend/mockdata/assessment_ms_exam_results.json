@@ -1,0 +1,31 @@
+{
+  "status": "success",
+  "message": "Exam results processed",
+  "data": {
+    "user_id": "user_001",
+    "exam_type": "baseline",
+    "exam_results": {
+      "verified_skills": [
+        {
+          "skill_id": "skill_js_001",
+          "skill_name": "JavaScript",
+          "score": 85,
+          "passed": true
+        },
+        {
+          "skill_id": "skill_js_002",
+          "skill_name": "React",
+          "score": 78,
+          "passed": true
+        },
+        {
+          "skill_id": "skill_js_003",
+          "skill_name": "Node.js",
+          "score": 65,
+          "passed": false
+        }
+      ]
+    }
+  }
+}
+

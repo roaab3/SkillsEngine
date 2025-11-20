@@ -1,69 +1,52 @@
-# Mock Data
+# Mock Data Directory
 
-This directory contains mock data files for development and testing.
+This directory contains realistic JSON mock data files for all external microservice APIs.
+
+## Purpose
+
+When external APIs are unavailable (timeout, 5xx errors, network issues), the system automatically falls back to these mock files to ensure continued operation.
 
 ## Files
 
-- `users.json` - Sample user data
-- `competencies.json` - Sample competency data
-- `skills.json` - Sample skill data
-- `userProfile.json` - Complete user profile with competencies and skills
-- `seed_mockdata.sql` - SQL script to load all mock data into Supabase
+- **users.json** - Mock user data
+- **skills.json** - Mock skills taxonomy data
+- **competencies.json** - Mock competencies taxonomy data
+- **directory_ms_response.json** - Mock response from Directory MS
+- **assessment_ms_exam_results.json** - Mock exam results from Assessment MS
+- **course_builder_response.json** - Mock response from Course Builder MS
+- **content_studio_response.json** - Mock response from Content Studio MS
+- **learner_ai_response.json** - Mock gap analysis response from Learner AI MS
+- **analytics_response.json** - Mock user profile data for Learning Analytics MS
+- **rag_response.json** - Mock search results for RAG/Chatbot MS
 
-## Loading Data into Supabase
+## How It Works
 
-To load the mock data into your Supabase database:
+1. **API Client** (`backend/src/utils/apiClient.js`) attempts to call the real API
+2. If the call fails (timeout, 5xx, network error), it automatically loads the corresponding mock file
+3. All fallbacks are logged to `customize/change_log.json` with `change_type: "api_fallback"`
 
-### 1. Via Supabase SQL Editor (Recommended)
-   - Go to your Supabase project dashboard
-   - Navigate to **SQL Editor**
-   - Copy and paste the contents of `seed_mockdata.sql`
-   - Click **Run** to execute the script
+## Usage
 
-### 2. Via psql command line
-   ```bash
-   psql -h your-supabase-host -U postgres -d postgres -f backend/mockdata/seed_mockdata.sql
-   ```
+Mock data is automatically used when:
+- API connection is refused (`ECONNREFUSED`)
+- Request times out (`ETIMEDOUT`)
+- DNS lookup fails (`ENOTFOUND`)
+- Server returns 5xx error
+- Network error occurs
 
-### 3. Via Railway CLI
-   ```bash
-   railway run psql < backend/mockdata/seed_mockdata.sql
-   ```
+## Updating Mock Data
 
-## Data Structure
+To update mock data:
+1. Edit the corresponding JSON file
+2. Ensure the structure matches the expected API response format
+3. Test with the API client to verify fallback behavior
 
-The seed script will insert:
-- **2 users** (user_123, user_456)
-- **5 competencies** (comp_123, comp_456, comp_789, comp_1, comp_2)
-- **10 skills** (skill_123, skill_456, skill_789, skill_101, skill_102, skill_1-5)
-- **User competency relationships** with verified skills
-- **Hierarchy relationships** (parent-child for competencies and skills)
-- **Competency-skill mappings**
+## Logging
 
-## Notes
+All API fallbacks are automatically logged to `customize/change_log.json` with:
+- `change_type: "api_fallback"`
+- Timestamp
+- API name
+- Error message
+- Mock file used
 
-- The script uses `ON CONFLICT` clauses to handle duplicate inserts gracefully
-- All timestamps are set to `CURRENT_TIMESTAMP`
-- The script can be run multiple times safely (idempotent)
-- To clear existing mock data before seeding, uncomment the DELETE statements at the top of the script
-
-## Usage as API Fallback
-
-When an external API call fails, the system automatically falls back to these mock data files to ensure the system remains operational.
-
-Backend services implement fallback logic like:
-
-```typescript
-try {
-  // Call real API
-  const data = await externalAPI.getData();
-  return data;
-} catch (error) {
-  // Fallback to mock data
-  const mockData = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../mockdata/data.json'), 'utf-8')
-  );
-  logger.warn('Using mock data due to API failure', { error });
-  return mockData;
-}
-```

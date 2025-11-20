@@ -24,5 +24,3 @@ Output format:
 Text:
 
 """{{raw_text}}"""
-
-

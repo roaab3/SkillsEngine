@@ -1,21 +1,29 @@
-[
-  {
-    "competency_id": "comp_123",
-    "competency_name": "Full Stack Development",
-    "description": "Complete full-stack development skills",
-    "parent_competency_id": null
-  },
-  {
-    "competency_id": "comp_456",
-    "competency_name": "Frontend Development",
-    "description": "Frontend development skills",
-    "parent_competency_id": "comp_123"
-  },
-  {
-    "competency_id": "comp_789",
-    "competency_name": "Backend Development",
-    "description": "Backend development skills",
-    "parent_competency_id": "comp_123"
-  }
-]
+{
+  "competencies": [
+    {
+      "competency_id": "comp_web_001",
+      "competency_name": "Web Development",
+      "description": "Full-stack web development competency",
+      "parent_competency_id": null
+    },
+    {
+      "competency_id": "comp_web_002",
+      "competency_name": "Frontend Development",
+      "description": "Client-side development",
+      "parent_competency_id": "comp_web_001"
+    },
+    {
+      "competency_id": "comp_web_003",
+      "competency_name": "Backend Development",
+      "description": "Server-side development",
+      "parent_competency_id": "comp_web_001"
+    },
+    {
+      "competency_id": "comp_data_001",
+      "competency_name": "Data Science",
+      "description": "Data analysis and machine learning",
+      "parent_competency_id": null
+    }
+  ]
+}
 

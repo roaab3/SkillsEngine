@@ -1,0 +1,13 @@
+{
+  "status": "success",
+  "message": "User profile retrieved successfully",
+  "data": {
+    "user_id": "user_001",
+    "user_name": "John Doe",
+    "company_id": "company_001",
+    "employee_type": "regular",
+    "path_career": "Full Stack Developer",
+    "relevance_score": 75.5
+  }
+}
+

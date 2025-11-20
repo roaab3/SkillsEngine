@@ -1,0 +1,22 @@
+{
+  "status": "success",
+  "message": "Search completed",
+  "data": {
+    "query": "JavaScript",
+    "results": [
+      {
+        "type": "skill",
+        "skill_id": "skill_js_001",
+        "skill_name": "JavaScript",
+        "description": "Programming language for web development"
+      },
+      {
+        "type": "competency",
+        "competency_id": "comp_web_001",
+        "competency_name": "Web Development",
+        "description": "Full-stack web development competency"
+      }
+    ]
+  }
+}
+

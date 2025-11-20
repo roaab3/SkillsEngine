@@ -1,0 +1,29 @@
+{
+  "status": "success",
+  "message": "Gap analysis calculated",
+  "data": {
+    "user_id": "user_001",
+    "gaps": {
+      "comp_web_001": {
+        "competency_id": "comp_web_001",
+        "required_mgs_count": 10,
+        "verified_mgs_count": 7,
+        "missing_mgs_count": 3,
+        "missing_mgs": {
+          "Web Development": [
+            {
+              "skill_id": "skill_js_003",
+              "skill_name": "Node.js"
+            },
+            {
+              "skill_id": "skill_py_001",
+              "skill_name": "Python"
+            }
+          ]
+        },
+        "coverage_percentage": 70.0
+      }
+    }
+  }
+}
+

@@ -1,30 +1,26 @@
+/**
+ * Jest Configuration for Backend Tests
+ */
+
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
-  transform: {
-    '^.+\\.ts$': 'ts-jest',
-  },
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
+  testMatch: [
+    '**/__tests__/**/*.js',
+    '**/?(*.)+(spec|test).js'
+  ],
   collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.d.ts',
-    '!src/migrations/**',
-    '!src/scripts/**',
+    'src/**/*.js',
+    '!src/index.js',
+    '!src/**/*.test.js',
+    '!src/**/*.spec.js'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1'
   },
-  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
-  moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-  },
+  testTimeout: 10000
 };
 

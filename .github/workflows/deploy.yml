@@ -109,10 +109,14 @@ jobs:
         cd backend
         npm ci
         
-    - name: Run database migrations
+    - name: Install PostgreSQL client
       run: |
-        cd backend
-        npm run migrate:prod
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client
+    
+    - name: Run database migrations to Supabase
+      run: |
+        psql "${{ secrets.DATABASE_URL }}" -f database/migrations/000_initial_schema.sql
       env:
         DATABASE_URL: ${{ secrets.DATABASE_URL }}
 

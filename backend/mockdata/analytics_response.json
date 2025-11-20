@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "message": "User profile data retrieved",
+  "data": {
+    "user_id": "user_001",
+    "user_name": "John Doe",
+    "company_id": "company_001",
+    "employee_type": "regular",
+    "competencies": [
+      {
+        "competency_id": "comp_web_001",
+        "coverage_percentage": 75.5,
+        "proficiency_level": "ADVANCED"
+      }
+    ],
+    "skills": [
+      {
+        "skill_id": "skill_js_001",
+        "verified": true,
+        "source": "assessment"
+      }
+    ]
+  }
+}
+

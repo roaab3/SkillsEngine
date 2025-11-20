@@ -1,7 +1,7 @@
 {
-  "project_name": "Skills Engine Microservice",
-  "status": "planning_complete",
-  "phase": "step_5_complete",
+  "project_name": "",
+  "status": "in_progress",
+  "phase": "step_3",
   "step_0": {
     "use_default": true,
     "core_folders": ["/frontend", "/backend", "/database"],
@@ -9,59 +9,52 @@
     "custom_folders": [],
     "customization_folder": "/customize",
     "status": "complete",
-    "timestamp": "2025-01-27T00:00:00Z"
+    "timestamp": "2025-01-27T18:35:00Z"
   },
   "step_1": {
-    "project_idea": "EduCora AI is a learning and development platform with 11 microservices. Skills Engine is the microservice that acts as the central authority for managing all skill and competency data within the platform. It maintains a hierarchical skill taxonomy, tracks user skill profiles, verifies skills, and enables precise gap analysis. Its core purpose is to provide accurate, structured skill data to other services, supporting personalized learning, career development, and talent management.",
+    "project_idea": "Skills Engine is a microservice that acts as the central authority for managing all skill and competency data within the EduCore platform. It maintains a hierarchical skill taxonomy, tracks user skill profiles, verifies skills, and enables precise gap analysis. Its core purpose is to provide accurate, structured skill data to other services, supporting personalized learning, career development, and talent management. It is part of the EduCore platform which consists of 11 microservices: Directory (People Manager), Marketplace (Course Shopping), Course Builder (Course Planner), Content Studio (Lesson Creator), Assessment (Test Maker), Skills Engine, Learner AI (Personal Tutor), Learning Analytics (Progress Reporter), HR Reporting (Manager Dashboard), DevLab (Coding Practice), and Corporate Assistant (Smart Helper).",
     "business_goals": "The Skills Engine microservice establishes a single source of truth for skills and competencies across the EduCora AI platform, ensuring consistent, verified data for all training, assessments, and reporting. It enables accurate tracking of individual and team skill levels, allowing employees and trainers to identify gaps and take targeted development actions. By providing structured skill data to other services like Learner AI, Content Studio, and Course Builder, it supports competency-aligned content, courses, and learning paths, enhancing personalized learning experiences. For organizations, it delivers insights into workforce competencies, improves talent management, and ensures scalable, efficient, and data-driven decision-making for employee growth and upskilling initiatives.",
     "target_users": {
       "direct_users": {
         "employees": {
-          "description": "View their own skill profiles, track verified competencies, and identify skill gaps",
-          "capabilities": ["view profiles", "track skills", "identify gaps"]
+          "capabilities": ["View their own skill profiles", "Track verified competencies", "Identify skill gaps"]
         },
         "trainers": {
-          "description": "Same as employees, plus can upload custom skills/competencies via CSV. Cannot manage the skill taxonomy (that's an admin function)",
-          "capabilities": ["view profiles", "track skills", "identify gaps", "upload custom skills/competencies via CSV"]
+          "capabilities": ["Same capabilities as employees", "Can upload custom skills/competencies via CSV"],
+          "restrictions": ["Cannot manage the skill taxonomy (that's an admin function)"]
         }
       },
-      "indirect_users": {
-        "description": "Users accessing Skills Engine data through other services (Directory, EduCore)",
-        "example": "Employee viewing skills summary via Directory - data provided by Skills Engine but interface is through another service"
-      },
-      "system_integrations": {
-        "count": 7,
-        "microservices": [
-          {
-            "name": "Assessment",
-            "role": "Sends exam results to update verified skills"
-          },
-          {
-            "name": "Course Builder",
-            "role": "Requests skills to map courses or training paths"
-          },
-          {
-            "name": "Content Studio",
-            "role": "Sends competency to Skills Engine and receives all related skills to generate/organize lesson content"
-          },
-          {
-            "name": "Learner AI",
-            "role": "Receives missing skills per user, queries Skills Engine for skills related to competency to build learning plans and recommend courses"
-          },
-          {
-            "name": "RAG/Chatbot",
-            "role": "Extracts skill and competency data for analytics or user queries"
-          },
-          {
-            "name": "Directory",
-            "role": "Retrieves skill and competency summaries for display in user dashboards"
-          },
-          {
-            "name": "Learning Analytics",
-            "role": "Retrieves stored, pre-calculated individual profiles and aggregate team competency status for reporting and insights"
-          }
-        ]
-      }
+      "indirect_users": "Users accessing Skills Engine data through other services (Directory, EduCore). For example, an employee viewing their skills summary via Directory - data provided by Skills Engine but interface is through another service.",
+      "system_integrations": [
+        {
+          "service": "Assessment",
+          "role": "Sends exam results to update verified skills"
+        },
+        {
+          "service": "Course Builder",
+          "role": "Requests skills to map courses or training paths"
+        },
+        {
+          "service": "Content Studio",
+          "role": "Sends competency to Skills Engine and receives all related skills to generate/organize lesson content"
+        },
+        {
+          "service": "Learner AI",
+          "role": "Receives missing skills per user, queries Skills Engine for skills related to competency to build learning plans and recommend courses"
+        },
+        {
+          "service": "RAG/Chatbot",
+          "role": "Extracts skill and competency data for analytics or user queries"
+        },
+        {
+          "service": "Directory",
+          "role": "Retrieves skill and competency summaries for display in user dashboards"
+        },
+        {
+          "service": "Learning Analytics",
+          "role": "Retrieves stored, pre-calculated individual profiles and aggregate team competency status for reporting and insights"
+        }
+      ]
     },
     "problem_statement": "Before Skills Engine, skill and competency data across the platform was fragmented, unstructured, and often unreliable. There was no single source of truth for skills, making it difficult to track user proficiency, identify skill gaps, and provide personalized learning paths. Skills Engine solves this by centralizing all skill data, verifying user skills, maintaining a flexible hierarchical taxonomy, and enabling precise gap analysis for career development.",
     "vision_mission": {
@@ -69,129 +62,456 @@
       "mission": "The Skills Engine microservice organizes, verifies, and delivers structured skill and competency data, powering accurate skill tracking, gap analysis, and competency-aligned learning experiences. It ensures that all services within EduCora AI can rely on a consistent, authoritative source of skill information, enabling personalized growth, informed talent management, and measurable learning outcomes."
     },
     "success_metrics": {
-      "performance": {
-        "api_response_times": "Flexible - API response times appropriate for operation complexity (e.g., simple reads faster, complex gap analysis may take longer)",
-        "system_uptime": "≥99.9%"
-      },
-      "business": [
+      "performance_metrics": [
+        {
+          "metric": "API Response Times",
+          "description": "Flexible - API response times appropriate for operation complexity (e.g., simple reads faster, complex gap analysis may take longer)"
+        },
+        {
+          "metric": "System Uptime",
+          "target": "≥99.9%"
+        }
+      ],
+      "business_metrics": [
         "Number of verified skills",
         "Skill verifications count",
         "Mapped competencies count"
       ],
-      "quality": [
+      "quality_metrics": [
         "Data accuracy",
         "Gap analysis precision",
         "Consistency across microservices"
       ],
-      "adoption": [
+      "adoption_metrics": [
         "API usage frequency",
         "Number of integrated microservices",
         "Employee access to skill profiles"
       ]
     },
     "constraints": {
+      "platform_ecosystem": [
+        "Must integrate smoothly with existing EduCora AI microservices (Directory, Course Builder, Assessment, Learner AI, Learning Analytics)",
+        "Must use platform's unified APIs",
+        "Must support asynchronous event-based communication"
+      ],
       "technical": [
-        "Must integrate seamlessly with existing EduCora AI services",
-        "Support scalable, N-level skill hierarchies"
+        "Support flexible N-level hierarchies for skills and competencies",
+        "Handle large datasets efficiently",
+        "Maintain backward compatibility as taxonomy grows",
+        "Ensure high accuracy in AI extraction and normalization"
+      ],
+      "security_privacy": [
+        "Follow strict data privacy and security rules",
+        "Ensure safe storage and sharing of user profiles, assessment results, and skill information"
       ],
       "business": [
-        "Project timelines",
-        "Budget limitations",
-        "Resource availability"
-      ],
-      "regulatory": [
-        "Secure handling of employee data",
-        "Compliance with privacy regulations"
-      ],
-      "platform": [
-        "Reliable operation within EduCora AI ecosystem",
-        "Backward compatibility requirements",
-        "Support for asynchronous events"
-      ],
-      "authentication": [
-        "Each microservice integration requires its own authentication token",
-        "Microservices with tokens: Directory, Assessment, Content Studio, Course Builder, Learner AI, Learning Analytics, RAG/Chatbot",
-        "Skills Engine must manage and validate tokens for each microservice connection"
+        "Limited development time",
+        "Available resources constraints",
+        "Need to deliver features in phases"
       ]
-    }
+    },
+    "status": "complete",
+    "timestamp": "2025-01-27T19:10:00Z"
   },
   "step_2": {
-    "functional_requirements": "Documented in docs/FUNCTIONAL_REQUIREMENTS.md - 10 main requirements covering system initialization, user onboarding, profile updates, gap analysis, API endpoints, CSV upload, frontend display, and integrations",
-    "user_stories": "Documented in docs/USER_STORIES_AND_BUSINESS_LOGIC.md - 13 user stories covering Employees (viewing, tracking, gap identification), Trainers (upload, viewing), and System Integrations (7 microservices)",
-    "business_logic": "Documented in docs/USER_STORIES_AND_BUSINESS_LOGIC.md - 6 main flows: Taxonomy Initialization, User Profile Creation, Baseline Exam Processing, Post-Course Exam Processing, On-Demand Skill Discovery, External Data Integration",
-    "non_functional_requirements": "Documented in docs/NON_FUNCTIONAL_REQUIREMENTS.md - 4 main NFRs: Performance (Gap Analysis <1s), Scalability (100,000+ users), Security & Audit (audit trail), Data Trust Priority (Assessment > Certification > Claims/AI)",
-    "ai_capabilities": "Documented in docs/AI_CAPABILITIES.md - 3 main AI capabilities: Knowledge Building & Taxonomy Construction (discovery, extraction, validation, normalization), Data Extraction & Initial Profile Mapping (from unstructured data), External Knowledge Discovery (dynamic enrichment)",
-    "ai_technology": "Google Gemini API",
-    "ai_models": ["Gemini Flash", "Gemini Deep-Search"]
+    "functional_requirements": {
+      "skills_competency_taxonomy": {
+        "FR_5_1_1": "Unified Skill Hierarchy: Store the entire skill hierarchy in a single canonical skill table using a self-referencing relationship to manage parent-child connections, supporting unlimited N-level depth. Each Top-Level Skill (L1) must maintain a cached attribute for total leaf-node (MGS) count for proficiency and gap calculations.",
+        "FR_5_1_2": "Atomic Skill Definition: Every skill requires a Name and Description. Most Granular Skills (MGS) must track their Primary Verification Source.",
+        "FR_5_1_3": "Competency Structure: Competencies must support a maximum two-layer structure (Parent Competency → Child Competency).",
+        "FR_5_1_4": "Granular Competency Requirements: Each competency defines a Minimum Proficiency Level and required Skills. Competencies can link directly to L1 skills and nested Competencies. The system must aggregate the full set of MGS from the hierarchy to determine the complete requirement set.",
+        "FR_5_1_5": "Skill Relationship Network: Support many-to-many relationships between any two skills using a dedicated junction table."
+      },
+      "data_ingestion_normalization": {
+        "FR_5_2_1": "Initial Import: On system initialization, define official external sources (URLs) and use AI-driven extraction to build the initial Skills Taxonomy Database.",
+        "FR_5_2_2": "AI Normalization: Standardize imported and user-added skills. Check for existing entries to prevent duplication before saving.",
+        "FR_5_2_3": "On-Demand Skill Discovery: When a missing skill/competency is requested, first perform an internal lookup. If not found, query an External Knowledge Discovery AI Tool, normalize the findings, store them in the taxonomy, and return them.",
+        "FR_5_2_4": "Trainer Custom Taxonomy Import: Allow Trainer users to upload a CSV with hierarchical skills/competencies.",
+        "FR_5_2_5": "Taxonomy Periodic Synchronization: On system activation, re-scan official URLs and trigger AI extraction only for net-new skills or competencies."
+      },
+      "user_profile_verification": {
+        "FR_5_3_1": "Profile Initialization: Receive user data from Directory MS (#1), including user name, user_id, company_id, employee_type, career path, and raw external data (claimed skills, job roles, certifications, experiences). Validate and store this data in user profile tables.",
+        "FR_5_3_2": "AI-Based Skill Extraction & Normalization: Process stored raw data with AI to extract granular skills and competencies, map them to the internal taxonomy, normalize synonyms/duplicates, and create the initial user skill profile.",
+        "FR_5_3_3": "Initial Status: All normalized skills after mapping are initialized as verified=false.",
+        "FR_5_3_4": "Primary Assignment Verification Request: After profile initialization, send required MGS for the mandatory Primary Assignment test to Assessment MS (#5) to trigger formal skill verification.",
+        "FR_5_3_5": "Granular Verification: Update MGS to verified=true and store verification date upon receiving assessment results exceeding thresholds.",
+        "FR_5_3_6": "Post-course Exam Handling: Support multiple exam attempts; add any newly verified MGS to the user profile and update exam status (Pass/Fail).",
+        "FR_5_3_7": "User Skill Storage Format: Store individual user skill data in UserCompetency as a JSON mapping skill_id, skill_name, verification status, and last update.",
+        "FR_5_3_8": "Directory Update after Baseline: After a Baseline Exam, send a secondary request to Directory MS (#1) including the calculated Relevance Score.",
+        "FR_5_3_9": "Updated Profile Delivery: After any skill verification or profile update, send the updated user profile to Directory MS (#1), including: List of Competencies the user possesses, Proficiency level per Competency (BEGINNER → EXPERT), Top-Level (L1) skills directly owned by the user, Relevance Score for the Career Path Goal.",
+        "FR_5_3_10": "Initial Raw Skill Storage: Store all skills extracted from raw external data in UserSkill table without hierarchical relationships; initialize as verified=false.",
+        "FR_5_3_11": "Post-Baseline MGS Storage: After Baseline Exam, store verified MGS in UserCompetency JSON with: Competency → MGS mapping, Proficiency level, Top-Level (L1) skills directly owned, Relevance Score."
+      },
+      "proficiency_calculation": {
+        "FR_5_4_2": "Competency Level Calculation (MGS Count): Calculate proficiency as the ratio of verified MGS to total required MGS. Coverage Percentage = (Verified MGS / Total Required MGS) × 100. Intermediate layers are ignored.",
+        "FR_5_4_3": "Proficiency Mapping: Map coverage percentage to levels: BEGINNER (0–30%), INTERMEDIATE (31–65%), ADVANCED (66–85%), EXPERT (86–100%).",
+        "FR_5_4_4": "Continuous Profile Update: After receiving a verification Pass, recalculate and update the parent Competency level. Fail does not update proficiency.",
+        "FR_5_4_5": "Relevance Score Calculation: Calculate the Relevance Score for the user's Career Path Goal using the same formula as Coverage Percentage."
+      },
+      "gap_analysis_reporting": {
+        "FR_5_5_1": "User/Team Data Retrieval: Provide Learning Analytics (MS #8) access to verified user profiles and aggregated team competency status.",
+        "FR_5_5_2": "Skills Profile Data Provision: Provide a secure URL to render the Dedicated Skills Profile Page; missing skills derived from Broad Gap Analysis, structured as MAP (Competency ID → missing MGS list).",
+        "FR_5_5_3": "Automated Trigger: Automatically trigger Gap Analysis and profile updates whenever a verification score is received from MS #5.",
+        "FR_5_5_4": "Conditional Gap Analysis Logic: Baseline Exam → Broad Gap Analysis against Career Path Goal. Post-course Exam: FAIL → Narrow Gap Analysis for course-specific Competency, PASS → Broad Gap Analysis against Career Path Goal.",
+        "FR_5_5_5": "Definitive Gap Calculation: Missing MGS = Required MGS Set − Verified MGS Set",
+        "FR_5_5_6": "Gap Analysis Data Sent: Send structured gap-analysis results to Learner AI (MS #7) with missing skills, exam status, and related course/competency info (MAP format).",
+        "FR_5_5_7": "Frontend Display & Access Control: Trainer users have access to Upload File button."
+      },
+      "skill_competency_retrieval": {
+        "FR_5_6_1": "Granular Skill Retrieval (Course Builder): Retrieve MGS for a given Competency; apply AI normalization and fuzzy-matching. If missing/incomplete, dynamically discover and import skills before returning the full MGS list.",
+        "FR_5_6_2": "Granular Skill Retrieval (Content Studio / Learner AI): Retrieve MGS for a given Competency from internal database only, without triggering external discovery."
+      }
+    },
+    "user_stories": [
+      {
+        "id": "US-1",
+        "user_type": "Employee",
+        "story": "As an employee, I want to view my skill profile so that I can see my verified competencies, proficiency levels, and identify skill gaps.",
+        "flow": "FLOW 2, FLOW 3, FLOW 4",
+        "acceptance_criteria": ["Profile displays verified MGS", "Shows proficiency levels (BEGINNER to EXPERT)", "Displays gap analysis results", "Shows relevance score for career path"]
+      },
+      {
+        "id": "US-2",
+        "user_type": "Trainer",
+        "story": "As a trainer, I want to upload a CSV file with custom skills and competencies so that I can import domain-specific taxonomies for my training programs.",
+        "flow": "FLOW 6",
+        "acceptance_criteria": ["Upload button visible only to trainers", "CSV file validated for security", "Skills normalized and merged into taxonomy", "L1 skills updated with MGS count"]
+      },
+      {
+        "id": "US-3",
+        "user_type": "Directory Microservice",
+        "story": "As Directory MS, I want to send new user data to Skills Engine so that user profiles can be initialized and skill extraction can begin.",
+        "flow": "FLOW 2",
+        "acceptance_criteria": ["User data validated and stored", "Raw data stored for AI processing", "Initial profile returned with unverified skills", "Relevance score calculated and sent"]
+      },
+      {
+        "id": "US-4",
+        "user_type": "Directory Microservice",
+        "story": "As Directory MS, I want to receive updated user profiles after skill verification so that I can display current skill status to users.",
+        "flow": "FLOW 3, FLOW 4",
+        "acceptance_criteria": ["Receives updated competencies list", "Gets proficiency levels per competency", "Receives L1 skills owned by user", "Gets relevance score for career path"]
+      },
+      {
+        "id": "US-5",
+        "user_type": "Assessment Microservice",
+        "story": "As Assessment MS, I want to receive required MGS for baseline exam so that I can create the Primary Assignment test for new users.",
+        "flow": "FLOW 2",
+        "acceptance_criteria": ["Receives complete aggregated MGS set", "MGS list includes all required skills for user's competencies", "Data format is structured and complete"]
+      },
+      {
+        "id": "US-6",
+        "user_type": "Assessment Microservice",
+        "story": "As Assessment MS, I want to send exam results to Skills Engine so that user skills can be verified and profiles updated.",
+        "flow": "FLOW 3, FLOW 4",
+        "acceptance_criteria": ["Sends user_id, exam type, status", "Includes list of MGS with pass/fail status", "Results trigger automatic gap analysis", "Profile updates calculated and sent to Directory"]
+      },
+      {
+        "id": "US-7",
+        "user_type": "Course Builder Microservice",
+        "story": "As Course Builder MS, I want to retrieve MGS for a competency so that I can map courses to required skills, with automatic discovery of missing skills.",
+        "flow": "FLOW 5",
+        "acceptance_criteria": ["Receives complete MGS list for competency", "Missing skills discovered and imported automatically", "AI normalization applied", "Returns updated taxonomy data"]
+      },
+      {
+        "id": "US-8",
+        "user_type": "Content Studio Microservice",
+        "story": "As Content Studio MS, I want to retrieve MGS for a competency from existing database only so that I can organize lesson content without altering the taxonomy.",
+        "flow": "FLOW 5",
+        "acceptance_criteria": ["Receives MGS from internal database only", "No external discovery triggered", "Fast lookup response", "Data format matches requirements"]
+      },
+      {
+        "id": "US-9",
+        "user_type": "Learner AI Microservice",
+        "story": "As Learner AI MS, I want to receive gap analysis results with missing skills so that I can build personalized learning plans and recommend courses.",
+        "flow": "FLOW 3, FLOW 4",
+        "acceptance_criteria": ["Receives structured gap analysis (MAP format)", "Gets missing MGS list per competency", "Includes exam status and course info", "Data triggers learning plan generation"]
+      },
+      {
+        "id": "US-10",
+        "user_type": "Learner AI Microservice",
+        "story": "As Learner AI MS, I want to retrieve MGS for competencies from existing database so that I can query skills related to competencies for learning plan building.",
+        "flow": "FLOW 5",
+        "acceptance_criteria": ["Receives MGS from internal database only", "No external discovery triggered", "Fast lookup response"]
+      },
+      {
+        "id": "US-11",
+        "user_type": "Learning Analytics Microservice",
+        "story": "As Learning Analytics MS, I want to retrieve verified user profiles and aggregated team competency status so that I can generate reports and insights.",
+        "flow": "FLOW 7",
+        "acceptance_criteria": ["Access to individual verified profiles", "Gets proficiency levels and coverage percentages", "Receives aggregate team competency data", "Data is pre-calculated and accurate"]
+      },
+      {
+        "id": "US-12",
+        "user_type": "RAG/Chatbot Microservice",
+        "story": "As RAG MS, I want to receive canonical taxonomy structure and verified user profiles so that I can provide skill-aware guidance and recommendations.",
+        "flow": "FLOW 7",
+        "acceptance_criteria": ["Receives taxonomy structure", "Gets verified user profiles with proficiency levels", "Data format supports RAG context", "Secure data sharing"]
+      },
+      {
+        "id": "US-13",
+        "user_type": "System",
+        "story": "As the system, I want to initialize the taxonomy from external sources using AI extraction so that I can build the canonical skill database.",
+        "flow": "FLOW 1",
+        "acceptance_criteria": ["External sources identified and validated", "AI extraction processes all sources", "Data verified for quality", "Normalization prevents duplicates", "Hierarchy constructed with MGS counts"]
+      },
+      {
+        "id": "US-14",
+        "user_type": "System",
+        "story": "As the system, I want to automatically trigger gap analysis after exam results so that users always have current gap information.",
+        "flow": "FLOW 3, FLOW 4",
+        "acceptance_criteria": ["Gap analysis triggered automatically", "Conditional logic applied (Baseline vs Post-course, Pass vs Fail)", "Results sent to Learner AI", "Profile updated in Directory"]
+      },
+      {
+        "id": "US-15",
+        "user_type": "Trainer",
+        "story": "As a trainer, I want my uploaded CSV file to be validated for security threats so that the system is protected from injection attacks.",
+        "flow": "FLOW 6",
+        "acceptance_criteria": ["File checked for SQL injection", "File checked for prompt injection", "Security alerts triggered if threats detected", "File rejected if unsafe"]
+      }
+    ],
+    "business_logic": {
+      "skill_competency_normalization": {
+        "description": "AI extracts skills/competencies from user raw data. Skills are normalized to the existing taxonomy using synonym matching and semantic similarity. Duplicates are removed. All extracted skills are stored as unverified until validated."
+      },
+      "determining_required_mgs": {
+        "description": "Each competency defines required Most Granular Skills (MGS). The system flattens the full hierarchy (Competency → Skills → MGS) to produce a complete MGS requirement list."
+      },
+      "dynamic_discovery_rules": {
+        "course_builder": "If Course Builder requests a competency that does not exist, the system performs external AI-based discovery and saves the new data.",
+        "content_studio_learner_ai": "If Content Studio or Learner AI requests a missing competency, only internal lookup is allowed (no external discovery)."
+      },
+      "verification_workflow": {
+        "description": "Assessment MS sends exam results (Baseline or Post-course). Skills that meet the threshold are marked verified=true. Verified skills update parent skills and update competency proficiency."
+      },
+      "competency_level_calculation": {
+        "formula": "Coverage = verified_MGS / total_required_MGS",
+        "mapping": "Coverage is mapped to 4 levels: BEGINNER (0-30%), INTERMEDIATE (31-65%), ADVANCED (66-85%), EXPERT (86-100%)",
+        "update_rule": "Levels update automatically after each verification event."
+      },
+      "relevance_score_logic": {
+        "description": "Relevance Score uses the same coverage formula as competency proficiency. Represents user alignment with their Career Path Goal."
+      },
+      "gap_analysis_rules": {
+        "trigger": "Triggered whenever new exam results arrive.",
+        "baseline_exam": "Baseline Exam → Broad Gap Analysis (full career path).",
+        "post_course_pass": "Post-course PASS → Broad Gap Analysis.",
+        "post_course_fail": "Post-course FAIL → Narrow Gap Analysis (only the competency of the course).",
+        "calculation": "Gap = Required MGS – Verified MGS, grouped by competency."
+      },
+      "profile_update_logic": {
+        "description": "After each verification or profile change, the system returns an updated profile to Directory MS including: Competencies + proficiency level, Top-level skills directly owned by the user, Verified MGS, Relevance Score."
+      },
+      "storage_rules": {
+        "extracted_skills": "Extracted skills are stored in UserSkill table.",
+        "verified_data": "Verified skills and competency-level data are stored in UserCompetency as JSON."
+      }
+    },
+    "non_functional_requirements": {
+      "performance": {
+        "api_response_times": {
+          "simple_reads": "≤200ms for basic skill/competency lookups",
+          "complex_operations": "Flexible - gap analysis and proficiency calculations may take longer (up to 2-3 seconds for complex hierarchies)",
+          "ai_operations": "Timeout after 30 seconds, fallback to mock data if exceeded"
+        },
+        "system_uptime": "≥99.9% availability",
+        "throughput": "Support at least 1000 concurrent API requests",
+        "database_performance": "Efficient queries for N-level hierarchical data, use indexing and caching for frequently accessed taxonomies"
+      },
+      "security": {
+        "data_encryption": "Encrypt sensitive data at rest and in transit (TLS 1.2+)",
+        "access_control": "Role-based access control (RBAC) - employees, trainers, admin roles with appropriate permissions",
+        "injection_prevention": "Validate and sanitize all inputs, especially CSV uploads - prevent SQL injection and prompt injection attacks",
+        "api_security": "Authenticate and authorize all API requests, use API keys or OAuth tokens for microservice communication",
+        "data_privacy": "Comply with privacy regulations, secure handling of employee skill data, audit logging for sensitive operations"
+      },
+      "scalability": {
+        "data_volume": "Handle large skill taxonomies (thousands of skills, hundreds of competencies) efficiently",
+        "concurrent_users": "Support multiple concurrent microservice requests without degradation",
+        "horizontal_scaling": "Design for horizontal scaling - stateless API design, database connection pooling",
+        "caching": "Implement caching for frequently accessed taxonomy data and user profiles to reduce database load"
+      },
+      "reliability": {
+        "error_handling": "Graceful error handling with meaningful error messages, no system crashes from invalid inputs",
+        "fallback_mechanisms": "Automatic fallback to mock data if external AI services fail (per global API rollback rule)",
+        "data_consistency": "Use database transactions for critical operations (profile updates, skill verification)",
+        "backup_recovery": "Regular database backups, ability to recover from data loss",
+        "monitoring": "Comprehensive logging and monitoring for system health, error tracking, and performance metrics"
+      },
+      "usability": {
+        "user_interface": "Intuitive UI for employees and trainers, clear navigation, responsive design",
+        "error_messages": "Clear, actionable error messages for users",
+        "api_documentation": "Comprehensive API documentation for microservice integrations",
+        "accessibility": "WCAG AA compliance for web interface, keyboard navigation, screen reader support"
+      },
+      "maintainability": {
+        "code_quality": "Clean, well-documented code following best practices",
+        "api_versioning": "API versioning to maintain backward compatibility as system evolves",
+        "logging": "Structured logging for debugging and auditing",
+        "testing": "Comprehensive test coverage (unit, integration, e2e tests)"
+      },
+      "compatibility": {
+        "platform_integration": "Seamless integration with existing EduCora AI microservices",
+        "api_standards": "Follow platform's unified API standards and patterns",
+        "asynchronous_communication": "Support event-based asynchronous communication with other microservices",
+        "backward_compatibility": "Maintain backward compatibility as taxonomy grows and evolves"
+      }
+    },
+    "ai_capabilities": [
+      {
+        "id": "AI-1",
+        "name": "Source Discovery",
+        "purpose": "Identify official external sources for skills and competencies",
+        "model": "Gemini 1.5 Flash",
+        "prompt_specification": "Generate list of authoritative URLs for skills and competencies",
+        "expected_output": "List of valid URLs to feed into the extraction workflow",
+        "related_fr": "FR 5.2.1"
+      },
+      {
+        "id": "AI-2",
+        "name": "Deep Web Scanning / Extraction",
+        "purpose": "Scrape or call APIs on official sources to extract hierarchical skills and competencies",
+        "model": "Gemini 1.5 Pro (Deep Search)",
+        "prompt_specification": "Input: source URLs. Instruction: Extract skills/competencies in a hierarchical format (Competency → Skill → Sub-skill → N-levels)",
+        "expected_output": "Verified hierarchical data ready for normalization",
+        "related_fr": "FR 5.2.1"
+      },
+      {
+        "id": "AI-3",
+        "name": "Skill & Competency Extraction from Raw User Data",
+        "purpose": "Process user-provided raw data (resumes, LinkedIn, GitHub, ORCID, Credly) to extract granular skills and associated competencies",
+        "model": "Gemini 1.5 Flash",
+        "prompt_specification": "Input: raw text data. Instruction: Identify skills, competencies, synonyms, and map to internal taxonomy",
+        "expected_output": "List of normalized skills and competencies, ready for storage in user profile",
+        "related_fr": "FR 5.3.2"
+      },
+      {
+        "id": "AI-4",
+        "name": "Normalization of Skills and Competencies",
+        "purpose": "Standardize terminology, merge duplicates, unify synonyms, and ensure consistent hierarchical structure",
+        "model": "Gemini 1.5 Flash",
+        "prompt_specification": "Input: extracted skills/competencies. Instruction: Normalize terms, detect duplicates, unify hierarchy",
+        "expected_output": "Canonical, normalized, hierarchical taxonomy entries",
+        "related_fr": "FR 5.2.2"
+      },
+      {
+        "id": "AI-5",
+        "name": "Validation of Extracted Data",
+        "purpose": "Validate completeness, accuracy, and hierarchical correctness of extracted skills and competencies before storage",
+        "model": "Gemini 1.5 Flash / Gemini 1.5 Pro (Deep Search)",
+        "prompt_specification": "Input: hierarchical extracted data. Instruction: Check for completeness, missing levels, inconsistencies, duplicates, and assign confidence scores",
+        "expected_output": "Flagged entries, confidence scores, verified hierarchical structure ready for storage",
+        "related_fr": "FR 5.2.1"
+      },
+      {
+        "id": "AI-6",
+        "name": "On-Demand Skill Discovery for Missing Competencies",
+        "purpose": "When a competency is requested but not found internally, perform external search to discover missing skills/competencies",
+        "model": "Gemini 1.5 Flash + Deep Search",
+        "prompt_specification": "Input: missing competency name. Instruction: Search for relevant sources, extract, normalize, and return hierarchical skills",
+        "expected_output": "New competency and skills data, normalized and ready to integrate into the canonical taxonomy",
+        "related_fr": "FR 5.2.3"
+      }
+    ],
+    "status": "complete",
+    "timestamp": "2025-01-27T19:40:00Z"
   },
   "step_3": {
-    "feature_architecture": "Documented in docs/FEATURE_ARCHITECTURE.md - 7 system-level features mapped to frontend, backend, and database components. Includes AI integration points (3 capabilities), external API integrations (7 microservices), UI/UX design requirements, dependencies, and 5-phase rollout strategy",
-    "system_features": [
-      "Taxonomy Management",
-      "User Profile Management",
-      "Gap Analysis",
-      "API Gateway",
-      "CSV Upload",
-      "Frontend Display",
-      "Audit & Security"
-    ],
-    "component_mapping": {
-      "frontend": ["ProfileDashboard", "CompetencyCard", "GapAnalysis", "CSVUpload", "SkillsProfileDetail"],
-      "backend": ["taxonomyService", "profileService", "gapAnalysisService", "apiGatewayService", "aiService", "csvProcessingService", "auditService", "authService"],
-      "database": ["skills", "competencies", "userCompetency", "userSkill", "audit_log", "official_sources", "microservice_tokens", "junction_tables"]
-    },
-    "ai_integration_points": [
-      "Knowledge Building & Taxonomy Construction (Flash/Deep-Search)",
-      "Data Extraction & Initial Profile Mapping (Deep-Search/Flash)",
-      "External Knowledge Discovery (Deep-Search)"
-    ],
-    "external_api_integrations": [
-      "Assessment Microservice",
-      "Course Builder Microservice",
-      "Content Studio Microservice",
-      "Learner AI Microservice",
-      "Directory Microservice",
-      "Learning Analytics Microservice",
-      "RAG/Chatbot Microservice"
-    ],
-    "rollout_strategy": "5 phases over 20 weeks: Foundation (Weeks 1-4), Core Features (Weeks 5-8), Integrations (Weeks 9-12), Advanced Features (Weeks 13-16), Production Readiness (Weeks 17-20)"
-  },
-  "step_4": {
-    "technical_design": "Documented in docs/STEP4_TECHNICAL_DESIGN.md - Database schema, API endpoints, component architecture, data access layer, algorithms, security, integration patterns, performance optimization, error handling",
-    "status": "complete",
-    "sections": [
-      "Database Schema (11 tables)",
-      "API Endpoints Design",
-      "Component Architecture",
-      "Data Access Layer",
-      "Algorithms & Queries",
-      "Security Implementation",
-      "Integration Patterns",
-      "Performance Optimization",
-      "Error Handling & Logging"
+    "functional_requirement_links": [],
+    "features": [
+      {
+        "feature_name": "Taxonomy Management",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "User Profile Management",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Skill Verification",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Proficiency & Level Calculation",
+        "goal": "Calculate coverage percentage for each competency, map coverage to 4 proficiency levels (Beginner → Expert), update levels only if verification passes, and recalculate Relevance Score after verification",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Gap Analysis",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Skill Discovery",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Trainer Import",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Directory MS Integration",
+        "goal": "Receive user data, send updated profiles",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Assessment MS Integration",
+        "goal": "Send MGS for exams, receive exam results",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Course Builder MS Integration",
+        "goal": "Provide MGS retrieval with discovery capability",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Content Studio MS Integration",
+        "goal": "Provide MGS retrieval (lookup only)",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Learner AI MS Integration",
+        "goal": "Send gap analysis results, provide MGS retrieval",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Learning Analytics MS Integration",
+        "goal": "Provide user profiles and aggregated team data",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "RAG/Chatbot MS Integration",
+        "goal": "Share taxonomy structure and user profiles",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Source Discovery & Link Storage",
+        "goal": "Identify official external source URLs for skill extraction",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Web Deep Search & Skill Extraction",
+        "goal": "Scrape and extract skills and competencies from external sites",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Normalization & Deduplication",
+        "goal": "Standardize terminology, merge duplicates, unify hierarchy",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "Validation of Extracted Data",
+        "goal": "Ensure the quality, completeness, and correctness of extracted skills and competencies",
+        "status": "pending_details"
+      },
+      {
+        "feature_name": "On-Demand Discovery for Missing Competencies",
+        "goal": "When a requested competency or skill is missing, search external sources to find new data",
+        "status": "pending_details"
+      }
     ]
   },
-  "step_5": {
-    "system_architecture": "Documented in docs/STEP5_ARCHITECTURE_DESIGN.md - Complete system architecture including architecture diagrams, service decisions, API patterns, storage & caching, scalability & fault tolerance, security layers, integration points, and IaC setup",
-    "status": "complete",
-    "sections": [
-      "Architecture Diagram (High-level, Component, Data Flow)",
-      "Service Decisions (Microservice boundaries, responsibilities, technology stack)",
-      "API Patterns (REST, Unified Data Exchange, Synchronous/Asynchronous)",
-      "Storage & Caching (PostgreSQL, in-memory cache, connection pooling)",
-      "Scalability & Fault Tolerance (Horizontal/Vertical scaling, circuit breakers, health checks)",
-      "Security Layers (Authentication, data security, API security, infrastructure security)",
-      "Integration Points (Incoming/outgoing webhooks, synchronous endpoints)",
-      "IaC Setup (Railway backend, Vercel frontend, Supabase database, GitHub Actions CI/CD)"
-    ],
-    "deployment_platform": {
-      "backend": "Railway (Managed Container Platform)",
-      "frontend": "Vercel (Managed Frontend Platform)",
-      "database": "Supabase (Managed PostgreSQL)",
-      "ci_cd": "GitHub Actions"
-    }
-  },
+  "step_4": null,
+  "step_5": null,
   "step_6": null,
-  "created_at": "2025-01-27T00:00:00Z",
-  "updated_at": "2025-01-27T10:00:00Z"
+  "created_at": "2025-01-27T12:00:00Z",
+  "updated_at": "2025-01-27T20:00:00Z"
 }

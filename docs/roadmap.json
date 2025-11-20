@@ -1,0 +1,862 @@
+{
+  "project": "Skills Engine Microservice",
+  "platform": "EduCora AI (11 microservices)",
+  "created_at": "2025-01-27T00:00:00Z",
+  "updated_at": "2025-01-27T12:00:00Z",
+  "phases": {
+    "planning": {
+      "status": "DONE",
+      "steps": [0, 1, 2, 3, 4, 5]
+    },
+    "implementation": {
+      "status": "TODO",
+      "steps": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+    }
+  },
+  "features": {
+    "taxonomy_management": {
+      "name": "Taxonomy Management",
+      "description": "Manage skill hierarchy and competency structure",
+      "steps": [
+        {
+          "id": 6,
+          "name": "Database Setup & Migrations",
+          "description": "Set up PostgreSQL database on Supabase and create all tables with migrations",
+          "dependencies": [],
+          "artifacts": ["database/migrations/", "backend/config/database.js", "backend/env.example"],
+          "status": "IN_PROGRESS",
+          "checklist": [
+            {"task": "Create Supabase project and database", "done": false},
+            {"task": "Create migration files for all tables", "done": true},
+            {"task": "Set up database connection configuration", "done": true},
+            {"task": "Run initial migrations", "done": false},
+            {"task": "Verify all tables and indexes created", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 7,
+          "name": "Skill Repository & Model",
+          "description": "Implement skill data access layer and model",
+          "dependencies": [6],
+          "artifacts": ["backend/repositories/skillRepository.js", "backend/models/Skill.js"],
+          "status": "IN_PROGRESS",
+          "checklist": [
+            {"task": "Create Skill model with validation", "done": true},
+            {"task": "Implement skillRepository with CRUD operations", "done": true},
+            {"task": "Add hierarchy traversal methods", "done": true},
+            {"task": "Add MGS identification logic", "done": true},
+            {"task": "Write unit tests for repository", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 8,
+          "name": "Competency Repository & Model",
+          "description": "Implement competency data access layer and model",
+          "dependencies": [6],
+          "artifacts": ["backend/repositories/competencyRepository.js", "backend/models/Competency.js"],
+          "status": "IN_PROGRESS",
+          "checklist": [
+            {"task": "Create Competency model with validation", "done": true},
+            {"task": "Implement competencyRepository with CRUD operations", "done": true},
+            {"task": "Add parent-child relationship methods", "done": true},
+            {"task": "Add skill mapping methods", "done": true},
+            {"task": "Write unit tests for repository", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 9,
+          "name": "Skill Service - Hierarchy Management",
+          "description": "Implement business logic for skill hierarchy operations",
+          "dependencies": [7],
+          "artifacts": ["backend/services/skillService.js"],
+          "status": "IN_PROGRESS",
+          "checklist": [
+            {"task": "Implement create skill with parent validation", "done": true},
+            {"task": "Implement update skill with hierarchy validation", "done": true},
+            {"task": "Implement delete skill with cascade handling", "done": true},
+            {"task": "Implement get skill tree (recursive)", "done": true},
+            {"task": "Implement MGS identification algorithm", "done": true},
+            {"task": "Write unit tests for service", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 10,
+          "name": "Competency Service - Structure Management",
+          "description": "Implement business logic for competency structure operations",
+          "dependencies": [8],
+          "artifacts": ["backend/services/competencyService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement create competency with parent validation", "done": false},
+            {"task": "Implement update competency", "done": false},
+            {"task": "Implement delete competency with cascade handling", "done": false},
+            {"task": "Implement link skills to competency", "done": false},
+            {"task": "Implement MGS aggregation algorithm", "done": false},
+            {"task": "Write unit tests for service", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 11,
+          "name": "MGS Count Calculation Service",
+          "description": "Implement MGS count calculation and caching for L1 skills",
+          "dependencies": [9],
+          "artifacts": ["backend/services/mgsCalculationService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement recursive MGS counting algorithm", "done": false},
+            {"task": "Implement cache update on hierarchy changes", "done": false},
+            {"task": "Add cache invalidation logic", "done": false},
+            {"task": "Write unit tests for calculation", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 12,
+          "name": "Taxonomy API Endpoints",
+          "description": "Create REST API endpoints for skill and competency management",
+          "dependencies": [9, 10],
+          "artifacts": ["backend/routes/api/skills/", "backend/routes/api/competencies/", "backend/controllers/skillController.js", "backend/controllers/competencyController.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create skill routes (GET, POST, PUT, DELETE)", "done": false},
+            {"task": "Create competency routes (GET, POST, PUT, DELETE)", "done": false},
+            {"task": "Implement skill controller methods", "done": false},
+            {"task": "Implement competency controller methods", "done": false},
+            {"task": "Add authentication middleware", "done": false},
+            {"task": "Add trainer authorization check", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "user_profile_management": {
+      "name": "User Profile Management",
+      "description": "Create and manage user profiles with AI extraction",
+      "steps": [
+        {
+          "id": 13,
+          "name": "User Repository & Model",
+          "description": "Implement user data access layer and model",
+          "dependencies": [6],
+          "artifacts": ["backend/repositories/userRepository.js", "backend/models/User.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create User model with validation", "done": false},
+            {"task": "Implement userRepository with CRUD operations", "done": false},
+            {"task": "Add employee_type validation", "done": false},
+            {"task": "Write unit tests for repository", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 14,
+          "name": "User Competency Repository & Model",
+          "description": "Implement userCompetency data access layer and model",
+          "dependencies": [6, 8],
+          "artifacts": ["backend/repositories/userCompetencyRepository.js", "backend/models/UserCompetency.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create UserCompetency model with JSON field handling", "done": false},
+            {"task": "Implement userCompetencyRepository with CRUD operations", "done": false},
+            {"task": "Add verified_skills JSON parsing/stringifying", "done": false},
+            {"task": "Write unit tests for repository", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 15,
+          "name": "User Skill Repository & Model",
+          "description": "Implement userSkill data access layer and model",
+          "dependencies": [6, 7],
+          "artifacts": ["backend/repositories/userSkillRepository.js", "backend/models/UserSkill.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create UserSkill model with validation", "done": false},
+            {"task": "Implement userSkillRepository with CRUD operations", "done": false},
+            {"task": "Add source enum validation", "done": false},
+            {"task": "Write unit tests for repository", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 16,
+          "name": "AI Service - Gemini Integration",
+          "description": "Implement Google Gemini API integration service",
+          "dependencies": [],
+          "artifacts": ["backend/services/aiService.js", "backend/config/ai.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Set up Google Gemini API client", "done": false},
+            {"task": "Implement API key configuration", "done": false},
+            {"task": "Create prompt builder utilities", "done": false},
+            {"task": "Implement retry logic with exponential backoff", "done": false},
+            {"task": "Add error handling and fallback", "done": false},
+            {"task": "Write unit tests with mocks", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 17,
+          "name": "Extraction Service - Feature 2.2",
+          "description": "Implement AI extraction of skills and competencies from raw data",
+          "dependencies": [16],
+          "artifacts": ["backend/services/extractionService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Load extraction prompt from file", "done": false},
+            {"task": "Implement raw data chunking for large inputs", "done": false},
+            {"task": "Call Gemini API for extraction", "done": false},
+            {"task": "Parse JSON response", "done": false},
+            {"task": "Validate extracted data structure", "done": false},
+            {"task": "Emit extraction event", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 18,
+          "name": "Normalization Service - Feature 2.3",
+          "description": "Implement normalization and deduplication of extracted data",
+          "dependencies": [16, 7, 8],
+          "artifacts": ["backend/services/normalizationService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Load normalization prompt from file", "done": false},
+            {"task": "Call Gemini API for normalization", "done": false},
+            {"task": "Map extracted items to taxonomy IDs", "done": false},
+            {"task": "Remove duplicates", "done": false},
+            {"task": "Validate normalized structure", "done": false},
+            {"task": "Emit normalization event", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 19,
+          "name": "User Profile Service - Feature 2.1 & 2.4",
+          "description": "Implement user profile creation and initial competency profile delivery",
+          "dependencies": [13, 14, 15, 18],
+          "artifacts": ["backend/services/userService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement create user profile from Directory MS data", "done": false},
+            {"task": "Implement store competencies in userCompetency table", "done": false},
+            {"task": "Implement store skills in userSkill table", "done": false},
+            {"task": "Implement store skills as competencies logic", "done": false},
+            {"task": "Implement build initial profile payload for Directory MS", "done": false},
+            {"task": "Implement skill matching algorithm", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 20,
+          "name": "User Profile API Endpoints",
+          "description": "Create REST API endpoints for user profile management",
+          "dependencies": [19],
+          "artifacts": ["backend/routes/api/user/", "backend/controllers/userController.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create GET /api/user/{userId}/profile endpoint", "done": false},
+            {"task": "Create GET /api/user/{userId}/profile/detailed endpoint", "done": false},
+            {"task": "Create POST /api/user/{userId}/profile/export endpoint", "done": false},
+            {"task": "Implement user controller methods", "done": false},
+            {"task": "Add authentication and authorization", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "skill_verification": {
+      "name": "Skill Verification",
+      "description": "Handle baseline and post-course exam verification",
+      "steps": [
+        {
+          "id": 21,
+          "name": "Verification Service - Feature 3.1, 3.2, 3.3",
+          "description": "Implement exam request and results processing",
+          "dependencies": [14, 15, 10],
+          "artifacts": ["backend/services/verificationService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement baseline exam request (send MGS list)", "done": false},
+            {"task": "Implement baseline exam results processing", "done": false},
+            {"task": "Implement post-course exam results processing", "done": false},
+            {"task": "Implement skill verification status update", "done": false},
+            {"task": "Implement coverage percentage calculation", "done": false},
+            {"task": "Implement proficiency level mapping", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 22,
+          "name": "Profile Update Service - Feature 2.5",
+          "description": "Implement profile updates after verification",
+          "dependencies": [21],
+          "artifacts": ["backend/services/userService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement update userCompetency after verification", "done": false},
+            {"task": "Implement update userSkill status", "done": false},
+            {"task": "Implement send updated profile to Directory MS", "done": false},
+            {"task": "Implement event emission", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "gap_analysis": {
+      "name": "Gap Analysis",
+      "description": "Calculate and provide gap analysis for users",
+      "steps": [
+        {
+          "id": 23,
+          "name": "Gap Analysis Service - Feature 5",
+          "description": "Implement gap analysis calculation algorithm",
+          "dependencies": [14, 10, 11],
+          "artifacts": ["backend/services/gapAnalysisService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement get required MGS for competency", "done": false},
+            {"task": "Implement get verified MGS from user profile", "done": false},
+            {"task": "Implement calculate missing MGS (on-the-fly)", "done": false},
+            {"task": "Implement broad gap analysis", "done": false},
+            {"task": "Implement narrow gap analysis (post-course)", "done": false},
+            {"task": "Implement group missing MGS by competency", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 24,
+          "name": "Gap Analysis Integration",
+          "description": "Integrate gap analysis into user profile endpoint and Learner AI MS",
+          "dependencies": [23, 20],
+          "artifacts": ["backend/services/userService.js", "backend/handlers/learner/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Add gap analysis to user profile response", "done": false},
+            {"task": "Implement send gap analysis to Learner AI MS", "done": false},
+            {"task": "Add gap analysis to unified endpoint handler", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "skill_discovery": {
+      "name": "Skill Discovery",
+      "description": "Internal and external skill lookup and discovery",
+      "steps": [
+        {
+          "id": 25,
+          "name": "Internal Skill Lookup Service - Feature 6.1",
+          "description": "Implement internal skill lookup by competency",
+          "dependencies": [10, 11],
+          "artifacts": ["backend/services/skillDiscoveryService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement lookup competency by name", "done": false},
+            {"task": "Implement get linked L1 skills", "done": false},
+            {"task": "Implement traverse skill hierarchy to MGS", "done": false},
+            {"task": "Implement aggregate MGS across child competencies", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 26,
+          "name": "External Competency Discovery - Feature 6.2",
+          "description": "Implement external competency discovery using AI",
+          "dependencies": [16, 25],
+          "artifacts": ["backend/services/skillDiscoveryService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Load external discovery prompt", "done": false},
+            {"task": "Call Gemini API for competency discovery", "done": false},
+            {"task": "Parse discovered competency and skills", "done": false},
+            {"task": "Store discovered data in taxonomy", "done": false},
+            {"task": "Return MGS list", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "trainer_import": {
+      "name": "Trainer Import",
+      "description": "CSV upload and import for custom skills/competencies",
+      "steps": [
+        {
+          "id": 27,
+          "name": "CSV Parser Service - Feature 7.3",
+          "description": "Implement CSV parsing and validation",
+          "dependencies": [],
+          "artifacts": ["backend/services/csvParserService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement CSV file parsing", "done": false},
+            {"task": "Implement data validation", "done": false},
+            {"task": "Implement duplicate detection", "done": false},
+            {"task": "Implement SQL injection check", "done": false},
+            {"task": "Implement prompt injection check", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 28,
+          "name": "Import Service - Feature 7.3",
+          "description": "Implement import logic for competencies and skills",
+          "dependencies": [27, 9, 10],
+          "artifacts": ["backend/services/importService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement store competencies from CSV", "done": false},
+            {"task": "Implement store skills from CSV", "done": false},
+            {"task": "Implement handle duplicates", "done": false},
+            {"task": "Implement return import results", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 29,
+          "name": "Import API Endpoint - Feature 7.1",
+          "description": "Create CSV upload endpoint with trainer authorization",
+          "dependencies": [28],
+          "artifacts": ["backend/routes/api/competencies/import.js", "backend/controllers/importController.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create POST /api/competencies/import endpoint", "done": false},
+            {"task": "Implement multipart/form-data handling", "done": false},
+            {"task": "Add trainer authorization check", "done": false},
+            {"task": "Implement file size validation", "done": false},
+            {"task": "Implement async/sync response handling", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "external_systems_integration": {
+      "name": "External Systems API Integration",
+      "description": "Unified endpoint and microservice handlers",
+      "steps": [
+        {
+          "id": 30,
+          "name": "Unified Endpoint Controller",
+          "description": "Implement unified endpoint with routing logic",
+          "dependencies": [],
+          "artifacts": ["backend/routes/api/fill-content-metrics/index.js", "backend/controllers/unifiedEndpointController.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create POST /api/fill-content-metrics/ route", "done": false},
+            {"task": "Implement requester_service routing", "done": false},
+            {"task": "Implement request validation", "done": false},
+            {"task": "Implement response template handling", "done": false},
+            {"task": "Add microservice authentication", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 31,
+          "name": "Directory MS Handler - Feature 8.1",
+          "description": "Implement handler for Directory MS requests",
+          "dependencies": [30, 19],
+          "artifacts": ["backend/handlers/directory/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement receive user data handler", "done": false},
+            {"task": "Implement send initial profile handler", "done": false},
+            {"task": "Implement send updated profile handler", "done": false},
+            {"task": "Implement Directory MS API client", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 32,
+          "name": "Assessment MS Handler - Feature 8.2",
+          "description": "Implement handler for Assessment MS requests",
+          "dependencies": [30, 21],
+          "artifacts": ["backend/handlers/assessment/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement send baseline exam request handler", "done": false},
+            {"task": "Implement receive baseline exam results handler", "done": false},
+            {"task": "Implement receive post-course exam results handler", "done": false},
+            {"task": "Implement Assessment MS API client", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 33,
+          "name": "Course Builder MS Handler - Feature 8.3",
+          "description": "Implement handler for Course Builder MS requests with external discovery",
+          "dependencies": [30, 25, 26],
+          "artifacts": ["backend/handlers/courses/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement MGS request handler", "done": false},
+            {"task": "Implement internal lookup fallback", "done": false},
+            {"task": "Implement external discovery trigger", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 34,
+          "name": "Content Studio MS Handler - Feature 8.4",
+          "description": "Implement handler for Content Studio MS requests (internal only)",
+          "dependencies": [30, 25],
+          "artifacts": ["backend/handlers/content/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement MGS request handler", "done": false},
+            {"task": "Implement internal lookup only", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 35,
+          "name": "Learner AI MS Handler - Feature 8.5",
+          "description": "Implement handler for Learner AI MS requests",
+          "dependencies": [30, 24, 25],
+          "artifacts": ["backend/handlers/learner/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement send gap analysis handler", "done": false},
+            {"task": "Implement MGS request handler", "done": false},
+            {"task": "Implement Learner AI MS API client", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 36,
+          "name": "Learning Analytics MS Handler - Feature 8.6",
+          "description": "Implement handler for Learning Analytics MS requests",
+          "dependencies": [30, 14, 15],
+          "artifacts": ["backend/handlers/analytics/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement user profiles request handler", "done": false},
+            {"task": "Implement team aggregates request handler", "done": false},
+            {"task": "Implement aggregation algorithms", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 37,
+          "name": "RAG MS Handler - Feature 8.7",
+          "description": "Implement handler for RAG MS requests",
+          "dependencies": [30, 23, 8, 7],
+          "artifacts": ["backend/handlers/rag/index.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement taxonomy request handler", "done": false},
+            {"task": "Implement gap data request handler", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "ai_powered_extraction": {
+      "name": "AI-Powered Extraction Features",
+      "description": "Web source discovery and extraction",
+      "steps": [
+        {
+          "id": 38,
+          "name": "Source Discovery Service - Feature 9.1",
+          "description": "Implement AI-powered source URL discovery",
+          "dependencies": [16],
+          "artifacts": ["backend/services/sourceDiscoveryService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Load source discovery prompt", "done": false},
+            {"task": "Call Gemini API for source discovery", "done": false},
+            {"task": "Parse discovered sources", "done": false},
+            {"task": "Store sources in official_sources table", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 39,
+          "name": "Web Extraction Service - Feature 9.2",
+          "description": "Implement deep web search and skill extraction",
+          "dependencies": [16, 38],
+          "artifacts": ["backend/services/webExtractionService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Load web extraction prompt", "done": false},
+            {"task": "Call Gemini Deep Search API", "done": false},
+            {"task": "Parse extracted hierarchical data", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 40,
+          "name": "Validation Service - Feature 9.5",
+          "description": "Implement validation of extracted data",
+          "dependencies": [16, 39],
+          "artifacts": ["backend/services/validationService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Load validation prompt", "done": false},
+            {"task": "Call Gemini API for validation", "done": false},
+            {"task": "Parse validation results", "done": false},
+            {"task": "Trigger storage if validated", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 41,
+          "name": "Taxonomy Storage Service - Feature 9.7",
+          "description": "Implement storage of validated extracted data",
+          "dependencies": [40, 9, 10],
+          "artifacts": ["backend/services/taxonomyStorageService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement store validated competencies", "done": false},
+            {"task": "Implement store validated skills", "done": false},
+            {"task": "Implement create hierarchy relationships", "done": false},
+            {"task": "Implement link competencies to skills", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 42,
+          "name": "System Initialization Workflow",
+          "description": "Implement startup workflow for taxonomy initialization",
+          "dependencies": [38, 39, 40, 41],
+          "artifacts": ["backend/services/initializationService.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Implement check if database is empty", "done": false},
+            {"task": "Implement trigger source discovery", "done": false},
+            {"task": "Implement trigger web extraction", "done": false},
+            {"task": "Implement trigger validation", "done": false},
+            {"task": "Implement trigger storage", "done": false},
+            {"task": "Add startup hook", "done": false},
+            {"task": "Write unit tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "user_competency_api": {
+      "name": "User Competency & Skill API",
+      "description": "REST API endpoints for userCompetency and userSkill",
+      "steps": [
+        {
+          "id": 43,
+          "name": "User Competency API Endpoints",
+          "description": "Create REST API endpoints for userCompetency CRUD",
+          "dependencies": [14, 19],
+          "artifacts": ["backend/routes/api/user-competency/", "backend/controllers/userCompetencyController.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create GET /api/user-competency/{userId} endpoint", "done": false},
+            {"task": "Create GET /api/user-competency/{userId}/{competencyId} endpoint", "done": false},
+            {"task": "Create PUT /api/user-competency/{userId}/{competencyId} endpoint", "done": false},
+            {"task": "Create DELETE /api/user-competency/{userId}/{competencyId} endpoint", "done": false},
+            {"task": "Implement controller methods", "done": false},
+            {"task": "Add authentication and authorization", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 44,
+          "name": "User Skill API Endpoints",
+          "description": "Create REST API endpoints for userSkill CRUD",
+          "dependencies": [15, 19],
+          "artifacts": ["backend/routes/api/user-skill/", "backend/controllers/userSkillController.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create GET /api/user-skill/{userId} endpoint", "done": false},
+            {"task": "Create GET /api/user-skill/{userId}/{skillId} endpoint", "done": false},
+            {"task": "Create PUT /api/user-skill/{userId}/{skillId} endpoint", "done": false},
+            {"task": "Create DELETE /api/user-skill/{userId}/{skillId} endpoint", "done": false},
+            {"task": "Implement controller methods", "done": false},
+            {"task": "Add authentication and authorization", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 45,
+          "name": "Competency Tree Endpoint",
+          "description": "Create endpoint for lazy-loading competency tree",
+          "dependencies": [20, 23],
+          "artifacts": ["backend/routes/api/user-competency/[userId]/competency/[competencyId]/tree.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create GET /api/user-competency/{userId}/competency/{competencyId}/tree endpoint", "done": false},
+            {"task": "Implement tree building algorithm", "done": false},
+            {"task": "Add missing MGS to response", "done": false},
+            {"task": "Write integration tests", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    },
+    "infrastructure": {
+      "name": "Infrastructure & DevOps",
+      "description": "Setup infrastructure, middleware, and deployment",
+      "steps": [
+        {
+          "id": 46,
+          "name": "Express App Setup & Middleware",
+          "description": "Set up Express application with all middleware",
+          "dependencies": [],
+          "artifacts": ["backend/index.js", "backend/middleware/"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Initialize Express app", "done": false},
+            {"task": "Set up CORS middleware", "done": false},
+            {"task": "Set up body parser middleware", "done": false},
+            {"task": "Set up authentication middleware", "done": false},
+            {"task": "Set up error handler middleware", "done": false},
+            {"task": "Set up rate limiter middleware", "done": false},
+            {"task": "Set up request logger middleware", "done": false},
+            {"task": "Set up route registration", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 47,
+          "name": "Environment Configuration",
+          "description": "Set up environment variables and configuration",
+          "dependencies": [],
+          "artifacts": [".env.example", "backend/config/env.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create .env.example file", "done": false},
+            {"task": "Set up environment variable validation", "done": false},
+            {"task": "Configure database connection", "done": false},
+            {"task": "Configure AI service keys", "done": false},
+            {"task": "Configure JWT secrets", "done": false},
+            {"task": "Configure Railway deployment variables", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 48,
+          "name": "Testing Infrastructure",
+          "description": "Set up testing framework and test utilities",
+          "dependencies": [],
+          "artifacts": ["backend/tests/", "jest.config.js", "backend/utils/testHelpers.js"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Install and configure Jest or Vitest", "done": false},
+            {"task": "Set up test database", "done": false},
+            {"task": "Create test utilities and helpers", "done": false},
+            {"task": "Set up test fixtures", "done": false},
+            {"task": "Configure test coverage reporting", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 49,
+          "name": "CI/CD Pipeline Setup",
+          "description": "Configure GitHub Actions for CI/CD",
+          "dependencies": [],
+          "artifacts": [".github/workflows/ci-cd.yml"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create GitHub Actions workflow file", "done": false},
+            {"task": "Configure test job", "done": false},
+            {"task": "Configure lint job", "done": false},
+            {"task": "Configure build job", "done": false},
+            {"task": "Configure Railway deployment", "done": false},
+            {"task": "Configure Vercel deployment (if frontend)", "done": false},
+            {"task": "Set up GitHub secrets", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        },
+        {
+          "id": 50,
+          "name": "Documentation & API Docs",
+          "description": "Create API documentation and setup guides",
+          "dependencies": [46],
+          "artifacts": ["docs/API.md", "docs/SETUP.md", "README.md"],
+          "status": "TODO",
+          "checklist": [
+            {"task": "Create API documentation", "done": false},
+            {"task": "Create setup guide", "done": false},
+            {"task": "Update README with project overview", "done": false},
+            {"task": "Add code examples", "done": false},
+            {"task": "Add deployment instructions", "done": false}
+          ],
+          "timestamp": "2025-01-27T00:00:00Z",
+          "rework_reason": ""
+        }
+      ]
+    }
+  }
+}
+
