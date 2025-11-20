@@ -74,7 +74,7 @@ export const api = {
     }
 
     try {
-      const response = await apiClient.get(`/api/user/${userId}/profile`);
+      const response = await apiClient.get(`/api/user/${userId}`);
       return response.data;
     } catch (error) {
       console.warn(
