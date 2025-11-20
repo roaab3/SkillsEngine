@@ -41,11 +41,17 @@ app.get('/', (req, res) => {
 const skillsRoutes = require('./routes/api/skills');
 const competenciesRoutes = require('./routes/api/competencies');
 const userRoutes = require('./routes/api/user');
+const userCompetencyRoutes = require('./routes/api/user-competency');
+const userSkillRoutes = require('./routes/api/user-skill');
+const competencySkillRoutes = require('./routes/api/competency-skill');
 const unifiedEndpointHandler = require('./handlers/unifiedEndpointHandler');
 
 app.use('/api/skills', skillsRoutes);
 app.use('/api/competencies', competenciesRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/user-competency', userCompetencyRoutes);
+app.use('/api/user-skill', userSkillRoutes);
+app.use('/api/competency-skill', competencySkillRoutes);
 
 // Unified Data Exchange Protocol endpoint
 app.post('/api/fill-content-metrics/', unifiedEndpointHandler.handle.bind(unifiedEndpointHandler));
