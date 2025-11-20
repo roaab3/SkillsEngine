@@ -3,7 +3,9 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+// Railway (and most PaaS providers) inject a PORT env var that we must respect.
+// Default to 3000 only if PORT is not set (e.g. local dev without .env).
+const PORT = process.env.PORT || 3000;
 
 // CORS Configuration
 const FRONTEND_URL = process.env.FRONTEND_URL;
@@ -76,9 +78,9 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Skills Engine Backend running on port ${PORT}`);
+// Start server - bind explicitly to 0.0.0.0 so Railway can reach the container
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Skills Engine Backend running on port ${PORT} (process.env.PORT=${process.env.PORT || 'undefined'})`);
   console.log(`📊 Health check available at http://localhost:${PORT}/health`);
   console.log(`📚 API endpoints:`);
   console.log(`   - Skills: http://localhost:${PORT}/api/skills`);
