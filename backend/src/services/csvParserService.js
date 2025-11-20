@@ -81,18 +81,7 @@ class CSVParserService {
    * @returns {boolean} True if suspicious pattern found
    */
   checkSQLInjection(text) {
-    if (!text || typeof text !== 'string') {
-      return false;
-    }
-
-    const sqlPatterns = [
-      /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|SCRIPT)\b)/i,
-      /('|(\\')|(;)|(\\)|(\/\*)|(\*\/)|(\-\-)|(\+)|(\%)/,
-      /(\bor\b\s*\d+\s*=\s*\d+)/i,
-      /(\band\b\s*\d+\s*=\s*\d+)/i
-    ];
-
-    return sqlPatterns.some(pattern => pattern.test(text));
+    return isSQLInjection(text);
   }
 
   /**
@@ -101,18 +90,7 @@ class CSVParserService {
    * @returns {boolean} True if suspicious pattern found
    */
   checkPromptInjection(text) {
-    if (!text || typeof text !== 'string') {
-      return false;
-    }
-
-    const promptPatterns = [
-      /(\b(ignore|forget|disregard|override|system|admin|root)\b)/i,
-      /(\[SYSTEM\]|\[ADMIN\]|\[ROOT\]|\[IGNORE\])/i,
-      /(you are|you're|act as|pretend to be|roleplay)/i,
-      /(new instructions|updated instructions|revised instructions)/i
-    ];
-
-    return promptPatterns.some(pattern => pattern.test(text));
+    return isPromptInjection(text);
   }
 
   /**

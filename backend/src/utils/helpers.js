@@ -73,6 +73,42 @@ async function retry(fn, maxRetries = 3, delay = 1000) {
   }
 }
 
+/**
+ * Check for SQL injection patterns
+ */
+function isSQLInjection(text) {
+  if (!text || typeof text !== 'string') {
+    return false;
+  }
+
+  const sqlPatterns = [
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|SCRIPT)\b)/i,
+    /('|\\'|;|\\|(\/\*)|(\*\/)|(\-\-)|(\+)|(\%))/,
+    /(\bor\b\s*\d+\s*=\s*\d+)/i,
+    /(\band\b\s*\d+\s*=\s*\d+)/i
+  ];
+
+  return sqlPatterns.some(pattern => pattern.test(text));
+}
+
+/**
+ * Check for prompt injection patterns
+ */
+function isPromptInjection(text) {
+  if (!text || typeof text !== 'string') {
+    return false;
+  }
+
+  const promptPatterns = [
+    /(\b(ignore|forget|disregard|override|system|admin|root)\b)/i,
+    /(\[SYSTEM\]|\[ADMIN\]|\[ROOT\]|\[IGNORE\])/i,
+    /(you are|you're|act as|pretend to be|roleplay)/i,
+    /(new instructions|updated instructions|revised instructions)/i
+  ];
+
+  return promptPatterns.some(pattern => pattern.test(text));
+}
+
 module.exports = {
   generateId,
   sanitizeString,
@@ -80,6 +116,8 @@ module.exports = {
   paginate,
   deepClone,
   sleep,
-  retry
+  retry,
+  isSQLInjection,
+  isPromptInjection
 };
 
