@@ -200,6 +200,23 @@ class UserService {
       throw new Error(`User with ID ${userId} not found`);
     }
 
+    return {
+      user: user.toJSON()
+    };
+  }
+
+  /**
+   * Get full user profile with competencies and skills
+   * (used internally by analytics handlers)
+   * @param {string} userId - User ID
+   * @returns {Promise<Object>}
+   */
+  async getFullUserProfile(userId) {
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+
     const userCompetencies = await userCompetencyRepository.findByUser(userId);
     const userSkills = await userSkillRepository.findByUser(userId);
 

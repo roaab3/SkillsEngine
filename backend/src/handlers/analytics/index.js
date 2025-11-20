@@ -20,7 +20,7 @@ class AnalyticsHandler {
 
       if (user_id) {
         // Get user profile data
-        const profile = await userService.getUserProfile(user_id);
+        const profile = await userService.getFullUserProfile(user_id);
         return {
           status: 'success',
           message: 'User profile data retrieved',

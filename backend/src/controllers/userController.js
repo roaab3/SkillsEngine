@@ -11,7 +11,7 @@ const normalizationService = require('../services/normalizationService');
 class UserController {
   /**
    * Get user profile (unified endpoint)
-   * GET /api/user/:userId/profile
+  * GET /api/user/:userId
    */
   async getUserProfile(req, res) {
     try {

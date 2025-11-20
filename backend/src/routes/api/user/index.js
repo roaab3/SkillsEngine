@@ -12,11 +12,8 @@ router.post('/:userId/extract', userController.extractFromRawData.bind(userContr
 // Normalize data
 router.post('/:userId/normalize', userController.normalizeData.bind(userController));
 
-// Build initial profile
-router.post('/:userId/initial-profile', userController.buildInitialProfile.bind(userController));
-
-// Get user profile (unified)
-router.get('/:userId/profile', userController.getUserProfile.bind(userController));
+// Get user basic profile (no skills/competencies)
+router.get('/:userId', userController.getUserProfile.bind(userController));
 
 // Create or update user
 router.post('/', userController.createOrUpdateUser.bind(userController));

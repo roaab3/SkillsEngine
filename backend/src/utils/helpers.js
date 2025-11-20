@@ -83,7 +83,8 @@ function isSQLInjection(text) {
 
   const sqlPatterns = [
     /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|EXECUTE|UNION|SCRIPT)\b)/i,
-    /('|\\'|;|\\|(\/\*)|(\*\/)|(\-\-)|(\+)|(\%))/,
+    // Match common SQL special characters and comment operators: ', \', ;, \, /*, */, --, +, %
+    /('|\\'|;|\\|\/\*|\*\/|--|\+|%)/,
     /(\bor\b\s*\d+\s*=\s*\d+)/i,
     /(\band\b\s*\d+\s*=\s*\d+)/i
   ];
