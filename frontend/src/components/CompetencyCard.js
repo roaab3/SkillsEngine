@@ -3,7 +3,7 @@
  */
 
 import { ArrowRight } from 'lucide-react';
-import { formatPercentage, getCoverageColor } from '@/lib/utils';
+import { getCoverageColor } from '@/lib/utils';
 
 /**
  * @param {{userCompetency: any, onClick: function}} props

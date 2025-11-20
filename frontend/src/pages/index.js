@@ -4,7 +4,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { api } from '@/lib/api';
 import Dashboard from '@/components/Dashboard';
 import mockUserProfile from '../../public/mockdata/userProfile.json';
 

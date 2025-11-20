@@ -14,7 +14,7 @@ import { Loader2 } from 'lucide-react';
  * @param {{userId: string}} props
  */
 export default function Dashboard({ userId }) {
-  const { profile, loading, error, refetch } = useUserProfile(userId);
+  const { profile, loading, error } = useUserProfile(userId);
   const [selectedCompetency, setSelectedCompetency] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
 

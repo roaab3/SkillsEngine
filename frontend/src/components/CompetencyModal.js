@@ -3,33 +3,24 @@
  */
 
 import { useState, useEffect } from 'react';
-import { X, ChevronDown, ChevronRight, CheckCircle2, XCircle } from 'lucide-react';
+import { X, CheckCircle2 } from 'lucide-react';
 import { api } from '@/lib/api';
-import { formatPercentage } from '@/lib/utils';
 
 /**
  * @param {{competencyId: string, onClose: function, isDarkMode: boolean}} props
  */
 export default function CompetencyModal({ competencyId, onClose, isDarkMode }) {
   const [competency, setCompetency] = useState(null);
-  const [hierarchy, setHierarchy] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [expandedNodes, setExpandedNodes] = useState(new Set());
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [compRes, hierRes] = await Promise.all([
-          api.getCompetencyById(competencyId),
-          api.getCompetencyHierarchy(competencyId),
-        ]);
+        const compRes = await api.getCompetencyById(competencyId);
 
         if (compRes.success) {
           setCompetency(compRes.data);
-        }
-        if (hierRes.success) {
-          setHierarchy(hierRes.data);
         }
       } catch (error) {
         console.error('Failed to load competency data:', error);
@@ -42,16 +33,6 @@ export default function CompetencyModal({ competencyId, onClose, isDarkMode }) {
       fetchData();
     }
   }, [competencyId]);
-
-  const toggleNode = (nodeId) => {
-    const newExpanded = new Set(expandedNodes);
-    if (newExpanded.has(nodeId)) {
-      newExpanded.delete(nodeId);
-    } else {
-      newExpanded.add(nodeId);
-    }
-    setExpandedNodes(newExpanded);
-  };
 
   if (loading) {
     return (
