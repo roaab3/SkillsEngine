@@ -12,6 +12,7 @@ RUN npm install --production
 
 # Copy source code
 COPY src ./src
+COPY config ./config
 
 # Expose port
 EXPOSE 8080
