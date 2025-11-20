@@ -34,8 +34,8 @@ export default function CSVUploadModal({ onClose, isDarkMode }) {
     try {
       setUploading(true);
       setError(null);
-      const response = await api.importCSV(file);
-      setResult(response);
+      //const response = await api.importCSV(file);
+      //setResult(response);
     } catch (err) {
       setError(err.message || 'Upload failed');
     } finally {
