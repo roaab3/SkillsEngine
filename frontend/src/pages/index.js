@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { api } from '@/lib/api';
 import Dashboard from '@/components/Dashboard';
+import mockUserProfile from '../../public/mockdata/userProfile.json';
 
 export default function Home() {
   const router = useRouter();
@@ -14,7 +15,8 @@ export default function Home() {
 
   useEffect(() => {
     // Get userId from query params or localStorage
-    const id = router.query.userId || localStorage.getItem('userId') || 'default-user';
+    const defaultUserId = mockUserProfile?.user_id || 'default-user';
+    const id = router.query.userId || localStorage.getItem('userId') || defaultUserId;
     setUserId(id);
     if (id) {
       localStorage.setItem('userId', id);
