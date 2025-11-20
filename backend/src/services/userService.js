@@ -196,7 +196,7 @@ class UserService {
    */
   async getUserProfile(userId) {
     const user = await userRepository.findById(userId);
-    if (!user) {
+   /*  if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
     
@@ -207,6 +207,19 @@ class UserService {
   });
     return {
       user: user.toJSON()
+    }; */
+    console.log('[UserService.getUserProfile] TEMP stub for userId:', userId);
+
+    return {
+      user: {
+        user_id: userId,
+        user_name: 'Test User',
+        company_id: 'test_company',
+        employee_type: 'regular',
+        path_career: null,
+        raw_data: null,
+        relevance_score: 0,
+      },
     };
   }
 
