@@ -318,6 +318,64 @@ class CompetencyRepository {
     const result = await query(sql, [parentCompetencyId]);
     return result.rows.map(row => new Competency(row));
   }
+
+  /**
+   * Get direct sub-competency links for a parent
+   * @param {string} parentCompetencyId
+   * @returns {Promise<Competency[]>}
+   */
+  async getSubCompetencyLinks(parentCompetencyId) {
+    const sql = `
+      SELECT c.*
+      FROM competencies c
+      INNER JOIN competency_subCompetency csc ON c.competency_id = csc.child_competency_id
+      WHERE csc.parent_competency_id = $1
+      ORDER BY c.competency_name
+    `;
+    const result = await query(sql, [parentCompetencyId]);
+    return result.rows.map(row => new Competency(row));
+  }
+
+  /**
+   * Link a sub-competency to a parent competency
+   * @param {string} parentCompetencyId
+   * @param {string} childCompetencyId
+   * @returns {Promise<boolean>}
+   */
+  async linkSubCompetency(parentCompetencyId, childCompetencyId) {
+    const checkSql = `
+      SELECT 1 FROM competency_subCompetency
+      WHERE parent_competency_id = $1 AND child_competency_id = $2
+    `;
+    const exists = await query(checkSql, [parentCompetencyId, childCompetencyId]);
+    if (exists.rows.length > 0) {
+      return true;
+    }
+
+    const sql = `
+      INSERT INTO competency_subCompetency (parent_competency_id, child_competency_id)
+      VALUES ($1, $2)
+      RETURNING *
+    `;
+    const result = await query(sql, [parentCompetencyId, childCompetencyId]);
+    return result.rows.length > 0;
+  }
+
+  /**
+   * Unlink a sub-competency from a parent
+   * @param {string} parentCompetencyId
+   * @param {string} childCompetencyId
+   * @returns {Promise<boolean>}
+   */
+  async unlinkSubCompetency(parentCompetencyId, childCompetencyId) {
+    const sql = `
+      DELETE FROM competency_subCompetency
+      WHERE parent_competency_id = $1 AND child_competency_id = $2
+      RETURNING *
+    `;
+    const result = await query(sql, [parentCompetencyId, childCompetencyId]);
+    return result.rows.length > 0;
+  }
 }
 
 module.exports = new CompetencyRepository();
