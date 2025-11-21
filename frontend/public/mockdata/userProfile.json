@@ -1,0 +1,50 @@
+{
+  "user_id": "user_123",
+  "user_name": "John Doe",
+  "company_id": "company_456",
+  "relevance_score": 75.5,
+  "competencies": [
+    {
+      "competency_id": "comp_1",
+      "competency_name": "Full Stack Development",
+      "coverage_percentage": 65.0,
+      "proficiency_level": "INTERMEDIATE",
+      "l1_skills": [
+        {
+          "skill_id": "skill_1",
+          "skill_name": "JavaScript"
+        },
+        {
+          "skill_id": "skill_2",
+          "skill_name": "React"
+        },
+        {
+          "skill_id": "skill_3",
+          "skill_name": "Node.js"
+        }
+      ],
+      "verified_skills_count": 5,
+      "total_required_mgs": 10
+    },
+    {
+      "competency_id": "comp_2",
+      "competency_name": "Database Management",
+      "coverage_percentage": 45.0,
+      "proficiency_level": "BEGINNER",
+      "l1_skills": [
+        {
+          "skill_id": "skill_4",
+          "skill_name": "SQL"
+        },
+        {
+          "skill_id": "skill_5",
+          "skill_name": "PostgreSQL"
+        }
+      ],
+      "verified_skills_count": 2,
+      "total_required_mgs": 8
+    }
+  ]
+}
+
+

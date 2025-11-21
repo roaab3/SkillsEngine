@@ -5,7 +5,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Dashboard from '@/components/Dashboard';
-import mockUserProfile from '../../public/mockdata/userProfile.json';
 
 export default function Home() {
   const router = useRouter();
@@ -13,9 +12,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get userId from query params or localStorage
-    const defaultUserId = mockUserProfile?.user_id || 'default-user';
-    const id = router.query.userId || localStorage.getItem('userId') || defaultUserId;
+    // Get userId from query params or localStorage, fallback to a generic default
+
+    const id = router.query.userId 
     setUserId(id);
     if (id) {
       localStorage.setItem('userId', id);
