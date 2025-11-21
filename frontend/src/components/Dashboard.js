@@ -98,6 +98,7 @@ export default function Dashboard({ userId }) {
                   >
                     + Add Competency
                   </button>
+                  </div>
             </div>
           </div>
         </section>
