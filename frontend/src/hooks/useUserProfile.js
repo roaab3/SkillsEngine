@@ -22,7 +22,14 @@ export function useUserProfile(userId) {
         setProfile(profileData);
         setError(null);
       } catch (err) {
-        setError(err.message || 'Failed to load profile');
+        const status = err?.response?.status;
+        if (status === 404) {
+          // Treat 404 as "no profile" rather than a hard error
+          setProfile(null);
+          setError(null);
+        } else {
+          setError(err.message || 'Failed to load profile');
+        }
       } finally {
         setLoading(false);
       }
@@ -40,7 +47,13 @@ export function useUserProfile(userId) {
         const profileData = await api.getUserProfile(userId);
         setProfile(profileData);
       } catch (err) {
-        setError(err.message || 'Failed to reload profile');
+        const status = err?.response?.status;
+        if (status === 404) {
+          setProfile(null);
+          setError(null);
+        } else {
+          setError(err.message || 'Failed to reload profile');
+        }
       } finally {
         setLoading(false);
       }
