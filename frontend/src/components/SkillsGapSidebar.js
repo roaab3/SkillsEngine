@@ -1,8 +1,9 @@
 /**
  * Skills Gap Sidebar Component
+ * Modern redesign with sticky positioning on the right side
  */
 
-import { AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, Target, ArrowRight } from 'lucide-react';
 
 /**
  * @param {{profile: any, isDarkMode: boolean}} props
@@ -29,105 +30,170 @@ export default function SkillsGapSidebar({ profile, isDarkMode }) {
     }
   });
 
+  // Get priority style
+  const getPriorityBadge = (index) => {
+    if (index < 3) return { bg: 'bg-red-500', label: 'High' };
+    if (index < 6) return { bg: 'bg-amber-500', label: 'Medium' };
+    return { bg: 'bg-slate-500', label: 'Low' };
+  };
+
+  if (!hasProfile) {
+    return (
+      <div className="lg:sticky lg:top-24 space-y-4">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 text-center">
+          <AlertCircle className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+            No gap data available yet
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (allMissingMGS.length === 0) {
+    return (
+      <div className="lg:sticky lg:top-24 space-y-4">
+        <div className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-950/30 dark:to-accent-950/30 rounded-2xl border border-primary-200 dark:border-primary-800 p-6 text-center">
+          <CheckCircle2 className="w-16 h-16 text-primary-500 dark:text-primary-400 mx-auto mb-3 animate-bounce-subtle" />
+          <h3 className="text-lg font-bold text-primary-600 dark:text-primary-400 mb-1">
+            All Skills Mastered!
+          </h3>
+          <p className="text-sm text-slate-700 dark:text-slate-300">
+            Outstanding progress!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={`w-96 fixed right-0 top-20 bottom-0 ${isDarkMode ? 'bg-slate-800' : 'bg-white'} border-l border-gray-200 dark:border-slate-700 shadow-2xl overflow-y-auto`}>
-      {/* Sticky Header */}
-      <div className={`sticky top-0 z-10 p-4 ${isDarkMode ? 'bg-gradient-to-r from-red-900 to-orange-900' : 'bg-gradient-to-r from-red-50 to-orange-50'} border-b border-gray-200 dark:border-slate-700`}>
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 rounded-full bg-red-100 dark:bg-red-800 flex items-center justify-center">
-            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-300" />
+    <div className="lg:sticky lg:top-24 space-y-4">
+      {/* Header Card */}
+      <div className="bg-gradient-to-br from-red-500 to-rose-500 rounded-2xl p-6 text-white shadow-xl">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+            <Target className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold dark:text-gray-100">Skills Gap</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {allMissingMGS.length} missing skills
+            <h2 className="text-xl font-bold">Skills Gap</h2>
+            <p className="text-sm text-white/90">
+              {allMissingMGS.length} skills to master
             </p>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-4">
-        {/* Overall gap / relevance score card */}
-        {hasProfile && relevanceScore !== null && (
-          <div
-            className={`rounded-2xl px-4 py-4 shadow-md border ${
-              isDarkMode
-                ? 'bg-slate-900/80 border-slate-700'
-                : 'bg-slate-900 border-slate-800'
-            }`}
-          >
-            <div className="flex items-start justify-between gap-3 mb-3">
+      {/* Overall Gap Score Card */}
+      {relevanceScore !== null && (
+        <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-6 shadow-xl border border-slate-700">
+          {/* Decorative element */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500/20 to-transparent rounded-full blur-2xl" />
+
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-3">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-200">
-                  Overall Gap Analysis
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1">
+                  Overall Gap Score
                 </p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-extrabold text-amber-400">
+                    {Math.round(100 - relevanceScore)}%
+                  </span>
+                </div>
               </div>
-              <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center">
-                <AlertTriangle className="w-3 h-3 text-amber-400" />
+              <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-amber-400" />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <p className="text-3xl font-extrabold text-amber-400">
-                {Math.round(100 - relevanceScore)}%
-              </p>
-              <p className="text-xs text-slate-200">
-                Moderate gaps identified
-              </p>
-            </div>
-
-            <div className="mt-4 h-2 w-full rounded-full bg-slate-700 overflow-hidden">
+            {/* Progress bar */}
+            <div className="relative h-2 bg-slate-700/50 rounded-full overflow-hidden mb-2">
               <div
                 className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500"
                 style={{ width: `${Math.min(Math.max(100 - relevanceScore, 0), 100)}%` }}
               />
             </div>
-          </div>
-        )}
 
-        {!hasProfile ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600 dark:text-gray-300">
-            <p className="font-semibold mb-1">No gap data available yet.</p>
-            <p className="text-sm">Connect a user profile to see skills gaps.</p>
+            <p className="text-xs text-slate-400">
+              Focus on priority skills
+            </p>
           </div>
-        ) : allMissingMGS.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <CheckCircle2 className="w-16 h-16 text-green-500 mb-4" />
-            <h3 className="text-lg font-bold text-green-600 dark:text-green-400 mb-2">
-              All skills mastered!
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">Congratulations! 🎉</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {allMissingMGS.map((skill, index) => (
+        </div>
+      )}
+
+      {/* Skills List */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+          <h3 className="font-bold text-slate-900 dark:text-slate-50">
+            Missing Skills
+          </h3>
+        </div>
+        <div className="divide-y divide-slate-200 dark:divide-slate-700 max-h-[600px] overflow-y-auto">
+          {allMissingMGS.slice(0, 15).map((skill, index) => {
+            const priority = getPriorityBadge(index);
+            return (
               <div
                 key={`${skill.skill_id}-${index}`}
-                className={`p-4 rounded-xl border ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-red-50 border-red-200'} shadow-md hover:shadow-lg transition-shadow`}
+                className="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group cursor-pointer"
               >
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-red-500 dark:bg-red-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div className="flex gap-3">
+                  {/* Number Badge */}
+                  <div className={`w-8 h-8 rounded-lg ${priority.bg} flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md`}>
                     {index + 1}
                   </div>
-                  <div className="flex-1">
-                    <div className="font-bold text-sm mb-1 dark:text-gray-100">
-                      {skill.skill_name}
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h4 className="font-semibold text-sm text-slate-900 dark:text-slate-50 line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                        {skill.skill_name}
+                      </h4>
+                      <span className={`${priority.bg} text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded-full flex-shrink-0`}>
+                        {priority.label}
+                      </span>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-1 mb-2">
                       {skill.competencyName}
-                    </div>
-                    <div className="text-xs font-semibold text-red-600 dark:text-red-400">
-                      Progress: 0%
+                    </p>
+
+                    {/* Progress bar */}
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-full w-0 bg-gradient-to-r from-primary-500 to-accent-500" />
+                      </div>
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                        0%
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
+            );
+          })}
+        </div>
+
+        {allMissingMGS.length > 15 && (
+          <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+            <button className="w-full text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center justify-center gap-1 transition-colors">
+              <span>View all {allMissingMGS.length} skills</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         )}
+      </div>
+
+      {/* CTA Card */}
+      <div className="bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl p-6 text-white shadow-xl">
+        <h3 className="font-bold text-lg mb-2">
+          Ready to Close the Gap?
+        </h3>
+        <p className="text-sm text-white/90 mb-4">
+          Start with high-priority skills
+        </p>
+        <button className="w-full py-2.5 bg-white text-primary-600 font-bold rounded-xl hover:bg-white/90 hover:scale-105 transition-all shadow-lg">
+          Get Started
+        </button>
       </div>
     </div>
   );
 }
-
