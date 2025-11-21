@@ -64,19 +64,35 @@ class AIService {
    * @returns {Promise<Object>} Parsed JSON
    */
   async callGeminiJSON(prompt, options = {}) {
-    const response = await this.callGemini(prompt, options);
+    // Force Gemini to return JSON by using responseMimeType.
+    const mergedOptions = {
+      ...options,
+      generationConfig: {
+        ...(options.generationConfig || {}),
+        responseMimeType: 'application/json'
+      }
+    };
+
+    const responseText = await this.callGemini(prompt, mergedOptions);
 
     // Try to extract JSON from response (handle markdown code blocks)
-    let jsonText = response.trim();
+    let jsonText = (responseText || '').trim();
 
     // Remove markdown code blocks if present
     if (jsonText.startsWith('```json')) {
-      jsonText = jsonText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+      jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
     } else if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```\n?/, '').replace(/\n?```$/, '');
+      jsonText = jsonText.replace(/^```\s*/i, '').replace(/```$/i, '').trim();
     }
 
-    return JSON.parse(jsonText);
+    try {
+      return JSON.parse(jsonText);
+    } catch (parseError) {
+      const preview = jsonText.slice(0, 200);
+      throw new Error(
+        `Gemini did not return valid JSON. Parse error: ${parseError.message}. Response preview: ${preview}`
+      );
+    }
   }
 
   /**
