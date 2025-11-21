@@ -1,0 +1,3 @@
+{{ contents of docs/prompts/skill_extraction_from_profile_prompt.txt }}
+
+

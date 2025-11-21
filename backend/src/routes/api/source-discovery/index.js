@@ -13,8 +13,19 @@ const sourceDiscoveryController = require('../../../controllers/sourceDiscoveryC
 // const { requireAdmin } = require('../../../middleware/authorization');
 // router.post('/run', requireAdmin, sourceDiscoveryController.runDiscovery.bind(sourceDiscoveryController));
 
-// For now, expose a simple POST endpoint:
+// POST /api/source-discovery/run → trigger discovery
 router.post('/run', sourceDiscoveryController.runDiscovery.bind(sourceDiscoveryController));
+
+// Convenience alias: POST /api/source-discovery also triggers discovery
+router.post('/', sourceDiscoveryController.runDiscovery.bind(sourceDiscoveryController));
+
+// Simple GET to verify the route is wired (does NOT trigger discovery)
+router.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Source discovery API is available. Use POST /api/source-discovery/run to trigger discovery.',
+  });
+});
 
 module.exports = router;
 
