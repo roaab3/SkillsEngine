@@ -84,6 +84,11 @@ export const api = {
     return response.data;
   },
 
+  getCompetencyCompleteHierarchy: async (competencyId) => {
+    const response = await apiClient.get(`/api/competencies/${competencyId}/complete-hierarchy`);
+    return response.data;
+  },
+
   getCompetencyMGS: async (competencyId) => {
     const response = await apiClient.get(`/api/competencies/${competencyId}/mgs`);
     return response.data;

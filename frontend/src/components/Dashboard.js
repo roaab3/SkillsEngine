@@ -3,9 +3,10 @@
  * Right sidebar layout with Average Progress and Skills Gap
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useUserCompetencies } from '@/hooks/useUserCompetencies';
+import { useCompetencyHierarchies } from '@/hooks/useCompetencyHierarchies';
 import CompetencyCard from './CompetencyCard';
 import SkillsGapSidebar from './SkillsGapSidebar';
 import CompetencyModal from './CompetencyModal';
@@ -24,6 +25,14 @@ export default function Dashboard({ userId }) {
   const [selectedCompetency, setSelectedCompetency] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+
+  // Extract competency IDs for hierarchy loading
+  const competencyIds = useMemo(() => {
+    return competencies.map(comp => comp.competency_id);
+  }, [competencies]);
+
+  // Fetch hierarchies progressively for all competencies
+  const { hierarchies, loading: hierarchyLoading } = useCompetencyHierarchies(competencyIds);
 
   const hasProfile = !!profile;
   const user = hasProfile
@@ -71,7 +80,7 @@ export default function Dashboard({ userId }) {
                     Your Competencies
                   </h2>
                   <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">
-                    Track your progress across {competencies.length} skill areas
+                    Track your progress across {competencies.length} competencies
                   </p>
                 </div>
 
@@ -101,6 +110,8 @@ export default function Dashboard({ userId }) {
                       key={userComp.competency_id}
                       userCompetency={userComp}
                       onClick={() => setSelectedCompetency(userComp.competency_id)}
+                      isLoadingHierarchy={hierarchyLoading[userComp.competency_id]}
+                      hierarchyData={hierarchies[userComp.competency_id]}
                     />
                   ))}
                 </div>
