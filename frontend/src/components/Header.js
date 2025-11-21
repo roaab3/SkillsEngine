@@ -2,16 +2,12 @@
  * Header Component
  */
 
-import { Upload, Sun, Moon, Bell } from 'lucide-react';
-import { useState } from 'react';
-import CSVUploadModal from './CSVUploadModal';
+import { Sun, Moon, Bell } from 'lucide-react';
 
 /**
  * @param {{user: any, isDarkMode: boolean, setIsDarkMode: function}} props
  */
 export default function Header({ user, isDarkMode, setIsDarkMode }) {
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const isTrainer = user?.employee_type === 'trainer';
   const userName = user?.user_name || 'Guest';
 
   return (
@@ -29,17 +25,6 @@ export default function Header({ user, isDarkMode, setIsDarkMode }) {
 
       {/* Right: actions */}
       <div className="flex items-center gap-4">
-        {/* CSV Upload Button - Trainer Only */}
-        {isTrainer && (
-          <button
-            onClick={() => setShowUploadModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 dark:bg-teal-500 text-white rounded-lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
-          >
-            <Upload className="w-5 h-5" />
-            <span>Upload CSV</span>
-          </button>
-        )}
-
         {/* Notifications */}
         <button
           type="button"
@@ -69,14 +54,6 @@ export default function Header({ user, isDarkMode, setIsDarkMode }) {
           )}
         </button>
       </div>
-
-      {/* CSV Upload Modal */}
-      {showUploadModal && (
-        <CSVUploadModal
-          onClose={() => setShowUploadModal(false)}
-          isDarkMode={isDarkMode}
-        />
-      )}
     </header>
   );
 }

@@ -8,7 +8,8 @@ import CompetencyCard from './CompetencyCard';
 import SkillsGapSidebar from './SkillsGapSidebar';
 import CompetencyModal from './CompetencyModal';
 import Header from './Header';
-import { Loader2 } from 'lucide-react';
+import CSVUploadModal from './CSVUploadModal';
+import { Loader2, Upload } from 'lucide-react';
 
 /**
  * @param {{userId: string}} props
@@ -17,12 +18,14 @@ export default function Dashboard({ userId }) {
   const { profile, loading, error } = useUserProfile(userId);
   const [selectedCompetency, setSelectedCompetency] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
 
   const hasProfile = !!profile;
   const user = hasProfile
     ? profile.user
     : { user_name: 'Guest User', employee_type: 'regular' };
   const competencies = hasProfile ? profile.competencies || [] : [];
+  const isTrainer = user.employee_type === 'trainer';
 
   if (loading) {
     return (
@@ -57,7 +60,7 @@ export default function Dashboard({ userId }) {
             </p>
           </section>
 
-          {/* Competencies header + filters */}
+          {/* Competencies header + filters + CSV upload */}
           <section className="space-y-4">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div>
@@ -92,13 +95,17 @@ export default function Dashboard({ userId }) {
                     <option value="advanced">Advanced</option>
                   </select>
 
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition"
-                  >
-                    + Add Competency
-                  </button>
-                  </div>
+                  {isTrainer && (
+                    <button
+                      type="button"
+                      onClick={() => setShowUploadModal(true)}
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload CSV
+                    </button>
+                  )}
+                </div>
             </div>
           </div>
         </section>
@@ -139,11 +146,20 @@ export default function Dashboard({ userId }) {
           <SkillsGapSidebar profile={profile} isDarkMode={isDarkMode} />
         </div>
       </div>
+
       {/* Competency Modal */}
       {selectedCompetency && (
         <CompetencyModal
           competencyId={selectedCompetency}
           onClose={() => setSelectedCompetency(null)}
+          isDarkMode={isDarkMode}
+        />
+      )}
+
+      {/* CSV Upload Modal (Trainer only) */}
+      {isTrainer && showUploadModal && (
+        <CSVUploadModal
+          onClose={() => setShowUploadModal(false)}
           isDarkMode={isDarkMode}
         />
       )}
