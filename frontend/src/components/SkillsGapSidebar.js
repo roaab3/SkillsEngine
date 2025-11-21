@@ -2,7 +2,7 @@
  * Skills Gap Sidebar Component
  */
 
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 /**
  * @param {{profile: any, isDarkMode: boolean}} props
@@ -11,6 +11,9 @@ export default function SkillsGapSidebar({ profile, isDarkMode }) {
   const hasProfile = !!profile;
   const gapAnalysis = profile?.gap_analysis || {};
   const allMissingMGS = [];
+  const relevanceScore = typeof profile?.relevance_score === 'number'
+    ? profile.relevance_score
+    : null;
 
   // Collect all missing MGS from all competencies
   Object.values(gapAnalysis).forEach((gap) => {
@@ -44,7 +47,45 @@ export default function SkillsGapSidebar({ profile, isDarkMode }) {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 space-y-4">
+        {/* Overall gap / relevance score card */}
+        {hasProfile && relevanceScore !== null && (
+          <div
+            className={`rounded-2xl px-4 py-4 shadow-md border ${
+              isDarkMode
+                ? 'bg-slate-900/80 border-slate-700'
+                : 'bg-slate-900 border-slate-800'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-200">
+                  Overall Gap Analysis
+                </p>
+              </div>
+              <div className="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center">
+                <AlertTriangle className="w-3 h-3 text-amber-400" />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-3xl font-extrabold text-amber-400">
+                {Math.round(100 - relevanceScore)}%
+              </p>
+              <p className="text-xs text-slate-200">
+                Moderate gaps identified
+              </p>
+            </div>
+
+            <div className="mt-4 h-2 w-full rounded-full bg-slate-700 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500"
+                style={{ width: `${Math.min(Math.max(100 - relevanceScore, 0), 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         {!hasProfile ? (
           <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600 dark:text-gray-300">
             <p className="font-semibold mb-1">No gap data available yet.</p>

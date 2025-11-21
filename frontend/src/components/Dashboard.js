@@ -40,7 +40,7 @@ export default function Dashboard({ userId }) {
         setIsDarkMode={setIsDarkMode}
       />
 
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
         {/* Main Content Area */}
         <div className="flex-1 p-6 space-y-6">
           {/* Hero / greeting section */}
@@ -134,10 +134,11 @@ export default function Dashboard({ userId }) {
           </div>
         </div>
 
-        {/* Skills Gap Sidebar */}
-        <SkillsGapSidebar profile={profile} isDarkMode={isDarkMode} />
+        {/* Skills Gap Sidebar (separate column) */}
+        <div className="w-full lg:w-[380px]">
+          <SkillsGapSidebar profile={profile} isDarkMode={isDarkMode} />
+        </div>
       </div>
-
       {/* Competency Modal */}
       {selectedCompetency && (
         <CompetencyModal
