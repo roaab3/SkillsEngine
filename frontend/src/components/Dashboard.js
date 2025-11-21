@@ -27,6 +27,18 @@ export default function Dashboard({ userId }) {
   const competencies = hasProfile ? profile.competencies || [] : [];
   const isTrainer = user.employee_type === 'trainer';
 
+  const searchBarContainerClasses = isDarkMode
+    ? 'bg-slate-900/70 border-slate-700'
+    : 'bg-white border-gray-200';
+
+  const searchInputClasses = isDarkMode
+    ? 'border-slate-700 bg-slate-800/80 text-slate-50 placeholder:text-slate-400'
+    : 'border-gray-300 bg-white text-gray-900 placeholder:text-gray-400';
+
+  const filterSelectClasses = isDarkMode
+    ? 'border-slate-700 bg-slate-800/80 text-slate-50'
+    : 'border-gray-300 bg-white text-gray-900';
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -43,9 +55,10 @@ export default function Dashboard({ userId }) {
         setIsDarkMode={setIsDarkMode}
       />
 
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
-        {/* Main Content Area */}
-        <div className="flex-1 p-6 space-y-6">
+      <main className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Main Content Area */}
+          <div className="flex-1 space-y-6">
           {/* Hero / greeting section */}
           <section className="space-y-2">
             <p className="text-sm font-medium text-emerald-500 uppercase tracking-wide">
@@ -72,17 +85,13 @@ export default function Dashboard({ userId }) {
             </div>
 
             <div
-              className={`flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-2xl border px-4 py-3 shadow-sm ${
-                isDarkMode
-                  ? 'bg-slate-900/70 border-slate-700'
-                  : 'bg-slate-900 border-slate-800'
-              }`}
+              className={`flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-2xl border px-4 py-3 shadow-sm ${searchBarContainerClasses}`}
             >
               <div className="w-full md:max-w-xl relative">
                 <input
                   type="text"
                   placeholder="Search competencies..."
-                  className="w-full rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm pl-9 text-slate-50 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className={`w-full rounded-lg px-3 py-2 text-sm pl-9 focus:outline-none focus:ring-2 focus:ring-emerald-400 ${searchInputClasses}`}
                 />
                 <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-slate-400 text-xs">
                   🔍
@@ -91,7 +100,7 @@ export default function Dashboard({ userId }) {
 
               <div className="flex items-stretch gap-2 w-full md:w-auto justify-end">
                 <select
-                  className="rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className={`rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 ${filterSelectClasses}`}
                   defaultValue="all"
                 >
                   <option value="all">All levels</option>
@@ -146,10 +155,11 @@ export default function Dashboard({ userId }) {
         </div>
 
         {/* Skills Gap Sidebar (separate column) */}
-        <div className="w-full lg:w-[380px]">
+        <div className="w-full lg:w-[380px] mt-4 lg:mt-0">
           <SkillsGapSidebar profile={profile} isDarkMode={isDarkMode} />
         </div>
-      </div>
+        </div>
+      </main>
 
       {/* Competency Modal */}
       {selectedCompetency && (
