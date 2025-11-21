@@ -6,9 +6,9 @@
 import { AlertCircle, AlertTriangle, CheckCircle2, Target, Zap } from 'lucide-react';
 
 /**
- * @param {{profile: any, isDarkMode: boolean}} props
+ * @param {{profile: any}} props
  */
-export default function SkillsGapSection({ profile, isDarkMode }) {
+export default function SkillsGapSection({ profile }) {
   const hasProfile = !!profile;
   const gapAnalysis = profile?.gap_analysis || {};
   const allMissingMGS = [];

@@ -4,14 +4,12 @@
  */
 
 import { ArrowRight, TrendingUp, BookOpen, Star } from 'lucide-react';
-import { getCoverageColor, getProficiencyColor } from '@/lib/utils';
 
 /**
  * @param {{userCompetency: any, onClick: function}} props
  */
 export default function CompetencyCard({ userCompetency, onClick }) {
   const coverage = userCompetency.coverage_percentage || 0;
-  const colorClass = getCoverageColor(coverage);
   const verifiedCount = userCompetency.verifiedSkills?.filter(s => s.verified).length || 0;
   const totalSkills = userCompetency.verifiedSkills?.length || 0;
   const proficiency = userCompetency.proficiency_level || 'beginner';
