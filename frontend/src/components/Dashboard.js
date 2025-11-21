@@ -60,55 +60,59 @@ export default function Dashboard({ userId }) {
             </p>
           </section>
 
-          {/* Competencies header + filters + CSV upload */}
-          <section className="space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">
-                  Your Competencies
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Track your progress across different skill areas.
-                </p>
+          {/* Competencies header + search, filter and upload action bar */}
+          <section className="space-y-3">
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">
+                Your Competencies
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Track your progress across different skill areas.
+              </p>
+            </div>
+
+            <div
+              className={`flex flex-col md:flex-row md:items-center md:justify-between gap-3 rounded-2xl border px-4 py-3 shadow-sm ${
+                isDarkMode
+                  ? 'bg-slate-900/70 border-slate-700'
+                  : 'bg-slate-900 border-slate-800'
+              }`}
+            >
+              <div className="w-full md:max-w-xl relative">
+                <input
+                  type="text"
+                  placeholder="Search competencies..."
+                  className="w-full rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm pl-9 text-slate-50 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                />
+                <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-slate-400 text-xs">
+                  🔍
+                </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <div className="relative flex-1 min-w-[220px]">
-                  <input
-                    type="text"
-                    placeholder="Search competencies..."
-                    className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800 px-3 py-2 text-sm pl-9 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                  <span className="pointer-events-none absolute inset-y-0 left-2 flex items-center text-gray-400 text-xs">
-                    🔍
-                  </span>
-                </div>
+              <div className="flex items-stretch gap-2 w-full md:w-auto justify-end">
+                <select
+                  className="rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  defaultValue="all"
+                >
+                  <option value="all">All levels</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
 
-                <div className="flex gap-2">
-                  <select
-                    className="rounded-lg border border-gray-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800 px-3 py-2 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    defaultValue="all"
+                {isTrainer && (
+                  <button
+                    type="button"
+                    onClick={() => setShowUploadModal(true)}
+                    className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-900 shadow-md hover:bg-emerald-400 hover:shadow-lg transition"
                   >
-                    <option value="all">All levels</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                  </select>
-
-                  {isTrainer && (
-                    <button
-                      type="button"
-                      onClick={() => setShowUploadModal(true)}
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-md hover:bg-emerald-700 hover:shadow-lg transition"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload CSV
-                    </button>
-                  )}
-                </div>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload CSV
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
           {/* Error / empty states shown inline but layout remains */}
           {error && (

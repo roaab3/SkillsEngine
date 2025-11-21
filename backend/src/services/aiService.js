@@ -99,6 +99,24 @@ class AIService {
   }
 
   /**
+   * Discover official external sources (URLs) for skills & competencies
+   * using the source_discovery_prompt.txt specification.
+   *
+   * @returns {Promise<Array>} Array of discovered sources
+   */
+  async discoverOfficialSources() {
+    const promptPath = 'docs/prompts/source_discovery_prompt.txt';
+    const prompt = await this.loadPrompt(promptPath);
+    const result = await this.callGeminiJSON(prompt, { modelType: 'pro' });
+
+    if (!Array.isArray(result)) {
+      throw new Error('Expected Gemini to return an array of sources');
+    }
+
+    return result;
+  }
+
+  /**
    * Normalize extracted data
    * @param {Object} extractedData - Extracted competencies and skills
    * @returns {Promise<Object>} Normalized data
