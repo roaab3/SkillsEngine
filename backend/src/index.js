@@ -28,6 +28,11 @@ app.use(express.json());
 const { apiLimiter } = require('./middleware/rateLimiter');
 app.use('/api', apiLimiter);
 
+// Favicon placeholder to avoid 404 noise in logs/browsers
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 // Health check endpoint (required by Railway)
 app.get('/health', (req, res) => {
   res.status(200).json({
