@@ -98,9 +98,9 @@ export default function Dashboard({ userId }) {
                   >
                     + Add Competency
                   </button>
-                </div>
-              </div>
             </div>
+          </div>
+        </section>
 
           {/* Error / empty states shown inline but layout remains */}
           {error && (
