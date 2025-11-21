@@ -6,21 +6,27 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Dashboard from '@/components/Dashboard';
 
+const DEFAULT_USER_ID = 'user_123';
+
 export default function Home() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get userId from query params or localStorage, fallback to a generic default
+    // Get userId from query params or localStorage, fallback to a default
+    let id = router.query.userId;
 
-    const id = router.query.userId 
+    if (!id && typeof window !== 'undefined') {
+      id = window.localStorage.getItem('userId') || DEFAULT_USER_ID;
+    }
+
     setUserId(id);
-    if (id) {
-      localStorage.setItem('userId', id);
+    if (id && typeof window !== 'undefined') {
+      window.localStorage.setItem('userId', id);
     }
     setLoading(false);
-  }, [router.query]);
+  }, [router.query.userId]);
 
   if (loading || !userId) {
     return (
