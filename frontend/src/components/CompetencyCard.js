@@ -1,6 +1,7 @@
 /**
  * Competency Card Component
  * Completely redesigned with modern styling and animations
+ * Displays user competency progress with interactive hierarchy preview
  */
 
 import { ArrowRight, TrendingUp, BookOpen, Star, Loader2 } from 'lucide-react';
