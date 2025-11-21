@@ -1,13 +1,27 @@
 /**
  * User Repository
- * 
+ *
  * Data access layer for users table.
+ * Uses Supabase client for database operations.
  */
 
-const { query } = require('../../config/database');
+const { getSupabaseClient } = require('../../config/supabase');
 const User = require('../models/User');
 
 class UserRepository {
+  constructor() {
+    this.supabase = null;
+  }
+
+  /**
+   * Get Supabase client instance
+   */
+  getClient() {
+    if (!this.supabase) {
+      this.supabase = getSupabaseClient();
+    }
+    return this.supabase;
+  }
   /**
    * Create a new user
    * @param {User} user - User model instance
@@ -19,24 +33,22 @@ class UserRepository {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const sql = `
-      INSERT INTO users (user_id, user_name, company_id, employee_type, path_career, raw_data, relevance_score)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
-    `;
+    const { data, error } = await this.getClient()
+      .from('users')
+      .insert({
+        user_id: user.user_id,
+        user_name: user.user_name,
+        company_id: user.company_id,
+        employee_type: user.employee_type,
+        path_career: user.path_career,
+        raw_data: user.raw_data,
+        relevance_score: user.relevance_score
+      })
+      .select()
+      .single();
 
-    const values = [
-      user.user_id,
-      user.user_name,
-      user.company_id,
-      user.employee_type,
-      user.path_career,
-      user.raw_data,
-      user.relevance_score
-    ];
-
-    const result = await query(sql, values);
-    return new User(result.rows[0]);
+    if (error) throw error;
+    return new User(data);
   }
 
   /**
@@ -45,14 +57,18 @@ class UserRepository {
    * @returns {Promise<User|null>}
    */
   async findById(userId) {
-    const sql = 'SELECT * FROM users WHERE user_id = $1';
-    const result = await query(sql, [userId]);
+    const { data, error } = await this.getClient()
+      .from('users')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new User(result.rows[0]);
+    return new User(data);
   }
 
   /**
@@ -63,14 +79,16 @@ class UserRepository {
    */
   async findByCompany(companyId, options = {}) {
     const { limit = 100, offset = 0 } = options;
-    const sql = `
-      SELECT * FROM users
-      WHERE company_id = $1
-      ORDER BY user_name
-      LIMIT $2 OFFSET $3
-    `;
-    const result = await query(sql, [companyId, limit, offset]);
-    return result.rows.map(row => new User(row));
+
+    const { data, error } = await this.getClient()
+      .from('users')
+      .select('*')
+      .eq('company_id', companyId)
+      .order('user_name')
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data.map(row => new User(row));
   }
 
   /**
@@ -81,14 +99,16 @@ class UserRepository {
    */
   async findByEmployeeType(employeeType, options = {}) {
     const { limit = 100, offset = 0 } = options;
-    const sql = `
-      SELECT * FROM users
-      WHERE employee_type = $1
-      ORDER BY user_name
-      LIMIT $2 OFFSET $3
-    `;
-    const result = await query(sql, [employeeType, limit, offset]);
-    return result.rows.map(row => new User(row));
+
+    const { data, error } = await this.getClient()
+      .from('users')
+      .select('*')
+      .eq('employee_type', employeeType)
+      .order('user_name')
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data.map(row => new User(row));
   }
 
   /**
@@ -99,37 +119,33 @@ class UserRepository {
    */
   async update(userId, updates) {
     const allowedFields = ['user_name', 'company_id', 'employee_type', 'path_career', 'raw_data', 'relevance_score'];
-    const updateFields = [];
-    const values = [];
-    let paramIndex = 1;
+    const updateData = {};
 
     for (const field of allowedFields) {
       if (updates.hasOwnProperty(field)) {
-        updateFields.push(`${field} = $${paramIndex}`);
-        values.push(updates[field]);
-        paramIndex++;
+        updateData[field] = updates[field];
       }
     }
 
-    if (updateFields.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       throw new Error('No valid fields to update');
     }
 
-    values.push(userId);
-    const sql = `
-      UPDATE users
-      SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
-      WHERE user_id = $${paramIndex}
-      RETURNING *
-    `;
+    updateData.updated_at = new Date().toISOString();
 
-    const result = await query(sql, values);
+    const { data, error } = await this.getClient()
+      .from('users')
+      .update(updateData)
+      .eq('user_id', userId)
+      .select()
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new User(result.rows[0]);
+    return new User(data);
   }
 
   /**
@@ -138,9 +154,13 @@ class UserRepository {
    * @returns {Promise<boolean>}
    */
   async delete(userId) {
-    const sql = 'DELETE FROM users WHERE user_id = $1 RETURNING user_id';
-    const result = await query(sql, [userId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('users')
+      .delete()
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    return true;
   }
 
   /**

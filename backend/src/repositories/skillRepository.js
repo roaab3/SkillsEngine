@@ -1,14 +1,29 @@
 /**
  * Skill Repository
- * 
+ *
  * Data access layer for skills table.
  * Handles CRUD operations, hierarchy traversal, and MGS identification.
+ * Uses Supabase client for database operations.
  */
 
-const { query, transaction } = require('../../config/database');
+const { getSupabaseClient } = require('../../config/supabase');
 const Skill = require('../models/Skill');
 
 class SkillRepository {
+  constructor() {
+    this.supabase = null;
+  }
+
+  /**
+   * Get Supabase client instance
+   */
+  getClient() {
+    if (!this.supabase) {
+      this.supabase = getSupabaseClient();
+    }
+    return this.supabase;
+  }
+
   /**
    * Create a new skill
    * @param {Skill} skill - Skill model instance
@@ -20,21 +35,19 @@ class SkillRepository {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const sql = `
-      INSERT INTO skills (skill_id, skill_name, parent_skill_id, description)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-    `;
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .insert({
+        skill_id: skill.skill_id,
+        skill_name: skill.skill_name,
+        parent_skill_id: skill.parent_skill_id,
+        description: skill.description
+      })
+      .select()
+      .single();
 
-    const values = [
-      skill.skill_id,
-      skill.skill_name,
-      skill.parent_skill_id,
-      skill.description
-    ];
-
-    const result = await query(sql, values);
-    return new Skill(result.rows[0]);
+    if (error) throw error;
+    return new Skill(data);
   }
 
   /**
@@ -43,14 +56,18 @@ class SkillRepository {
    * @returns {Promise<Skill|null>}
    */
   async findById(skillId) {
-    const sql = 'SELECT * FROM skills WHERE skill_id = $1';
-    const result = await query(sql, [skillId]);
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('*')
+      .eq('skill_id', skillId)
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new Skill(result.rows[0]);
+    return new Skill(data);
   }
 
   /**
@@ -59,14 +76,18 @@ class SkillRepository {
    * @returns {Promise<Skill|null>}
    */
   async findByName(skillName) {
-    const sql = 'SELECT * FROM skills WHERE LOWER(TRIM(skill_name)) = LOWER(TRIM($1))';
-    const result = await query(sql, [skillName]);
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('*')
+      .ilike('skill_name', skillName.trim())
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new Skill(result.rows[0]);
+    return new Skill(data);
   }
 
   /**
@@ -78,13 +99,15 @@ class SkillRepository {
    */
   async findAll(options = {}) {
     const { limit = 100, offset = 0 } = options;
-    const sql = `
-      SELECT * FROM skills
-      ORDER BY skill_name
-      LIMIT $1 OFFSET $2
-    `;
-    const result = await query(sql, [limit, offset]);
-    return result.rows.map(row => new Skill(row));
+
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('*')
+      .order('skill_name')
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data.map(row => new Skill(row));
   }
 
   /**
@@ -92,9 +115,14 @@ class SkillRepository {
    * @returns {Promise<Skill[]>}
    */
   async findRootSkills() {
-    const sql = 'SELECT * FROM skills WHERE parent_skill_id IS NULL ORDER BY skill_name';
-    const result = await query(sql);
-    return result.rows.map(row => new Skill(row));
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('*')
+      .is('parent_skill_id', null)
+      .order('skill_name');
+
+    if (error) throw error;
+    return data.map(row => new Skill(row));
   }
 
   /**
@@ -103,9 +131,14 @@ class SkillRepository {
    * @returns {Promise<Skill[]>}
    */
   async findChildren(parentSkillId) {
-    const sql = 'SELECT * FROM skills WHERE parent_skill_id = $1 ORDER BY skill_name';
-    const result = await query(sql, [parentSkillId]);
-    return result.rows.map(row => new Skill(row));
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('*')
+      .eq('parent_skill_id', parentSkillId)
+      .order('skill_name');
+
+    if (error) throw error;
+    return data.map(row => new Skill(row));
   }
 
   /**
@@ -129,37 +162,33 @@ class SkillRepository {
    */
   async update(skillId, updates) {
     const allowedFields = ['skill_name', 'parent_skill_id', 'description'];
-    const updateFields = [];
-    const values = [];
-    let paramIndex = 1;
+    const updateData = {};
 
     for (const field of allowedFields) {
       if (updates.hasOwnProperty(field)) {
-        updateFields.push(`${field} = $${paramIndex}`);
-        values.push(updates[field]);
-        paramIndex++;
+        updateData[field] = updates[field];
       }
     }
 
-    if (updateFields.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       throw new Error('No valid fields to update');
     }
 
-    values.push(skillId);
-    const sql = `
-      UPDATE skills
-      SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
-      WHERE skill_id = $${paramIndex}
-      RETURNING *
-    `;
+    updateData.updated_at = new Date().toISOString();
 
-    const result = await query(sql, values);
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .update(updateData)
+      .eq('skill_id', skillId)
+      .select()
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new Skill(result.rows[0]);
+    return new Skill(data);
   }
 
   /**
@@ -168,9 +197,13 @@ class SkillRepository {
    * @returns {Promise<boolean>}
    */
   async delete(skillId) {
-    const sql = 'DELETE FROM skills WHERE skill_id = $1 RETURNING skill_id';
-    const result = await query(sql, [skillId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('skills')
+      .delete()
+      .eq('skill_id', skillId);
+
+    if (error) throw error;
+    return true;
   }
 
   /**
@@ -206,33 +239,12 @@ class SkillRepository {
    * @returns {Promise<Skill[]>}
    */
   async findMGS(rootSkillId) {
-    // Recursive CTE to find all leaf nodes under the root skill
-    const sql = `
-      WITH RECURSIVE skill_tree AS (
-        -- Base case: start with root skill
-        SELECT skill_id, skill_name, parent_skill_id, description, created_at, updated_at
-        FROM skills
-        WHERE skill_id = $1
-        
-        UNION ALL
-        
-        -- Recursive case: get all children
-        SELECT s.skill_id, s.skill_name, s.parent_skill_id, s.description, s.created_at, s.updated_at
-        FROM skills s
-        INNER JOIN skill_tree st ON s.parent_skill_id = st.skill_id
-      )
-      SELECT st.*
-      FROM skill_tree st
-      WHERE NOT EXISTS (
-        SELECT 1
-        FROM skills s
-        WHERE s.parent_skill_id = st.skill_id
-      )
-      ORDER BY st.skill_name
-    `;
+    // Use Supabase RPC for recursive CTE query
+    const { data, error } = await this.getClient()
+      .rpc('get_mgs_for_skill', { root_skill_id: rootSkillId });
 
-    const result = await query(sql, [rootSkillId]);
-    return result.rows.map(row => new Skill(row));
+    if (error) throw error;
+    return data.map(row => new Skill(row));
   }
 
   /**
@@ -251,26 +263,12 @@ class SkillRepository {
    * @returns {Promise<number>} Depth level (1 = L1, 2 = L2, etc.)
    */
   async getDepth(skillId) {
-    const sql = `
-      WITH RECURSIVE skill_depth AS (
-        -- Base case: start with the skill
-        SELECT skill_id, parent_skill_id, 1 as depth
-        FROM skills
-        WHERE skill_id = $1
-        
-        UNION ALL
-        
-        -- Recursive case: traverse up to root
-        SELECT s.skill_id, s.parent_skill_id, sd.depth + 1
-        FROM skills s
-        INNER JOIN skill_depth sd ON s.skill_id = sd.parent_skill_id
-      )
-      SELECT MAX(depth) as max_depth
-      FROM skill_depth
-    `;
+    // Use Supabase RPC for recursive CTE query
+    const { data, error } = await this.getClient()
+      .rpc('get_skill_depth', { skill_id_param: skillId });
 
-    const result = await query(sql, [skillId]);
-    return result.rows[0]?.max_depth || 0;
+    if (error) throw error;
+    return data || 0;
   }
 
   /**
@@ -279,34 +277,34 @@ class SkillRepository {
    * @returns {Promise<boolean>}
    */
   async isLeaf(skillId) {
-    const sql = `
-      SELECT COUNT(*) as child_count
-      FROM skills
-      WHERE parent_skill_id = $1
-    `;
-    const result = await query(sql, [skillId]);
-    return parseInt(result.rows[0].child_count) === 0;
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('skill_id', { count: 'exact', head: true })
+      .eq('parent_skill_id', skillId);
+
+    if (error) throw error;
+    return data === 0;
   }
 
   /**
    * Find all skills by name pattern (LIKE search)
-   * @param {string} pattern - Search pattern (supports % wildcards)
+   * @param {string} pattern - Search pattern
    * @param {Object} options - Query options
    * @returns {Promise<Skill[]>}
    */
   async searchByName(pattern, options = {}) {
     const { limit = 100, offset = 0 } = options;
-    const sql = `
-      SELECT * FROM skills
-      WHERE LOWER(skill_name) LIKE LOWER($1)
-      ORDER BY skill_name
-      LIMIT $2 OFFSET $3
-    `;
-    const result = await query(sql, [`%${pattern}%`, limit, offset]);
-    return result.rows.map(row => new Skill(row));
+
+    const { data, error } = await this.getClient()
+      .from('skills')
+      .select('*')
+      .ilike('skill_name', `%${pattern}%`)
+      .order('skill_name')
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data.map(row => new Skill(row));
   }
 }
 
 module.exports = new SkillRepository();
-
-

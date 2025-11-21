@@ -1,13 +1,28 @@
 /**
  * User Competency Repository
- * 
+ *
  * Data access layer for userCompetency table.
+ * Uses Supabase client for database operations.
  */
 
-const { query } = require('../../config/database');
+const { getSupabaseClient } = require('../../config/supabase');
 const UserCompetency = require('../models/UserCompetency');
 
 class UserCompetencyRepository {
+  constructor() {
+    this.supabase = null;
+  }
+
+  /**
+   * Get Supabase client instance
+   */
+  getClient() {
+    if (!this.supabase) {
+      this.supabase = getSupabaseClient();
+    }
+    return this.supabase;
+  }
+
   /**
    * Create a new user competency
    * @param {UserCompetency} userCompetency - UserCompetency model instance
@@ -19,26 +34,20 @@ class UserCompetencyRepository {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const sql = `
-      INSERT INTO userCompetency (user_id, competency_id, coverage_percentage, proficiency_level, verifiedSkills)
-      VALUES ($1, $2, $3, $4, $5::jsonb)
-      RETURNING *
-    `;
+    const { data, error } = await this.getClient()
+      .from('userCompetency')
+      .insert({
+        user_id: userCompetency.user_id,
+        competency_id: userCompetency.competency_id,
+        coverage_percentage: userCompetency.coverage_percentage,
+        proficiency_level: userCompetency.proficiency_level,
+        verifiedSkills: userCompetency.verifiedSkills
+      })
+      .select()
+      .single();
 
-    const values = [
-      userCompetency.user_id,
-      userCompetency.competency_id,
-      userCompetency.coverage_percentage,
-      userCompetency.proficiency_level,
-      JSON.stringify(userCompetency.verifiedSkills)
-    ];
-
-    const result = await query(sql, values);
-    const row = result.rows[0];
-    return new UserCompetency({
-      ...row,
-      verifiedSkills: typeof row.verifiedskills === 'string' ? JSON.parse(row.verifiedskills) : row.verifiedskills
-    });
+    if (error) throw error;
+    return new UserCompetency(data);
   }
 
   /**
@@ -48,18 +57,19 @@ class UserCompetencyRepository {
    * @returns {Promise<UserCompetency|null>}
    */
   async findByUserAndCompetency(userId, competencyId) {
-    const sql = 'SELECT * FROM userCompetency WHERE user_id = $1 AND competency_id = $2';
-    const result = await query(sql, [userId, competencyId]);
+    const { data, error } = await this.getClient()
+      .from('userCompetency')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('competency_id', competencyId)
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    const row = result.rows[0];
-    return new UserCompetency({
-      ...row,
-      verifiedSkills: typeof row.verifiedskills === 'string' ? JSON.parse(row.verifiedskills) : row.verifiedskills || []
-    });
+    return new UserCompetency(data);
   }
 
   /**
@@ -68,12 +78,14 @@ class UserCompetencyRepository {
    * @returns {Promise<UserCompetency[]>}
    */
   async findByUser(userId) {
-    const sql = 'SELECT * FROM userCompetency WHERE user_id = $1 ORDER BY competency_id';
-    const result = await query(sql, [userId]);
-    return result.rows.map(row => new UserCompetency({
-      ...row,
-      verifiedSkills: typeof row.verifiedskills === 'string' ? JSON.parse(row.verifiedskills) : row.verifiedskills || []
-    }));
+    const { data, error } = await this.getClient()
+      .from('userCompetency')
+      .select('*')
+      .eq('user_id', userId)
+      .order('competency_id');
+
+    if (error) throw error;
+    return data.map(row => new UserCompetency(row));
   }
 
   /**
@@ -82,12 +94,14 @@ class UserCompetencyRepository {
    * @returns {Promise<UserCompetency[]>}
    */
   async findByCompetency(competencyId) {
-    const sql = 'SELECT * FROM userCompetency WHERE competency_id = $1 ORDER BY user_id';
-    const result = await query(sql, [competencyId]);
-    return result.rows.map(row => new UserCompetency({
-      ...row,
-      verifiedSkills: typeof row.verifiedskills === 'string' ? JSON.parse(row.verifiedskills) : row.verifiedskills || []
-    }));
+    const { data, error } = await this.getClient()
+      .from('userCompetency')
+      .select('*')
+      .eq('competency_id', competencyId)
+      .order('user_id');
+
+    if (error) throw error;
+    return data.map(row => new UserCompetency(row));
   }
 
   /**
@@ -99,46 +113,34 @@ class UserCompetencyRepository {
    */
   async update(userId, competencyId, updates) {
     const allowedFields = ['coverage_percentage', 'proficiency_level', 'verifiedSkills'];
-    const updateFields = [];
-    const values = [];
-    let paramIndex = 1;
+    const updateData = {};
 
     for (const field of allowedFields) {
       if (updates.hasOwnProperty(field)) {
-        if (field === 'verifiedSkills') {
-          updateFields.push(`${field} = $${paramIndex}::jsonb`);
-          values.push(JSON.stringify(updates[field]));
-        } else {
-          updateFields.push(`${field} = $${paramIndex}`);
-          values.push(updates[field]);
-        }
-        paramIndex++;
+        updateData[field] = updates[field];
       }
     }
 
-    if (updateFields.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       throw new Error('No valid fields to update');
     }
 
-    values.push(userId, competencyId);
-    const sql = `
-      UPDATE userCompetency
-      SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
-      WHERE user_id = $${paramIndex} AND competency_id = $${paramIndex + 1}
-      RETURNING *
-    `;
+    updateData.updated_at = new Date().toISOString();
 
-    const result = await query(sql, values);
+    const { data, error } = await this.getClient()
+      .from('userCompetency')
+      .update(updateData)
+      .eq('user_id', userId)
+      .eq('competency_id', competencyId)
+      .select()
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    const row = result.rows[0];
-    return new UserCompetency({
-      ...row,
-      verifiedSkills: typeof row.verifiedskills === 'string' ? JSON.parse(row.verifiedskills) : row.verifiedskills || []
-    });
+    return new UserCompetency(data);
   }
 
   /**
@@ -148,9 +150,14 @@ class UserCompetencyRepository {
    * @returns {Promise<boolean>}
    */
   async delete(userId, competencyId) {
-    const sql = 'DELETE FROM userCompetency WHERE user_id = $1 AND competency_id = $2 RETURNING *';
-    const result = await query(sql, [userId, competencyId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('userCompetency')
+      .delete()
+      .eq('user_id', userId)
+      .eq('competency_id', competencyId);
+
+    if (error) throw error;
+    return true;
   }
 
   /**

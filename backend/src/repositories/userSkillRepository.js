@@ -1,13 +1,28 @@
 /**
  * User Skill Repository
- * 
+ *
  * Data access layer for userSkill table.
+ * Uses Supabase client for database operations.
  */
 
-const { query } = require('../../config/database');
+const { getSupabaseClient } = require('../../config/supabase');
 const UserSkill = require('../models/UserSkill');
 
 class UserSkillRepository {
+  constructor() {
+    this.supabase = null;
+  }
+
+  /**
+   * Get Supabase client instance
+   */
+  getClient() {
+    if (!this.supabase) {
+      this.supabase = getSupabaseClient();
+    }
+    return this.supabase;
+  }
+
   /**
    * Create a new user skill
    * @param {UserSkill} userSkill - UserSkill model instance
@@ -19,22 +34,20 @@ class UserSkillRepository {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const sql = `
-      INSERT INTO userSkill (user_id, skill_id, skill_name, verified, source)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *
-    `;
+    const { data, error } = await this.getClient()
+      .from('userSkill')
+      .insert({
+        user_id: userSkill.user_id,
+        skill_id: userSkill.skill_id,
+        skill_name: userSkill.skill_name,
+        verified: userSkill.verified,
+        source: userSkill.source
+      })
+      .select()
+      .single();
 
-    const values = [
-      userSkill.user_id,
-      userSkill.skill_id,
-      userSkill.skill_name,
-      userSkill.verified,
-      userSkill.source
-    ];
-
-    const result = await query(sql, values);
-    return new UserSkill(result.rows[0]);
+    if (error) throw error;
+    return new UserSkill(data);
   }
 
   /**
@@ -44,14 +57,19 @@ class UserSkillRepository {
    * @returns {Promise<UserSkill|null>}
    */
   async findByUserAndSkill(userId, skillId) {
-    const sql = 'SELECT * FROM userSkill WHERE user_id = $1 AND skill_id = $2';
-    const result = await query(sql, [userId, skillId]);
+    const { data, error } = await this.getClient()
+      .from('userSkill')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('skill_id', skillId)
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new UserSkill(result.rows[0]);
+    return new UserSkill(data);
   }
 
   /**
@@ -62,26 +80,26 @@ class UserSkillRepository {
    */
   async findByUser(userId, options = {}) {
     const { verified = null, source = null } = options;
-    let sql = 'SELECT * FROM userSkill WHERE user_id = $1';
-    const values = [userId];
-    let paramIndex = 2;
+
+    let query = this.getClient()
+      .from('userSkill')
+      .select('*')
+      .eq('user_id', userId);
 
     if (verified !== null) {
-      sql += ` AND verified = $${paramIndex}`;
-      values.push(verified);
-      paramIndex++;
+      query = query.eq('verified', verified);
     }
 
     if (source) {
-      sql += ` AND source = $${paramIndex}`;
-      values.push(source);
-      paramIndex++;
+      query = query.eq('source', source);
     }
 
-    sql += ' ORDER BY skill_name';
+    query = query.order('skill_name');
 
-    const result = await query(sql, values);
-    return result.rows.map(row => new UserSkill(row));
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return data.map(row => new UserSkill(row));
   }
 
   /**
@@ -90,9 +108,14 @@ class UserSkillRepository {
    * @returns {Promise<UserSkill[]>}
    */
   async findBySkill(skillId) {
-    const sql = 'SELECT * FROM userSkill WHERE skill_id = $1 ORDER BY user_id';
-    const result = await query(sql, [skillId]);
-    return result.rows.map(row => new UserSkill(row));
+    const { data, error } = await this.getClient()
+      .from('userSkill')
+      .select('*')
+      .eq('skill_id', skillId)
+      .order('user_id');
+
+    if (error) throw error;
+    return data.map(row => new UserSkill(row));
   }
 
   /**
@@ -104,37 +127,34 @@ class UserSkillRepository {
    */
   async update(userId, skillId, updates) {
     const allowedFields = ['skill_name', 'verified', 'source'];
-    const updateFields = [];
-    const values = [];
-    let paramIndex = 1;
+    const updateData = {};
 
     for (const field of allowedFields) {
       if (updates.hasOwnProperty(field)) {
-        updateFields.push(`${field} = $${paramIndex}`);
-        values.push(updates[field]);
-        paramIndex++;
+        updateData[field] = updates[field];
       }
     }
 
-    if (updateFields.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       throw new Error('No valid fields to update');
     }
 
-    values.push(userId, skillId);
-    const sql = `
-      UPDATE userSkill
-      SET ${updateFields.join(', ')}, last_update = CURRENT_TIMESTAMP
-      WHERE user_id = $${paramIndex} AND skill_id = $${paramIndex + 1}
-      RETURNING *
-    `;
+    updateData.last_update = new Date().toISOString();
 
-    const result = await query(sql, values);
+    const { data, error } = await this.getClient()
+      .from('userSkill')
+      .update(updateData)
+      .eq('user_id', userId)
+      .eq('skill_id', skillId)
+      .select()
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null; // Not found
+      throw error;
     }
 
-    return new UserSkill(result.rows[0]);
+    return new UserSkill(data);
   }
 
   /**
@@ -144,9 +164,14 @@ class UserSkillRepository {
    * @returns {Promise<boolean>}
    */
   async delete(userId, skillId) {
-    const sql = 'DELETE FROM userSkill WHERE user_id = $1 AND skill_id = $2 RETURNING *';
-    const result = await query(sql, [userId, skillId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('userSkill')
+      .delete()
+      .eq('user_id', userId)
+      .eq('skill_id', skillId);
+
+    if (error) throw error;
+    return true;
   }
 
   /**

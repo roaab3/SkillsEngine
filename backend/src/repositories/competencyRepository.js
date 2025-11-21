@@ -1,14 +1,29 @@
 /**
  * Competency Repository
- * 
+ *
  * Data access layer for competencies table.
  * Handles CRUD operations, parent-child relationships, and skill mappings.
+ * Uses Supabase client for database operations.
  */
 
-const { query } = require('../../config/database');
+const { getSupabaseClient } = require('../../config/supabase');
 const Competency = require('../models/Competency');
 
 class CompetencyRepository {
+  constructor() {
+    this.supabase = null;
+  }
+
+  /**
+   * Get Supabase client instance
+   */
+  getClient() {
+    if (!this.supabase) {
+      this.supabase = getSupabaseClient();
+    }
+    return this.supabase;
+  }
+
   /**
    * Create a new competency
    * @param {Competency} competency - Competency model instance
@@ -20,21 +35,19 @@ class CompetencyRepository {
       throw new Error(`Validation failed: ${validation.errors.join(', ')}`);
     }
 
-    const sql = `
-      INSERT INTO competencies (competency_id, competency_name, description, parent_competency_id)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-    `;
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .insert({
+        competency_id: competency.competency_id,
+        competency_name: competency.competency_name,
+        description: competency.description,
+        parent_competency_id: competency.parent_competency_id
+      })
+      .select()
+      .single();
 
-    const values = [
-      competency.competency_id,
-      competency.competency_name,
-      competency.description,
-      competency.parent_competency_id
-    ];
-
-    const result = await query(sql, values);
-    return new Competency(result.rows[0]);
+    if (error) throw error;
+    return new Competency(data);
   }
 
   /**
@@ -43,14 +56,18 @@ class CompetencyRepository {
    * @returns {Promise<Competency|null>}
    */
   async findById(competencyId) {
-    const sql = 'SELECT * FROM competencies WHERE competency_id = $1';
-    const result = await query(sql, [competencyId]);
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .select('*')
+      .eq('competency_id', competencyId)
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw error;
     }
 
-    return new Competency(result.rows[0]);
+    return new Competency(data);
   }
 
   /**
@@ -59,14 +76,18 @@ class CompetencyRepository {
    * @returns {Promise<Competency|null>}
    */
   async findByName(competencyName) {
-    const sql = 'SELECT * FROM competencies WHERE LOWER(TRIM(competency_name)) = LOWER(TRIM($1))';
-    const result = await query(sql, [competencyName]);
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .select('*')
+      .ilike('competency_name', competencyName.trim())
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw error;
     }
 
-    return new Competency(result.rows[0]);
+    return new Competency(data);
   }
 
   /**
@@ -78,13 +99,15 @@ class CompetencyRepository {
    */
   async findAll(options = {}) {
     const { limit = 100, offset = 0 } = options;
-    const sql = `
-      SELECT * FROM competencies
-      ORDER BY competency_name
-      LIMIT $1 OFFSET $2
-    `;
-    const result = await query(sql, [limit, offset]);
-    return result.rows.map(row => new Competency(row));
+
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .select('*')
+      .order('competency_name')
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data.map(row => new Competency(row));
   }
 
   /**
@@ -92,9 +115,14 @@ class CompetencyRepository {
    * @returns {Promise<Competency[]>}
    */
   async findParentCompetencies() {
-    const sql = 'SELECT * FROM competencies WHERE parent_competency_id IS NULL ORDER BY competency_name';
-    const result = await query(sql);
-    return result.rows.map(row => new Competency(row));
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .select('*')
+      .is('parent_competency_id', null)
+      .order('competency_name');
+
+    if (error) throw error;
+    return data.map(row => new Competency(row));
   }
 
   /**
@@ -103,9 +131,14 @@ class CompetencyRepository {
    * @returns {Promise<Competency[]>}
    */
   async findChildren(parentCompetencyId) {
-    const sql = 'SELECT * FROM competencies WHERE parent_competency_id = $1 ORDER BY competency_name';
-    const result = await query(sql, [parentCompetencyId]);
-    return result.rows.map(row => new Competency(row));
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .select('*')
+      .eq('parent_competency_id', parentCompetencyId)
+      .order('competency_name');
+
+    if (error) throw error;
+    return data.map(row => new Competency(row));
   }
 
   /**
@@ -129,37 +162,33 @@ class CompetencyRepository {
    */
   async update(competencyId, updates) {
     const allowedFields = ['competency_name', 'description', 'parent_competency_id'];
-    const updateFields = [];
-    const values = [];
-    let paramIndex = 1;
+    const updateData = {};
 
     for (const field of allowedFields) {
       if (updates.hasOwnProperty(field)) {
-        updateFields.push(`${field} = $${paramIndex}`);
-        values.push(updates[field]);
-        paramIndex++;
+        updateData[field] = updates[field];
       }
     }
 
-    if (updateFields.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       throw new Error('No valid fields to update');
     }
 
-    values.push(competencyId);
-    const sql = `
-      UPDATE competencies
-      SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
-      WHERE competency_id = $${paramIndex}
-      RETURNING *
-    `;
+    updateData.updated_at = new Date().toISOString();
 
-    const result = await query(sql, values);
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .update(updateData)
+      .eq('competency_id', competencyId)
+      .select()
+      .single();
 
-    if (result.rows.length === 0) {
-      return null;
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw error;
     }
 
-    return new Competency(result.rows[0]);
+    return new Competency(data);
   }
 
   /**
@@ -168,9 +197,13 @@ class CompetencyRepository {
    * @returns {Promise<boolean>}
    */
   async delete(competencyId) {
-    const sql = 'DELETE FROM competencies WHERE competency_id = $1 RETURNING competency_id';
-    const result = await query(sql, [competencyId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('competencies')
+      .delete()
+      .eq('competency_id', competencyId);
+
+    if (error) throw error;
+    return true;
   }
 
   /**
@@ -179,15 +212,23 @@ class CompetencyRepository {
    * @returns {Promise<Array>} Array of skill objects
    */
   async getLinkedSkills(competencyId) {
-    const sql = `
-      SELECT s.skill_id, s.skill_name, s.description, s.parent_skill_id, s.created_at, s.updated_at
-      FROM skills s
-      INNER JOIN competency_skill cs ON s.skill_id = cs.skill_id
-      WHERE cs.competency_id = $1
-      ORDER BY s.skill_name
-    `;
-    const result = await query(sql, [competencyId]);
-    return result.rows;
+    const { data, error } = await this.getClient()
+      .from('competency_skill')
+      .select(`
+        skill_id,
+        skills (
+          skill_id,
+          skill_name,
+          description,
+          parent_skill_id,
+          created_at,
+          updated_at
+        )
+      `)
+      .eq('competency_id', competencyId);
+
+    if (error) throw error;
+    return data.map(row => row.skills);
   }
 
   /**
@@ -198,20 +239,21 @@ class CompetencyRepository {
    */
   async linkSkill(competencyId, skillId) {
     // Check if link already exists
-    const checkSql = 'SELECT * FROM competency_skill WHERE competency_id = $1 AND skill_id = $2';
-    const checkResult = await query(checkSql, [competencyId, skillId]);
+    const { data: existing } = await this.getClient()
+      .from('competency_skill')
+      .select('*')
+      .eq('competency_id', competencyId)
+      .eq('skill_id', skillId)
+      .single();
 
-    if (checkResult.rows.length > 0) {
-      return true; // Already linked
-    }
+    if (existing) return true;
 
-    const sql = `
-      INSERT INTO competency_skill (competency_id, skill_id)
-      VALUES ($1, $2)
-      RETURNING *
-    `;
-    const result = await query(sql, [competencyId, skillId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('competency_skill')
+      .insert({ competency_id: competencyId, skill_id: skillId });
+
+    if (error) throw error;
+    return true;
   }
 
   /**
@@ -221,9 +263,14 @@ class CompetencyRepository {
    * @returns {Promise<boolean>}
    */
   async unlinkSkill(competencyId, skillId) {
-    const sql = 'DELETE FROM competency_skill WHERE competency_id = $1 AND skill_id = $2 RETURNING *';
-    const result = await query(sql, [competencyId, skillId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('competency_skill')
+      .delete()
+      .eq('competency_id', competencyId)
+      .eq('skill_id', skillId);
+
+    if (error) throw error;
+    return true;
   }
 
   /**
@@ -232,15 +279,17 @@ class CompetencyRepository {
    * @returns {Promise<Competency[]>}
    */
   async findBySkill(skillId) {
-    const sql = `
-      SELECT c.*
-      FROM competencies c
-      INNER JOIN competency_skill cs ON c.competency_id = cs.competency_id
-      WHERE cs.skill_id = $1
-      ORDER BY c.competency_name
-    `;
-    const result = await query(sql, [skillId]);
-    return result.rows.map(row => new Competency(row));
+    const { data, error } = await this.getClient()
+      .from('competency_skill')
+      .select(`
+        competency_id,
+        competencies (*)
+      `)
+      .eq('skill_id', skillId)
+      .order('competencies(competency_name)');
+
+    if (error) throw error;
+    return data.map(row => new Competency(row.competencies));
   }
 
   /**
@@ -263,20 +312,22 @@ class CompetencyRepository {
 
   /**
    * Find all competencies by name pattern (LIKE search)
-   * @param {string} pattern - Search pattern (supports % wildcards)
+   * @param {string} pattern - Search pattern
    * @param {Object} options - Query options
    * @returns {Promise<Competency[]>}
    */
   async searchByName(pattern, options = {}) {
     const { limit = 100, offset = 0 } = options;
-    const sql = `
-      SELECT * FROM competencies
-      WHERE LOWER(competency_name) LIKE LOWER($1)
-      ORDER BY competency_name
-      LIMIT $2 OFFSET $3
-    `;
-    const result = await query(sql, [`%${pattern}%`, limit, offset]);
-    return result.rows.map(row => new Competency(row));
+
+    const { data, error } = await this.getClient()
+      .from('competencies')
+      .select('*')
+      .ilike('competency_name', `%${pattern}%`)
+      .order('competency_name')
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    return data.map(row => new Competency(row));
   }
 
   /**
@@ -285,9 +336,13 @@ class CompetencyRepository {
    * @returns {Promise<boolean>}
    */
   async hasChildren(competencyId) {
-    const sql = 'SELECT COUNT(*) as child_count FROM competencies WHERE parent_competency_id = $1';
-    const result = await query(sql, [competencyId]);
-    return parseInt(result.rows[0].child_count) > 0;
+    const { count, error } = await this.getClient()
+      .from('competencies')
+      .select('*', { count: 'exact', head: true })
+      .eq('parent_competency_id', competencyId);
+
+    if (error) throw error;
+    return count > 0;
   }
 
   /**
@@ -296,27 +351,12 @@ class CompetencyRepository {
    * @returns {Promise<Competency[]>}
    */
   async getAllSubCompetencies(parentCompetencyId) {
-    const sql = `
-      WITH RECURSIVE sub_competencies AS (
-        -- Base case: direct children
-        SELECT c.*
-        FROM competencies c
-        INNER JOIN competency_subCompetency csc ON c.competency_id = csc.child_competency_id
-        WHERE csc.parent_competency_id = $1
-        
-        UNION
-        
-        -- Recursive case: children of children
-        SELECT c.*
-        FROM competencies c
-        INNER JOIN competency_subCompetency csc ON c.competency_id = csc.child_competency_id
-        INNER JOIN sub_competencies sc ON csc.parent_competency_id = sc.competency_id
-      )
-      SELECT * FROM sub_competencies
-      ORDER BY competency_name
-    `;
-    const result = await query(sql, [parentCompetencyId]);
-    return result.rows.map(row => new Competency(row));
+    // Use Supabase RPC for recursive query
+    const { data, error } = await this.getClient()
+      .rpc('get_all_sub_competencies', { parent_id: parentCompetencyId });
+
+    if (error) throw error;
+    return data.map(row => new Competency(row));
   }
 
   /**
@@ -325,15 +365,17 @@ class CompetencyRepository {
    * @returns {Promise<Competency[]>}
    */
   async getSubCompetencyLinks(parentCompetencyId) {
-    const sql = `
-      SELECT c.*
-      FROM competencies c
-      INNER JOIN competency_subCompetency csc ON c.competency_id = csc.child_competency_id
-      WHERE csc.parent_competency_id = $1
-      ORDER BY c.competency_name
-    `;
-    const result = await query(sql, [parentCompetencyId]);
-    return result.rows.map(row => new Competency(row));
+    const { data, error } = await this.getClient()
+      .from('competency_subCompetency')
+      .select(`
+        child_competency_id,
+        competencies!competency_subCompetency_child_competency_id_fkey (*)
+      `)
+      .eq('parent_competency_id', parentCompetencyId)
+      .order('competencies(competency_name)');
+
+    if (error) throw error;
+    return data.map(row => new Competency(row.competencies));
   }
 
   /**
@@ -343,22 +385,22 @@ class CompetencyRepository {
    * @returns {Promise<boolean>}
    */
   async linkSubCompetency(parentCompetencyId, childCompetencyId) {
-    const checkSql = `
-      SELECT 1 FROM competency_subCompetency
-      WHERE parent_competency_id = $1 AND child_competency_id = $2
-    `;
-    const exists = await query(checkSql, [parentCompetencyId, childCompetencyId]);
-    if (exists.rows.length > 0) {
-      return true;
-    }
+    // Check if already exists
+    const { data: existing } = await this.getClient()
+      .from('competency_subCompetency')
+      .select('*')
+      .eq('parent_competency_id', parentCompetencyId)
+      .eq('child_competency_id', childCompetencyId)
+      .single();
 
-    const sql = `
-      INSERT INTO competency_subCompetency (parent_competency_id, child_competency_id)
-      VALUES ($1, $2)
-      RETURNING *
-    `;
-    const result = await query(sql, [parentCompetencyId, childCompetencyId]);
-    return result.rows.length > 0;
+    if (existing) return true;
+
+    const { error } = await this.getClient()
+      .from('competency_subCompetency')
+      .insert({ parent_competency_id: parentCompetencyId, child_competency_id: childCompetencyId });
+
+    if (error) throw error;
+    return true;
   }
 
   /**
@@ -368,16 +410,15 @@ class CompetencyRepository {
    * @returns {Promise<boolean>}
    */
   async unlinkSubCompetency(parentCompetencyId, childCompetencyId) {
-    const sql = `
-      DELETE FROM competency_subCompetency
-      WHERE parent_competency_id = $1 AND child_competency_id = $2
-      RETURNING *
-    `;
-    const result = await query(sql, [parentCompetencyId, childCompetencyId]);
-    return result.rows.length > 0;
+    const { error } = await this.getClient()
+      .from('competency_subCompetency')
+      .delete()
+      .eq('parent_competency_id', parentCompetencyId)
+      .eq('child_competency_id', childCompetencyId);
+
+    if (error) throw error;
+    return true;
   }
 }
 
 module.exports = new CompetencyRepository();
-
-
