@@ -8,7 +8,8 @@ import { AlertCircle, CheckCircle2 } from 'lucide-react';
  * @param {{profile: any, isDarkMode: boolean}} props
  */
 export default function SkillsGapSidebar({ profile, isDarkMode }) {
-  const gapAnalysis = profile.gap_analysis || {};
+  const hasProfile = !!profile;
+  const gapAnalysis = profile?.gap_analysis || {};
   const allMissingMGS = [];
 
   // Collect all missing MGS from all competencies
@@ -44,7 +45,12 @@ export default function SkillsGapSidebar({ profile, isDarkMode }) {
 
       {/* Content */}
       <div className="p-4">
-        {allMissingMGS.length === 0 ? (
+        {!hasProfile ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600 dark:text-gray-300">
+            <p className="font-semibold mb-1">No gap data available yet.</p>
+            <p className="text-sm">Connect a user profile to see skills gaps.</p>
+          </div>
+        ) : allMissingMGS.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <CheckCircle2 className="w-16 h-16 text-green-500 mb-4" />
             <h3 className="text-lg font-bold text-green-600 dark:text-green-400 mb-2">
