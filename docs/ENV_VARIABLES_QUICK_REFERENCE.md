@@ -85,3 +85,5 @@ curl https://your-railway-app.railway.app/health
 - [Railway Environment Variables](./RAILWAY_ENV_VARIABLES.md) - מדריך מפורט ל-Railway
 - [Vercel Environment Variables](./VERCEL_ENV_VARIABLES.md) - מדריך מפורט ל-Vercel
 
+
+

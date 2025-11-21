@@ -114,3 +114,5 @@ curl https://your-railway-app.railway.app/
 - Railway מגדיר אוטומטית את ה-PORT, אבל ודא ש-`PORT=8080` מוגדר
 - בדוק את ה-`railway.json` שהפורט נכון
 
+
+

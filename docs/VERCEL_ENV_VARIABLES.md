@@ -120,3 +120,5 @@ npm run dev
 2. Deploy מחדש את ה-frontend ב-Vercel
 3. בדוק שהחיבור עובד בפרודקשן
 
+
+

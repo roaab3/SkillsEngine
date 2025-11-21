@@ -14,6 +14,8 @@ const { query } = require('../../config/database');
 const User = require('../models/User');
 const UserCompetency = require('../models/UserCompetency');
 const UserSkill = require('../models/UserSkill');
+const fs = require('fs').promises;
+const path = require('path');
 
 class UserService {
   /**
@@ -195,21 +197,26 @@ class UserService {
    * @returns {Promise<Object>}
    */
   async getUserProfile(userId) {
-    // TEMP: Completely stubbed response that does NOT touch the database,
-    // so we can verify frontend-backend connectivity independently of DB config.
-    console.log('[UserService.getUserProfile] TEMP stub for userId (no DB):', userId);
+    // TEMP: Use backend mock data (backend/mockdata/users.json) instead of the database.
+    // This allows the frontend to be tested even when DATABASE_URL is not configured.
+    try {
+      const mockPath = path.join(__dirname, '../../mockdata/users.json');
+      const fileContents = await fs.readFile(mockPath, 'utf-8');
+      const mockUser = JSON.parse(fileContents);
 
-    return {
-      user: {
-        user_id: userId,
-        user_name: 'Test User',
-        company_id: 'test_company',
-        employee_type: 'regular',
-        path_career: null,
-        raw_data: null,
-        relevance_score: 0,
-      },
-    };
+      const resolvedUserId = userId || mockUser.user_id;
+      const userPayload = {
+        ...mockUser,
+        user_id: resolvedUserId
+      };
+
+      console.log('[UserService.getUserProfile] Using mock user profile for userId:', resolvedUserId);
+
+      return { user: userPayload };
+    } catch (error) {
+      console.error('[UserService.getUserProfile] Failed to load mock user profile:', error.message);
+      throw new Error('Failed to load user profile from mock data');
+    }
   }
 
   /**

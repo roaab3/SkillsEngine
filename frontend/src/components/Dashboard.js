@@ -56,6 +56,8 @@ export default function Dashboard({ userId }) {
       <div className="flex">
         {/* Main Content Area */}
         <div className="flex-1 p-6">
+          <h1 className="text-2xl font-bold mb-6">Competency Dashboard</h1>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {competencies.map((userComp) => (
               <CompetencyCard
