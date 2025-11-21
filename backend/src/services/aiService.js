@@ -64,23 +64,19 @@ class AIService {
    * @returns {Promise<Object>} Parsed JSON
    */
   async callGeminiJSON(prompt, options = {}) {
-    try {
-      const response = await this.callGemini(prompt, options);
-      
-      // Try to extract JSON from response (handle markdown code blocks)
-      let jsonText = response.trim();
-      
-      // Remove markdown code blocks if present
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
-      } else if (jsonText.startsWith('```')) {
-        jsonText = jsonText.replace(/^```\n?/, '').replace(/\n?```$/, '');
-      }
+    const response = await this.callGemini(prompt, options);
 
-      return JSON.parse(jsonText);
-    } catch (error) {
-      throw new Error(`Failed to parse JSON response: ${error.message}`);
+    // Try to extract JSON from response (handle markdown code blocks)
+    let jsonText = response.trim();
+
+    // Remove markdown code blocks if present
+    if (jsonText.startsWith('```json')) {
+      jsonText = jsonText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+    } else if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/^```\n?/, '').replace(/\n?```$/, '');
     }
+
+    return JSON.parse(jsonText);
   }
 
   /**
@@ -107,7 +103,8 @@ class AIService {
   async discoverOfficialSources() {
     const promptPath = 'docs/prompts/source_discovery_prompt.txt';
     const prompt = await this.loadPrompt(promptPath);
-    const result = await this.callGeminiJSON(prompt, { modelType: 'pro' });
+    // Use the flash model by default for better availability and lower latency.
+    const result = await this.callGeminiJSON(prompt, { modelType: 'flash' });
 
     if (!Array.isArray(result)) {
       throw new Error('Expected Gemini to return an array of sources');
