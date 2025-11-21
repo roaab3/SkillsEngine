@@ -1,7 +1,7 @@
 /**
  * User Competency Repository
  *
- * Data access layer for userCompetency table.
+ * Data access layer for usercompetency table.
  * Uses Supabase client for database operations.
  */
 
@@ -35,13 +35,13 @@ class UserCompetencyRepository {
     }
 
     const { data, error } = await this.getClient()
-      .from('userCompetency')
+      .from('usercompetency')
       .insert({
         user_id: userCompetency.user_id,
         competency_id: userCompetency.competency_id,
         coverage_percentage: userCompetency.coverage_percentage,
         proficiency_level: userCompetency.proficiency_level,
-        verifiedSkills: userCompetency.verifiedSkills
+        verifiedskills: userCompetency.verifiedSkills
       })
       .select()
       .single();
@@ -58,7 +58,7 @@ class UserCompetencyRepository {
    */
   async findByUserAndCompetency(userId, competencyId) {
     const { data, error } = await this.getClient()
-      .from('userCompetency')
+      .from('usercompetency')
       .select('*')
       .eq('user_id', userId)
       .eq('competency_id', competencyId)
@@ -79,7 +79,7 @@ class UserCompetencyRepository {
    */
   async findByUser(userId) {
     const { data, error } = await this.getClient()
-      .from('userCompetency')
+      .from('usercompetency')
       .select('*')
       .eq('user_id', userId)
       .order('competency_id');
@@ -95,7 +95,7 @@ class UserCompetencyRepository {
    */
   async findByCompetency(competencyId) {
     const { data, error } = await this.getClient()
-      .from('userCompetency')
+      .from('usercompetency')
       .select('*')
       .eq('competency_id', competencyId)
       .order('user_id');
@@ -117,7 +117,9 @@ class UserCompetencyRepository {
 
     for (const field of allowedFields) {
       if (updates.hasOwnProperty(field)) {
-        updateData[field] = updates[field];
+        // Map verifiedSkills to verifiedskills for database
+        const dbField = field === 'verifiedSkills' ? 'verifiedskills' : field;
+        updateData[dbField] = updates[field];
       }
     }
 
@@ -128,7 +130,7 @@ class UserCompetencyRepository {
     updateData.updated_at = new Date().toISOString();
 
     const { data, error } = await this.getClient()
-      .from('userCompetency')
+      .from('usercompetency')
       .update(updateData)
       .eq('user_id', userId)
       .eq('competency_id', competencyId)
@@ -151,7 +153,7 @@ class UserCompetencyRepository {
    */
   async delete(userId, competencyId) {
     const { error } = await this.getClient()
-      .from('userCompetency')
+      .from('usercompetency')
       .delete()
       .eq('user_id', userId)
       .eq('competency_id', competencyId);
@@ -183,5 +185,3 @@ class UserCompetencyRepository {
 }
 
 module.exports = new UserCompetencyRepository();
-
-
