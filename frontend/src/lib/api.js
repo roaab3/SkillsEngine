@@ -61,16 +61,11 @@ apiClient.interceptors.response.use(
 export const api = {
   // User Profile
   getUserProfile: async (userId) => {
-    try {
-      const response = await apiClient.get(`/api/user/${userId}`);
-      const data = response.data;
-      // Backend typically returns { success: true, data: profile }
-      const profile = data?.data ?? data;
-      return profile;
-    } catch (error) {
-      // Let callers decide how to handle failures (e.g. show error UI).
-      throw error;
-    }
+    const response = await apiClient.get(`/api/user/${userId}`);
+    const data = response.data;
+    // Backend typically returns { success: true, data: profile }
+    const profile = data?.data ?? data;
+    return profile;
   },
 
   // Competencies
