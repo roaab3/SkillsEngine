@@ -3,7 +3,6 @@
  */
 
 import axios from 'axios';
-import mockUserProfile from '../../public/mockdata/userProfile.json';
 
 // Resolve API base URL from environment
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -25,13 +24,6 @@ if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line no-console
   console.log('__API__', API_BASE_URL);
 }
-
-const USE_MOCK_DATA = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
-
-const buildMockUserProfile = (userId) => ({
-  ...mockUserProfile,
-  user_id: userId || mockUserProfile.user_id,
-});
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -69,19 +61,15 @@ apiClient.interceptors.response.use(
 export const api = {
   // User Profile
   getUserProfile: async (userId) => {
-    if (USE_MOCK_DATA) {
-      return buildMockUserProfile(userId);
-    }
-
     try {
       const response = await apiClient.get(`/api/user/${userId}`);
-      return response.data;
+      const data = response.data;
+      // Backend typically returns { success: true, data: profile }
+      const profile = data?.data ?? data;
+      return profile;
     } catch (error) {
-      console.warn(
-        '[API:getUserProfile] Failed to fetch from backend, falling back to mock data:',
-        error?.message || error
-      );
-      return buildMockUserProfile(userId);
+      // Let callers decide how to handle failures (e.g. show error UI).
+      throw error;
     }
   },
 

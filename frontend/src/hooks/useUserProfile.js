@@ -18,12 +18,9 @@ export function useUserProfile(userId) {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        const response = await api.getUserProfile(userId);
-        if (response.success) {
-          setProfile(response.data);
-        } else {
-          setError(response.error || 'Failed to load profile');
-        }
+        const profileData = await api.getUserProfile(userId);
+        setProfile(profileData);
+        setError(null);
       } catch (err) {
         setError(err.message || 'Failed to load profile');
       } finally {
@@ -40,10 +37,8 @@ export function useUserProfile(userId) {
     if (userId) {
       try {
         setLoading(true);
-        const response = await api.getUserProfile(userId);
-        if (response.success) {
-          setProfile(response.data);
-        }
+        const profileData = await api.getUserProfile(userId);
+        setProfile(profileData);
       } catch (err) {
         setError(err.message || 'Failed to reload profile');
       } finally {
