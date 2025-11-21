@@ -64,16 +64,8 @@ class AIService {
    * @returns {Promise<Object>} Parsed JSON
    */
   async callGeminiJSON(prompt, options = {}) {
-    // Force Gemini to return JSON by using responseMimeType.
-    const mergedOptions = {
-      ...options,
-      generationConfig: {
-        ...(options.generationConfig || {}),
-        responseMimeType: 'application/json'
-      }
-    };
-
-    const responseText = await this.callGemini(prompt, mergedOptions);
+    // Let callGemini handle model + retry; we keep JSON handling focused here.
+    const responseText = await this.callGemini(prompt, options);
 
     // Try to extract JSON from response (handle markdown code blocks)
     let jsonText = (responseText || '').trim();
