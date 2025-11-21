@@ -105,12 +105,9 @@ export default function CompetencyCard({ userCompetency, onClick }) {
           {/* Progress Bar */}
           <div className="relative h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
             <div
-              className={`h-full bg-gradient-to-r ${gradient} transition-all duration-1000 ease-out animate-progress-fill relative`}
+              className={`h-full bg-gradient-to-r ${gradient} transition-all duration-1000 ease-out animate-progress-fill`}
               style={{ width: `${coverage}%` }}
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-            </div>
+            />
           </div>
 
           {/* Label */}

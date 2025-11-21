@@ -132,6 +132,35 @@ export const api = {
     });
     return response.data;
   },
+
+  // User Competency
+  getUserCompetencies: async (userId, params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.competency_id) queryParams.append('competency_id', params.competency_id);
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+
+    const queryString = queryParams.toString();
+    const url = `/api/user-competency/${userId}${queryString ? `?${queryString}` : ''}`;
+
+    const response = await apiClient.get(url);
+    return response.data;
+  },
+
+  getUserCompetency: async (userId, competencyId) => {
+    const response = await apiClient.get(`/api/user-competency/${userId}/${competencyId}`);
+    return response.data;
+  },
+
+  updateUserCompetency: async (userId, competencyId, data) => {
+    const response = await apiClient.put(`/api/user-competency/${userId}/${competencyId}`, data);
+    return response.data;
+  },
+
+  deleteUserCompetency: async (userId, competencyId) => {
+    const response = await apiClient.delete(`/api/user-competency/${userId}/${competencyId}`);
+    return response.data;
+  },
 };
 
 export default api;

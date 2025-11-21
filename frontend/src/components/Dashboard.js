@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { useUserCompetencies } from '@/hooks/useUserCompetencies';
 import CompetencyCard from './CompetencyCard';
 import SkillsGapSidebar from './SkillsGapSidebar';
 import CompetencyModal from './CompetencyModal';
@@ -18,7 +19,8 @@ import { Upload } from 'lucide-react';
  * @param {{userId: string}} props
  */
 export default function Dashboard({ userId }) {
-  const { profile, loading, error } = useUserProfile(userId);
+  const { profile, loading: profileLoading, error: profileError } = useUserProfile(userId);
+  const { competencies, loading: competenciesLoading, error: competenciesError } = useUserCompetencies(userId);
   const [selectedCompetency, setSelectedCompetency] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -27,8 +29,10 @@ export default function Dashboard({ userId }) {
   const user = hasProfile
     ? profile.user
     : { user_name: 'Guest User', employee_type: 'regular' };
-  const competencies = hasProfile ? profile.competencies || [] : [];
   const isTrainer = user.employee_type === 'trainer';
+
+  const loading = profileLoading || competenciesLoading;
+  const error = profileError || competenciesError;
 
   if (loading) {
     return <LoadingSkeleton />;
