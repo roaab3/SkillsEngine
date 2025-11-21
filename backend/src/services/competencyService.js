@@ -196,6 +196,43 @@ class CompetencyService {
   }
 
   /**
+   * Get complete competency hierarchy with skills and subskills
+   * Returns: Competencies → Sub-competencies → Skills → Subskills
+   * @param {string} parentCompetencyId - Parent competency ID
+   * @returns {Promise<Object>}
+   */
+  async getCompleteHierarchy(parentCompetencyId) {
+    const hierarchy = await competencyRepository.getHierarchy(parentCompetencyId);
+    if (!hierarchy) {
+      return null;
+    }
+
+    // Helper function to get skill tree with all subskills
+    const getSkillWithSubskills = async (skillId) => {
+      const skillTree = await skillRepository.traverseHierarchy(skillId);
+      return skillTree;
+    };
+
+    // Add linked skills with their subskills to parent competency
+    const linkedSkills = await competencyRepository.getLinkedSkills(parentCompetencyId);
+    hierarchy.skills = await Promise.all(
+      linkedSkills.map(skill => getSkillWithSubskills(skill.skill_id))
+    );
+
+    // Add linked skills with their subskills to each sub-competency
+    if (hierarchy.children && hierarchy.children.length > 0) {
+      for (const child of hierarchy.children) {
+        const childSkills = await competencyRepository.getLinkedSkills(child.competency_id);
+        child.skills = await Promise.all(
+          childSkills.map(skill => getSkillWithSubskills(skill.skill_id))
+        );
+      }
+    }
+
+    return hierarchy;
+  }
+
+  /**
    * Update a competency
    * @param {string} competencyId - Competency ID
    * @param {Object} updates - Fields to update

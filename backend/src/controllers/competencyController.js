@@ -102,7 +102,26 @@ class CompetencyController {
     try {
       const { competencyId } = req.params;
       const hierarchy = await competencyService.getCompetencyHierarchy(competencyId);
-      
+
+      if (!hierarchy) {
+        return res.status(404).json({ success: false, error: 'Competency not found' });
+      }
+
+      res.json({ success: true, data: hierarchy });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  /**
+   * Get complete competency hierarchy with skills and subskills
+   * GET /api/competencies/:competencyId/complete-hierarchy
+   */
+  async getCompleteHierarchy(req, res) {
+    try {
+      const { competencyId } = req.params;
+      const hierarchy = await competencyService.getCompleteHierarchy(competencyId);
+
       if (!hierarchy) {
         return res.status(404).json({ success: false, error: 'Competency not found' });
       }

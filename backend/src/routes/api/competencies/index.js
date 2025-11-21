@@ -17,7 +17,8 @@ router.get('/', competencyController.getAllCompetencies.bind(competencyControlle
 // Search competencies by name (case-insensitive, ?q=pattern)
 router.get('/search', competencyController.searchCompetencies.bind(competencyController));
 
-
+// Get complete competency hierarchy with skills and subskills (must be before /:competencyId)
+router.get('/:competencyId/complete-hierarchy', competencyController.getCompleteHierarchy.bind(competencyController));
 
 // Get competency by ID
 router.get('/:competencyId', competencyController.getCompetencyById.bind(competencyController));
