@@ -136,6 +136,7 @@ export default function Dashboard({ userId }) {
           competencyId={selectedCompetency}
           onClose={() => setSelectedCompetency(null)}
           isDarkMode={isDarkMode}
+          hierarchyData={hierarchies[selectedCompetency]}
         />
       )}
 
