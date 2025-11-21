@@ -10,12 +10,9 @@ const userCompetencyRepository = require('../repositories/userCompetencyReposito
 const userSkillRepository = require('../repositories/userSkillRepository');
 const competencyRepository = require('../repositories/competencyRepository');
 const skillRepository = require('../repositories/skillRepository');
-const { query } = require('../../config/database');
 const User = require('../models/User');
 const UserCompetency = require('../models/UserCompetency');
 const UserSkill = require('../models/UserSkill');
-const fs = require('fs').promises;
-const path = require('path');
 
 class UserService {
   /**
@@ -197,26 +194,14 @@ class UserService {
    * @returns {Promise<Object>}
    */
   async getUserProfile(userId) {
-    // TEMP: Use backend mock data (backend/mockdata/users.json) instead of the database.
-    // This allows the frontend to be tested even when DATABASE_URL is not configured.
-    try {
-      const mockPath = path.join(__dirname, '../../mockdata/users.json');
-      const fileContents = await fs.readFile(mockPath, 'utf-8');
-      const mockUser = JSON.parse(fileContents);
-
-      const resolvedUserId = userId || mockUser.user_id;
-      const userPayload = {
-        ...mockUser,
-        user_id: resolvedUserId
-      };
-
-      console.log('[UserService.getUserProfile] Using mock user profile for userId:', resolvedUserId);
-
-      return { user: userPayload };
-    } catch (error) {
-      console.error('[UserService.getUserProfile] Failed to load mock user profile:', error.message);
-      throw new Error('Failed to load user profile from mock data');
+    const user = await userRepository.findById(userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
     }
+
+    return {
+      user: user.toJSON()
+    };
   }
 
   /**
