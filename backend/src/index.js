@@ -67,6 +67,7 @@ const competencySkillRoutes = require('./routes/api/competency-skill');
 const competencySubCompetencyRoutes = require('./routes/api/competency-subcompetency');
 const sourceDiscoveryRoutes = require('./routes/api/source-discovery');
 const competencyDiscoveryRoutes = require('./routes/api/competency-discovery');
+const webExtractionRoutes = require('./routes/api/web-extraction');
 const unifiedEndpointHandler = require('./handlers/unifiedEndpointHandler');
 const sourceDiscoveryService = require('./services/sourceDiscoveryService');
 
@@ -79,6 +80,7 @@ app.use('/api/competency-skill', competencySkillRoutes);
 app.use('/api/competency-subcompetency', competencySubCompetencyRoutes);
 app.use('/api/source-discovery', sourceDiscoveryRoutes);
 app.use('/api/competency-discovery', competencyDiscoveryRoutes);
+app.use('/api/web-extraction', webExtractionRoutes);
 
 // Unified Data Exchange Protocol endpoint
 app.post('/api/fill-content-metrics/', unifiedEndpointHandler.handle.bind(unifiedEndpointHandler));

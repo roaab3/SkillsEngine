@@ -115,6 +115,59 @@ class AIService {
   }
 
   /**
+   * Web deep search & semantic extraction from external URLs (Feature 9.2)
+   *
+   * Uses the semantic_extraction_prompt.txt specification and calls Gemini
+   * **once per URL**, then merges all results into a single JSON object:
+   * { sources: [...] }.
+   *
+   * @param {string[]|string} urls - URL or list of URLs to extract from
+   * @returns {Promise<Object>} JSON object with { sources: [...] }
+   */
+  async extractFromWeb(urls) {
+    // Normalize input to a non-empty array of URLs
+    const urlList = Array.isArray(urls) ? urls : [urls];
+    const cleaned = urlList
+      .map((u) => (typeof u === 'string' ? u.trim() : ''))
+      .filter((u) => u.length > 0);
+
+    if (cleaned.length === 0) {
+      throw new Error('extractFromWeb requires at least one valid URL');
+    }
+
+    const promptPath = 'docs/prompts/semantic_extraction_prompt.txt';
+    const basePrompt = await this.loadPrompt(promptPath);
+
+    const allSources = [];
+
+    // Call Gemini once per URL and merge the "sources" arrays
+    for (const url of cleaned) {
+      const prompt = `${basePrompt}\n${url}`;
+
+      // Use the "pro" model here to align with the Deep Search / Pro requirement.
+      const result = await this.callGeminiJSON(prompt, { modelType: 'pro' });
+
+      if (!result) {
+        continue;
+      }
+
+      if (Array.isArray(result.sources)) {
+        allSources.push(...result.sources);
+      } else if (result.source_url && result.data) {
+        // Be tolerant if the model returns a single object instead of { sources: [...] }
+        allSources.push({
+          source_url: result.source_url,
+          data: result.data,
+        });
+      } else {
+        throw new Error('extractFromWeb expected a JSON object with a "sources" array or a { source_url, data } object');
+      }
+    }
+
+    return { sources: allSources };
+  }
+
+  /**
    * Discover official external sources (URLs) for skills & competencies
    * using the source_discovery_prompt.txt specification.
    *

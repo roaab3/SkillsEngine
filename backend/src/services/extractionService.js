@@ -7,8 +7,21 @@
 
 const aiService = require('./aiService');
 const userRepository = require('../repositories/userRepository');
+const competencyRepository = require('../repositories/competencyRepository');
+const skillRepository = require('../repositories/skillRepository');
+const Competency = require('../models/Competency');
+const Skill = require('../models/Skill');
 
 class ExtractionService {
+  /**
+   * Generate a pseudo-unique ID for competencies/skills
+   * @param {string} prefix
+   * @returns {string}
+   */
+  generateId(prefix) {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
   /**
    * Extract competencies and skills from raw user data
    * @param {string} userId - User ID
@@ -53,10 +66,16 @@ class ExtractionService {
     allExtracted.competencies = this.deduplicateByName(allExtracted.competencies);
     allExtracted.skills = this.deduplicateByName(allExtracted.skills);
 
-    // TODO: Emit extraction event for downstream processing
-    // eventEmitter.emit('extraction.completed', { userId, extracted: allExtracted });
+    // Persist extracted items into taxonomy tables (competencies & skills)
+    const stats = await this.persistToTaxonomy(allExtracted);
 
-    return allExtracted;
+    // TODO: Emit extraction event for downstream processing
+    // eventEmitter.emit('extraction.completed', { userId, extracted: allExtracted, stats });
+
+    return {
+      ...allExtracted,
+      stats,
+    };
   }
 
   /**
@@ -125,6 +144,81 @@ class ExtractionService {
       seen.add(normalizedName);
       return true;
     });
+  }
+
+  /**
+   * Persist extracted competencies & skills into taxonomy tables.
+   *
+   * - Creates competencies in `competencies` table if they don't already exist
+   * - Creates skills in `skills` table if they don't already exist
+   * - Does NOT create hierarchy links here (those are handled by other features)
+   *
+   * @param {Object} extracted - { competencies: [], skills: [] }
+   * @returns {Promise<{competencies: number, skills: number}>}
+   */
+  async persistToTaxonomy(extracted) {
+    const stats = {
+      competencies: 0,
+      skills: 0,
+    };
+
+    if (!extracted) {
+      return stats;
+    }
+
+    // Persist competencies
+    if (Array.isArray(extracted.competencies)) {
+      for (const item of extracted.competencies) {
+        const name =
+          typeof item === 'string'
+            ? item.trim()
+            : (item && typeof item.name === 'string' ? item.name.trim() : '');
+
+        if (!name) continue;
+
+        // Skip if competency already exists (case-insensitive match)
+        const existing = await competencyRepository.findByName(name);
+        if (existing) continue;
+
+        const model = new Competency({
+          competency_id: this.generateId('comp'),
+          competency_name: name,
+          description: item && typeof item.description === 'string' ? item.description : null,
+          parent_competency_id: null,
+        });
+
+        await competencyRepository.create(model);
+        stats.competencies += 1;
+      }
+    }
+
+    // Persist skills
+    if (Array.isArray(extracted.skills)) {
+      for (const item of extracted.skills) {
+        const name =
+          typeof item === 'string'
+            ? item.trim()
+            : (item && typeof item.name === 'string' ? item.name.trim() : '');
+
+        if (!name) continue;
+
+        // Skip if skill already exists (case-insensitive match)
+        const existing = await skillRepository.findByName(name);
+        if (existing) continue;
+
+        const model = new Skill({
+          skill_id: this.generateId('skill'),
+          skill_name: name,
+          parent_skill_id: null,
+          description: item && typeof item.description === 'string' ? item.description : null,
+        });
+
+        await skillRepository.create(model);
+        stats.skills += 1;
+      }
+    }
+
+    return stats;
   }
 }
 
