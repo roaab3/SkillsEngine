@@ -2,6 +2,7 @@
   "user_id": "user_123",
   "user_name": "John Doe",
   "company_id": "company_456",
+  "path_career": "Full Stack Developer",
   "relevance_score": 75.5,
   "competencies": [
     {
@@ -44,7 +45,37 @@
       "verified_skills_count": 2,
       "total_required_mgs": 8
     }
-  ]
+  ],
+  "gap_analysis": {
+    "full_stack_development": {
+      "missing_mgs": {
+        "Full Stack Development": [
+          {
+            "skill_id": "skill_2",
+            "skill_name": "React"
+          },
+          {
+            "skill_id": "skill_3",
+            "skill_name": "Node.js"
+          }
+        ]
+      }
+    },
+    "database_management": {
+      "missing_mgs": {
+        "Database Management": [
+          {
+            "skill_id": "skill_5",
+            "skill_name": "PostgreSQL"
+          },
+          {
+            "skill_id": "skill_6",
+            "skill_name": "Index optimization"
+          }
+        ]
+      }
+    }
+  }
 }
 
 

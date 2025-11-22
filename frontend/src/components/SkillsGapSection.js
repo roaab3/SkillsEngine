@@ -5,15 +5,42 @@
 
 import { AlertCircle, AlertTriangle, CheckCircle2, Target, Zap } from 'lucide-react';
 
+// Mock profile fallback for demo/preview when no live profile is available
+const MOCK_PROFILE = {
+  user_id: 'user_123',
+  user_name: 'John Doe',
+  company_id: 'company_456',
+  relevance_score: 75.5,
+  gap_analysis: {
+    full_stack_development: {
+      missing_mgs: {
+        'Full Stack Development': [
+          { skill_id: 'skill_2', skill_name: 'React' },
+          { skill_id: 'skill_3', skill_name: 'Node.js' },
+        ],
+      },
+    },
+    database_management: {
+      missing_mgs: {
+        'Database Management': [
+          { skill_id: 'skill_5', skill_name: 'PostgreSQL' },
+          { skill_id: 'skill_6', skill_name: 'Index optimization' },
+        ],
+      },
+    },
+  },
+};
+
 /**
  * @param {{profile: any}} props
  */
 export default function SkillsGapSection({ profile }) {
-  const hasProfile = !!profile;
-  const gapAnalysis = profile?.gap_analysis || {};
+  const effectiveProfile = profile || MOCK_PROFILE;
+  const hasProfile = !!effectiveProfile;
+  const gapAnalysis = effectiveProfile?.gap_analysis || {};
   const allMissingMGS = [];
-  const relevanceScore = typeof profile?.relevance_score === 'number'
-    ? profile.relevance_score
+  const relevanceScore = typeof effectiveProfile?.relevance_score === 'number'
+    ? effectiveProfile.relevance_score
     : null;
 
   // Collect all missing MGS from all competencies
