@@ -26,6 +26,16 @@ class SourceDiscoveryService {
       throw new Error('discoverOfficialSources did not return an array');
     }
 
+    // If Gemini returned an empty list, short‑circuit without touching the DB
+    if (discovered.length === 0) {
+      return {
+        inserted: 0,
+        skipped: 0,
+        totalDiscovered: 0,
+        sources: [],
+      };
+    }
+
     // Load existing minimal data to avoid inserting duplicates
     const existing = await officialSourceRepository.findAllMinimal();
     const existingIds = new Set(existing.map((e) => e.source_id));

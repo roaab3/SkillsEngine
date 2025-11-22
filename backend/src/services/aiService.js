@@ -40,7 +40,7 @@ class AIService {
       temperature: 0.0,
       topP:1,
       topK: 1,
-      maxOutputTokens: 8192,
+      maxOutputTokens: 50000,
       ...generationConfig
     };
 
@@ -74,10 +74,10 @@ class AIService {
     // If Gemini returned nothing (or only whitespace), avoid parsing and either
     // return a safe default or throw a clear error. For source discovery and
     // similar flows, treating this as "no results" is acceptable.
-    if (!jsonText) {
+  /*   if (!jsonText) {
       console.warn('[callGeminiJSON] Empty response from Gemini, returning empty array.');
       return [];
-    }
+    } */
 
     // Remove markdown code blocks if present
     if (jsonText.startsWith('```json')) {
