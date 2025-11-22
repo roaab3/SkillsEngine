@@ -68,6 +68,7 @@ const competencySubCompetencyRoutes = require('./routes/api/competency-subcompet
 const sourceDiscoveryRoutes = require('./routes/api/source-discovery');
 const competencyDiscoveryRoutes = require('./routes/api/competency-discovery');
 const unifiedEndpointHandler = require('./handlers/unifiedEndpointHandler');
+const sourceDiscoveryService = require('./services/sourceDiscoveryService');
 
 app.use('/api/skills', skillsRoutes);
 app.use('/api/competencies', competenciesRoutes);
@@ -99,6 +100,21 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`   1. DATABASE_URL in backend/.env`);
   console.log(`   2. Supabase project is active`);
   console.log(`   3. Run: node check-connection.js`);
+
+  // Kick off source discovery asynchronously on each system load.
+  (async () => {
+    try {
+      console.log('🔎 [startup] Running initial source discovery in background...');
+      const result = await sourceDiscoveryService.discoverAndStoreSources();
+      console.log('✅ [startup] Source discovery completed:', {
+        inserted: result.inserted,
+        skipped: result.skipped,
+        totalDiscovered: result.totalDiscovered,
+      });
+    } catch (err) {
+      console.error('⚠️  [startup] Source discovery failed:', err.message || err);
+    }
+  })();
 });
 
 module.exports = app;
