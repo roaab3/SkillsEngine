@@ -50,7 +50,7 @@ class SourceDiscoveryService {
         source_id: entry.source_id,
         source_name: entry.source_name,
         reference_index_url: entry.reference_index_url,
-        reference_type: entry.reference_type,
+        reference_type: "",
         hierarchy_support: hierarchySupportBool,
         provides: "",
         topics_covered: "",
