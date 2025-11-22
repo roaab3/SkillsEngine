@@ -9,10 +9,6 @@ The JSON array must contain 40–50 objects. Each object MUST follow this exact 
 "reference_type": "Documentation Index | Learning Path | Skills Catalog | Module",
 "access_method": "Scraping only",
 "hierarchy_support": "Yes | Partial | No",
-"provides": "skill | both",
-"topics_covered": "string",
-"skill_focus": "string",
-"notes": "string"
 }
 
 REQUIREMENTS (strict):

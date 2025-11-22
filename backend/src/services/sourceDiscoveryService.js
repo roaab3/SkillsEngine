@@ -52,10 +52,10 @@ class SourceDiscoveryService {
         reference_index_url: entry.reference_index_url,
         reference_type: entry.reference_type,
         hierarchy_support: hierarchySupportBool,
-        provides: entry.provides,
-        topics_covered: entry.topics_covered,
-        skill_focus: entry.skill_focus,
-        notes: entry.notes,
+        provides: "",
+        topics_covered: "",
+        skill_focus: "",
+        notes: "",
         last_checked: new Date().toISOString(),
       });
     });
