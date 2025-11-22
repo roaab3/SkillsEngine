@@ -1,57 +1,17 @@
 /**
  * Competency Card Component
  * Completely redesigned with modern styling and animations
- * Displays user competency progress with interactive hierarchy preview
+ * Displays user competency progress.
  */
 
-import { ArrowRight, TrendingUp, BookOpen, Star, Loader2 } from 'lucide-react';
+import { ArrowRight, TrendingUp, BookOpen } from 'lucide-react';
 
 /**
- * @param {{userCompetency: any, onClick: function, isLoadingHierarchy: boolean, hierarchyData: any}} props
+ * @param {{userCompetency: any, onClick: function}} props
  */
-export default function CompetencyCard({ userCompetency, onClick, isLoadingHierarchy = false, hierarchyData = null }) {
+export default function CompetencyCard({ userCompetency, onClick }) {
   const coverage = userCompetency.coverage_percentage || 0;
-  const verifiedCount = userCompetency.verifiedSkills?.filter(s => s.verified).length || 0;
-  const totalSkills = userCompetency.verifiedSkills?.length || 0;
   const proficiency = userCompetency.proficiency_level || 'beginner';
-
-  // Count skills and subskills from hierarchy data
-  const getSkillCount = () => {
-    if (!hierarchyData) return { skills: 0, subskills: 0 };
-
-    let skillCount = 0;
-    let subskillCount = 0;
-
-    const countSkillsRecursively = (skillNode) => {
-      skillCount++;
-      if (skillNode.children && skillNode.children.length > 0) {
-        skillNode.children.forEach(child => {
-          subskillCount++;
-          if (child.children) {
-            countSkillsRecursively(child);
-          }
-        });
-      }
-    };
-
-    // Count skills in parent competency
-    if (hierarchyData.skills) {
-      hierarchyData.skills.forEach(skill => countSkillsRecursively(skill));
-    }
-
-    // Count skills in child competencies
-    if (hierarchyData.children) {
-      hierarchyData.children.forEach(child => {
-        if (child.skills) {
-          child.skills.forEach(skill => countSkillsRecursively(skill));
-        }
-      });
-    }
-
-    return { skills: skillCount, subskills: subskillCount };
-  };
-
-  const skillCounts = hierarchyData ? getSkillCount() : null;
 
   // Determine gradient based on coverage
   const getGradientColors = (coverage) => {
