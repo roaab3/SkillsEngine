@@ -49,9 +49,7 @@ class AIService {
     return await executeWithRetry(async () => {
       const result = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: defaultConfig,
-         //If your SDK uses this field outside generationConfig:
-      response_mime_type: "application/json"
+        generationConfig: defaultConfig
       });
 
       const response = await result.response;
