@@ -38,7 +38,7 @@ class AIService {
     
     const defaultConfig = {
       temperature: 0.0,
-      topP: 0.95,
+      topP:1,
       topK: 1,
       maxOutputTokens: 8192,
       ...generationConfig
@@ -70,6 +70,14 @@ class AIService {
     console.log('[Gemini raw response full]', responseText);
     // Try to extract JSON from response (handle markdown code blocks)
     let jsonText = (responseText || '').trim();
+
+    // If Gemini returned nothing (or only whitespace), avoid parsing and either
+    // return a safe default or throw a clear error. For source discovery and
+    // similar flows, treating this as "no results" is acceptable.
+    if (!jsonText) {
+      console.warn('[callGeminiJSON] Empty response from Gemini, returning empty array.');
+      return [];
+    }
 
     // Remove markdown code blocks if present
     if (jsonText.startsWith('```json')) {
