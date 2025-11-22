@@ -66,7 +66,8 @@ class AIService {
   async callGeminiJSON(prompt, options = {}) {
     // Let callGemini handle model + retry; we keep JSON handling focused here.
     const responseText = await this.callGemini(prompt, options);
-
+    console.log('[Gemini raw response length]', responseText.length);
+    console.log('[Gemini raw response full]', responseText);
     // Try to extract JSON from response (handle markdown code blocks)
     let jsonText = (responseText || '').trim();
 
@@ -78,9 +79,12 @@ class AIService {
     }
 
     try {
-      return JSON.parse(jsonText);
+      const parsed = JSON.parse(jsonText);
+      console.log('[callGeminiJSON] Parsed JSON:', JSON.stringify(parsed, null, 2));
+      return parsed;
     } catch (parseError) {
       const preview = jsonText.slice(0, 200);
+      console.error('[callGeminiJSON] Raw response preview:', preview);
       throw new Error(
         `Gemini did not return valid JSON. Parse error: ${parseError.message}. Response preview: ${preview}`
       );
