@@ -16,6 +16,9 @@ export function useCompetencyHierarchies(competencyIds = []) {
   const [errors, setErrors] = useState({});
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+  // Stable key for dependency tracking
+  const idsKey = competencyIds.join(',');
+
   const fetchHierarchy = useCallback(async (competencyId) => {
     // Set loading state for this competency
     setLoading(prev => ({ ...prev, [competencyId]: true }));
@@ -68,7 +71,8 @@ export function useCompetencyHierarchies(competencyIds = []) {
     };
 
     fetchAllHierarchies();
-  }, [competencyIds.join(',')]); // Only re-run if the list of IDs changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey]);
 
   return {
     hierarchies,

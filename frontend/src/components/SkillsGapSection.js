@@ -32,9 +32,9 @@ const MOCK_PROFILE = {
 };
 
 /**
- * @param {{profile: any}} props
+ * Skills gap section currently uses mock data only (no live profile wiring).
  */
-export default function SkillsGapSection({ profile }) {
+export default function SkillsGapSection() {
   const effectiveProfile = MOCK_PROFILE;
   const hasProfile = !!effectiveProfile;
   const gapAnalysis = effectiveProfile?.gap_analysis || {};
