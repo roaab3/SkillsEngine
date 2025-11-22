@@ -12,8 +12,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Model configurations
 const MODELS = {
-  FLASH: process.env.GEMINI_FLASH_MODEL || 'gemini-1.5-flash',
-  PRO: process.env.GEMINI_DEEP_SEARCH_MODEL || 'gemini-1.5-pro'
+  FLASH: process.env.GEMINI_FLASH_MODEL || 'gemini-2.5-flash',
+  PRO: process.env.GEMINI_DEEP_SEARCH_MODEL || 'gemini-2.5-pro'
 };
 
 /**
