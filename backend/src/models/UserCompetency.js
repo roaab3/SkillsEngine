@@ -10,7 +10,11 @@ class UserCompetency {
     this.competency_id = data.competency_id;
     this.coverage_percentage = data.coverage_percentage || 0.00;
     this.proficiency_level = data.proficiency_level || null;
-    this.verifiedSkills = data.verifiedSkills || [];
+    // Support both camelCase (model) and snake_case (DB) for verified skills
+    this.verifiedSkills = data.verifiedSkills || data.verifiedskills || [];
+    // Optional competency name when joined with competencies table
+    this.competency_name =
+      data.competency_name || (data.competencies && data.competencies.competency_name) || null;
     this.created_at = data.created_at || null;
     this.updated_at = data.updated_at || null;
   }
@@ -56,6 +60,7 @@ class UserCompetency {
     return {
       user_id: this.user_id,
       competency_id: this.competency_id,
+      competency_name: this.competency_name,
       coverage_percentage: this.coverage_percentage,
       proficiency_level: this.proficiency_level,
       verifiedSkills: this.verifiedSkills,

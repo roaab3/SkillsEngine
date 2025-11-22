@@ -59,7 +59,16 @@ class UserCompetencyRepository {
   async findByUserAndCompetency(userId, competencyId) {
     const { data, error } = await this.getClient()
       .from('usercompetency')
-      .select('*')
+      .select(`
+        user_id,
+        competency_id,
+        coverage_percentage,
+        proficiency_level,
+        verifiedskills,
+        created_at,
+        updated_at,
+        competencies (competency_name)
+      `)
       .eq('user_id', userId)
       .eq('competency_id', competencyId)
       .single();
@@ -80,7 +89,16 @@ class UserCompetencyRepository {
   async findByUser(userId) {
     const { data, error } = await this.getClient()
       .from('usercompetency')
-      .select('*')
+      .select(`
+        user_id,
+        competency_id,
+        coverage_percentage,
+        proficiency_level,
+        verifiedskills,
+        created_at,
+        updated_at,
+        competencies (competency_name)
+      `)
       .eq('user_id', userId)
       .order('competency_id');
 
@@ -96,7 +114,16 @@ class UserCompetencyRepository {
   async findByCompetency(competencyId) {
     const { data, error } = await this.getClient()
       .from('usercompetency')
-      .select('*')
+      .select(`
+        user_id,
+        competency_id,
+        coverage_percentage,
+        proficiency_level,
+        verifiedskills,
+        created_at,
+        updated_at,
+        competencies (competency_name)
+      `)
       .eq('competency_id', competencyId)
       .order('user_id');
 
