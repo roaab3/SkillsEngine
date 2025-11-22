@@ -70,6 +70,7 @@ const competencyDiscoveryRoutes = require('./routes/api/competency-discovery');
 const webExtractionRoutes = require('./routes/api/web-extraction');
 const unifiedEndpointHandler = require('./handlers/unifiedEndpointHandler');
 const sourceDiscoveryService = require('./services/sourceDiscoveryService');
+const webExtractionService = require('./services/webExtractionService');
 
 app.use('/api/skills', skillsRoutes);
 app.use('/api/competencies', competenciesRoutes);
@@ -103,7 +104,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`   2. Supabase project is active`);
   console.log(`   3. Run: node check-connection.js`);
 
-  // Kick off source discovery asynchronously on each system load.
+  // Kick off source discovery + web extraction asynchronously on each system load.
   (async () => {
     try {
       console.log('🔎 [startup] Running initial source discovery in background...');
@@ -113,8 +114,16 @@ app.listen(PORT, '0.0.0.0', () => {
         skipped: result.skipped,
         totalDiscovered: result.totalDiscovered,
       });
+
+      console.log('🌐 [startup] Running initial web extraction for discovered sources in background...');
+      const extractionResult = await webExtractionService.extractFromOfficialSources();
+      console.log('✅ [startup] Web extraction completed:', {
+        competenciesInserted: extractionResult.stats?.competencies ?? 0,
+        skillsInserted: extractionResult.stats?.skills ?? 0,
+        sourceCount: extractionResult.sources?.length ?? 0,
+      });
     } catch (err) {
-      console.error('⚠️  [startup] Source discovery failed:', err.message || err);
+      console.error('⚠️  [startup] Initialization pipeline failed (discovery or extraction):', err.message || err);
     }
   })();
 });
