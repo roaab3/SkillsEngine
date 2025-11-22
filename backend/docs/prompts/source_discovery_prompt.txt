@@ -1,3 +1,46 @@
-{{ contents of docs/prompts/source_discovery_prompt.txt }}
+IMPORTANT: Your response MUST be ONLY a valid JSON array. Do NOT include any text, explanation, description, markdown, comments, or formatting outside the JSON. Do NOT include trailing commas. Do NOT include code blocks. If you cannot produce results, return [].
 
+The JSON array must contain 40–50 objects. Each object MUST follow this exact structure with string values only:
 
+{
+"source_id": "string",
+"source_name": "string",
+"reference_index_url": "string",
+"reference_type": "Documentation Index | Learning Path | Skills Catalog | Module",
+"access_method": "Scraping only",
+"hierarchy_support": "Yes | Partial | No",
+"provides": "skill | both",
+"topics_covered": "string",
+"skill_focus": "string",
+"notes": "string"
+}
+
+REQUIREMENTS (strict):
+
+1.INCLUDE ONLY sources where "access_method" is exactly "Scraping only". Do NOT include any source that exposes an API, downloadable dataset, SDK, RSS feed, or any other machine interface. If a site clearly documents an API or machine-accessible endpoint for the same content, DO NOT include that source.
+
+2.Only include official or authoritative sources (examples: MDN, Microsoft Learn, AWS Docs, Google Developers, IBM, Oracle, Cisco, Linux Foundation, ISO, e-CF, SFIA, Red Hat, VMware, SAP, Adobe, TensorFlow, PyTorch, Coursera, OpenAI, Databricks). Non-official blogs, forums, or aggregator sites are NOT allowed.
+
+3.Only include pages that provide hierarchical skills or skills + competencies with linked skills (parent-child relationships). Skip pages that are flat lists without sub-skills, purely conceptual overviews, tutorials, or guides.
+
+4.Preferred URLs must match one of these patterns: /reference, /api/ (ONLY if the page itself is documentation but note rule 1 prohibits API access_method — if the content is only available via API, exclude), /docs/, /learn/, /skills/, /framework/, /ref/spec. However, final inclusion depends on scrapability — the page must be scrapable (rendered HTML with the hierarchical data visible). Exclude pages whose hierarchical data is only visible after client-side JS rendering that cannot be scraped by a standard HTML GET.
+
+5.For any main source that contains internal references, modules, or subpages with hierarchical skills, create a separate JSON object per internal reference with a unique source_id. Indicate parent-child relationships and provenance in the notes field (e.g., "parent: orgname-main; child: orgname-main-subpage").
+
+6.hierarchy_support field:
+
+"Yes" if the page contains full multi-level skill hierarchies with explicit sub-skill links.
+
+"Partial" if it contains some nested structure but not complete linkable sub-skills.
+
+"No" if it does not — such pages must be excluded.
+
+7.provides field: use "skill" if the page only lists skills; use "both" if it includes competencies and skills.
+
+8.All string fields must be concise. reference_index_url must be the exact URL of the page/section included. source_id must be unique and follow a predictable pattern (e.g., orgname-topic-subpage).
+
+TASK:
+
+Identify 40–50 official, authoritative sources (and their internal references) that meet the requirements above and return them as a single JSON array of objects strictly following the schema. Each returned object must be scrapable by a standard HTML scraper (no authentication, no API required, no client-side-only rendering for the hierarchical data). If any candidate cannot be scraped or clearly documents an API as the primary access method, do not include it.
+
+Return ONLY the JSON array now.

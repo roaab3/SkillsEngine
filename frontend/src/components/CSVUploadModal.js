@@ -116,8 +116,6 @@ export default function CSVUploadModal({ onClose, isDarkMode }) {
               </pre>
             </div>
           )}
-
-          {/* Actions */}
           <div className="flex gap-3">
             <button
               onClick={handleUpload}

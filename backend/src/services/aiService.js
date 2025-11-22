@@ -37,9 +37,9 @@ class AIService {
     const { modelType = 'flash', generationConfig = {} } = options;
     
     const defaultConfig = {
-      temperature: 0.7,
+      temperature: 0.0,
       topP: 0.95,
-      topK: 40,
+      topK: 1,
       maxOutputTokens: 8192,
       ...generationConfig
     };
@@ -49,7 +49,9 @@ class AIService {
     return await executeWithRetry(async () => {
       const result = await model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: defaultConfig
+        generationConfig: defaultConfig,
+         //If your SDK uses this field outside generationConfig:
+      response_mime_type: "application/json"
       });
 
       const response = await result.response;
@@ -113,7 +115,7 @@ class AIService {
     const prompt = await this.loadPrompt(promptPath);
     // Use the flash model by default for better availability and lower latency.
     const result = await this.callGeminiJSON(prompt, { modelType: 'flash' });
-
+    console.log('result', result);
     if (!Array.isArray(result)) {
       throw new Error('Expected Gemini to return an array of sources');
     }

@@ -69,7 +69,7 @@ export default function Dashboard({ userId }) {
           </div>
         )}
 
-        {/* Main Content - Two Column Layout */}
+        {/* Main Content-Two Column Layout */}
         {hasProfile && (
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Left Column - Competencies */}

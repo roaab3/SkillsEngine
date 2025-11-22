@@ -188,7 +188,7 @@ export default function CompetencyModal({ competencyId, onClose, isDarkMode, hie
           )}
         </div>
 
-        {/* Tree Content */}
+        {/* Tree Content  */}
         <div className="p-6">
           {!hierarchyData ? (
             <div className="text-center py-8 text-gray-600 dark:text-gray-400">
@@ -199,7 +199,7 @@ export default function CompetencyModal({ competencyId, onClose, isDarkMode, hie
               {/* Parent Competency */}
               {renderCompetencySection(hierarchyData, false)}
 
-              {/* Child Competencies */}
+              {/* Child Competencies  */}
               {hierarchyData.children && hierarchyData.children.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
