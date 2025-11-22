@@ -131,14 +131,14 @@ export default function CompetencyCard({ userCompetency, onClick, isLoadingHiera
             </div>
 
             {/* Skills count badge */}
-            <div className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
+           {/*  <div className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
               <div className="flex items-center gap-1.5">
                 <Star className="w-4 h-4 text-amber-500" />
                 <span className="text-sm font-bold text-slate-900 dark:text-slate-50">
                   {verifiedCount}/{totalSkills}
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Progress Bar */}
@@ -148,28 +148,7 @@ export default function CompetencyCard({ userCompetency, onClick, isLoadingHiera
               style={{ width: `${coverage}%` }}
             />
           </div>
-
-          {/* Label */}
-          <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-            {verifiedCount} of {totalSkills} skills mastered
-          </p>
         </div>
-
-        {/* Hierarchy Loading / Info Section */}
-        {isLoadingHierarchy ? (
-          <div className="pt-3 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Loading complete details...</span>
-          </div>
-        ) : skillCounts ? (
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-700">
-            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-              <span>Skills: {skillCounts.skills}</span>
-              <span>Subskills: {skillCounts.subskills}</span>
-              <span>Total: {skillCounts.skills + skillCounts.subskills}</span>
-            </div>
-          </div>
-        ) : null}
 
         {/* Footer CTA */}
         <div className="pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
