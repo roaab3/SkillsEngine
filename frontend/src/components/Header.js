@@ -17,7 +17,7 @@ export default function Header({ user, isDarkMode, setIsDarkMode }) {
       <div className="absolute inset-0 bg-gradient-to-r from-primary-50/50 via-accent-50/30 to-primary-50/50 dark:from-primary-950/30 dark:via-accent-950/20 dark:to-primary-950/30" />
 
       <div className="relative h-20 max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Left: EduCora logo / brand */}
+        {/* Left: EduCore logo / brand */}
         <div className="flex items-center gap-3 group">
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl blur-md opacity-50 group-hover:opacity-75 transition-opacity" />
@@ -27,10 +27,7 @@ export default function Header({ user, isDarkMode, setIsDarkMode }) {
           </div>
           <div className="flex flex-col leading-tight">
             <span className="font-bold text-xl bg-gradient-to-r from-primary-600 to-accent-600 dark:from-primary-400 dark:to-accent-400 bg-clip-text text-transparent">
-              EduCora
-            </span>
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
-              Skills & Competency Engine
+              EduCore
             </span>
           </div>
         </div>

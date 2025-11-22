@@ -123,7 +123,7 @@ export default function SkillsGapSection({ profile }) {
                 </p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-5xl font-extrabold text-amber-400">
-                    {Math.round(100 - relevanceScore)}%
+                    {Math.round(relevanceScore)}%
                   </span>
                   <span className="text-sm text-slate-400">gap detected</span>
                 </div>

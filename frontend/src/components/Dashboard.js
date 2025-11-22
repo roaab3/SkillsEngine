@@ -118,10 +118,14 @@ export default function Dashboard({ userId }) {
               )}
             </div>
 
-            {/* Right Column - Average Progress & Skills Gap */}
+            {/* Right Column - Relevance Score, Career Path & Skills Gap */}
             <div className="w-full lg:w-96 space-y-6">
-              {/* Average Progress Card */}
-              <StatsOverview competencies={competencies} />
+              {/* Relevance Score Card */}
+              <StatsOverview
+                competencies={competencies}
+                relevanceScore={profile?.relevance_score ?? user.relevance_score}
+                pathCareer={user.path_career}
+              />
 
               {/* Skills Gap Sidebar */}
               <SkillsGapSidebar profile={profile} />
